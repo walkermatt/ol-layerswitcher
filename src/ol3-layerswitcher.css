@@ -1,0 +1,39 @@
+.layer-switcher {
+    position: absolute;
+    top: 3.5em;
+    right: 0.5em;
+}
+
+.layer-switcher .panel {
+    padding-right: 50px;
+    border: 1px solid #cccccc;
+    background-color: white;
+}
+
+.layer-switcher .panel {
+    display: none;
+}
+
+.layer-switcher.shown .panel {
+    display: block;
+}
+
+.layer-switcher button {
+    float: right;
+    width: 38px;
+    height: 38px;
+    background-image: url('logo.png');
+    background-repeat: no-repeat;
+    background-position: 2px;
+    background-color: white;
+    border: none;
+}
+
+.layer-switcher button:focus, .layer-switcher button:hover {
+    background-color: white;
+}
+
+.layer-switcher ul {
+    padding-left: 1em;
+    list-style: none;
+}
