@@ -2,10 +2,14 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var options = opt_options || {};
 
+    var hiddenClassName = 'ol-unselectable ol-control layer-switcher';
+    this.hiddenClassName = hiddenClassName;
+
+    var shownClassName = hiddenClassName + ' shown';
+    this.shownClassName = shownClassName;
+
     var element = document.createElement('div');
-    var className = 'ol-unselectable ol-control layer-switcher';
-    var shownClassName = className + ' shown';
-    element.className = className;
+    element.className = hiddenClassName;
 
     var button = document.createElement('button');
     element.appendChild(button);
@@ -14,15 +18,18 @@ ol.control.LayerSwitcher = function(opt_options) {
     this.panel.className = 'panel';
     element.appendChild(this.panel);
 
+    var this_ = this;
+
     element.addEventListener('mouseover', function(e) {
-        element.className = shownClassName;
+        this_.showPanel();
     });
+
+    button.addEventListener('click', function(e) {
+        this_.showPanel();
+    });
+
     element.addEventListener('mouseout', function(e) {
-        element.className = className;
-        button.blur();
-    });
-    element.addEventListener('click', function(e) {
-        element.className = shownClassName;
+        this_.hidePanel();
     });
 
     ol.control.Control.call(this, {
@@ -34,8 +41,20 @@ ol.control.LayerSwitcher = function(opt_options) {
 
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 
+ol.control.LayerSwitcher.prototype.showPanel = function() {
+    this.element.className = this.shownClassName;
+};
+
+ol.control.LayerSwitcher.prototype.hidePanel = function() {
+    this.element.className = this.hiddenClassName;
+};
+
 ol.control.LayerSwitcher.prototype.setMap = function(map) {
     ol.control.Control.prototype.setMap.call(this, map);
+    var this_ = this;
+    map.on('pointerdown', function() {
+        this_.hidePanel();
+    });
     this.render(map);
 };
 
