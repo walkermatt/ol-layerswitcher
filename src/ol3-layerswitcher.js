@@ -91,7 +91,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
     if (lyr.getLayers) {
 
         var label = document.createElement('label');
-        label.innerText = lyr.get('title');
+        label.innerHTML = lyr.get('title');
         li.appendChild(label);
         var ul = document.createElement('ul');
         li.appendChild(ul);
@@ -117,7 +117,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
         var label = document.createElement('label');
         label.htmlFor = lyrId;
-        label.innerText = lyr.get('title');
+        label.innerHTML = lyr.get('title');
         li.appendChild(label);
 
     }
