@@ -22,7 +22,6 @@ var map = new ol.Map({
             layers: [
                 new ol.layer.Tile({
                     title: 'Countries',
-                    // opacity: 0.5,
                     source: new ol.source.TileWMS({
                         url: 'http://demo.opengeo.org/geoserver/wms',
                         params: {'LAYERS': 'ne:ne_10m_admin_1_states_provinces_lines_shp'},

@@ -2,7 +2,7 @@
 
 Grouped layer list control for an OL3 map.
 
-All layers should have a `title` property and base layers should have `type` property set to `base`. See [examples/layerswitcher.js](examples/layerswitcher.js) for example usage.
+All layers should have a `title` property and base layers should have a `type` property set to `base`. Group layers (`ol.layer.Group`) can be used to visually group layers together. See [examples/layerswitcher.js](examples/layerswitcher.js) for usage.
 
 ## Demo
 
