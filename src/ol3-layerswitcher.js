@@ -111,7 +111,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         input.id = lyrId;
         input.checked = lyr.get('visible');
         input.addEventListener('change', function(e) {
-            this_.setState(map, lyr);
+            this_.setState(this_.getMap(), lyr);
         });
         li.appendChild(input);
 
