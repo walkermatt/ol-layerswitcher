@@ -58,20 +58,11 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
     this.render(map);
 };
 
-function forEachRecursive(lyr, fn) {
-    lyr.getLayers().forEach(function(lyr, idx, a) {
-        fn(lyr, idx, a);
-        if (lyr.getLayers) {
-            forEachRecursive(lyr, fn);
-        }
-    });
-}
-
 ol.control.LayerSwitcher.prototype.setState = function(map, lyr) {
     lyr.setVisible(!lyr.getVisible());
     if (lyr.get('type') === 'base') {
-        // Hide all other base layers
-        forEachRecursive(map, function(l, idx, a) {
+        // Hide all other base layers regardless of grouping
+        ol.control.LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
             if (l.get('type') === 'base' && l != lyr) {
                 l.setVisible(false);
             }
@@ -141,4 +132,18 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
         ul.appendChild(this_.renderLayer(lyr, idx));
     });
 
+};
+
+/**
+ * Call the supplied function for each layer in the passed layer group
+ * recursing nested groups. Signature for fn is the same as
+ * ol.Collection#forEach
+ */
+ol.control.LayerSwitcher.forEachRecursive = function(lyr, fn) {
+    lyr.getLayers().forEach(function(lyr, idx, a) {
+        fn(lyr, idx, a);
+        if (lyr.getLayers) {
+            ol.control.LayerSwitcher.forEachRecursive(lyr, fn);
+        }
+    });
 };
