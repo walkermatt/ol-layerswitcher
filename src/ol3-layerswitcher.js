@@ -1,6 +1,6 @@
 ol.control.LayerSwitcher = function(opt_options) {
 
-    var options = opt_options || {};
+    var options = this.options = opt_options || { reverse: true};
 
     var hiddenClassName = 'ol-unselectable ol-control layer-switcher';
     this.hiddenClassName = hiddenClassName;
@@ -67,6 +67,14 @@ function forEachRecursive(lyr, fn) {
     });
 }
 
+function reverseArray(input) {
+    var ret = new Array;
+    for(var i = input.length-1; i >= 0; i--) {
+        ret.push(input[i]);
+    }
+    return ret;
+}
+
 ol.control.LayerSwitcher.prototype.setState = function(map, lyr) {
     lyr.setVisible(!lyr.getVisible());
     if (lyr.get('type') === 'base') {
@@ -96,7 +104,12 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         var ul = document.createElement('ul');
         li.appendChild(ul);
 
-        lyr.getLayers().forEach(function(lyr, idx, a) {
+        var arrayLegend = lyr.getLayers().getArray();
+        if (this.options.reverse) {
+            arrayLegend = reverseArray(arrayLegend);
+        }
+
+        arrayLegend.forEach(function(lyr, idx, a) {
             ul.appendChild(this_.renderLayer(lyr, idx));
         });
 
@@ -137,7 +150,12 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     var ul = document.createElement('ul');
     this.panel.appendChild(ul);
 
-    map.getLayers().forEach(function(lyr, idx, a) {
+    var arrayLegend = map.getLayers().getArray();
+    if (this.options.reverse) {
+        arrayLegend = reverseArray(arrayLegend);
+    }
+    
+    arrayLegend.forEach(function(lyr, idx, a) {
         ul.appendChild(this_.renderLayer(lyr, idx));
     });
 
