@@ -87,7 +87,8 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         var ul = document.createElement('ul');
         li.appendChild(ul);
 
-        lyr.getLayers().forEach(function(lyr, idx, a) {
+        var lyrs = lyr.getLayers().getArray().slice().reverse();
+        lyrs.forEach(function(lyr, idx, a) {
             ul.appendChild(this_.renderLayer(lyr, idx));
         });
 
@@ -128,7 +129,8 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     var ul = document.createElement('ul');
     this.panel.appendChild(ul);
 
-    map.getLayers().forEach(function(lyr, idx, a) {
+    var lyrs = map.getLayers().getArray().slice().reverse();
+    lyrs.forEach(function(lyr, idx, a) {
         ul.appendChild(this_.renderLayer(lyr, idx));
     });
 
