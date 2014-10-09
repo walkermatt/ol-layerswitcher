@@ -46,6 +46,7 @@ ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 ol.control.LayerSwitcher.prototype.showPanel = function() {
     if (this.element.className != this.shownClassName) {
         this.element.className = this.shownClassName;
+        this.render(this.getMap());
     }
 };
 
