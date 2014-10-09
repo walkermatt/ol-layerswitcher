@@ -29,7 +29,9 @@ ol.control.LayerSwitcher = function(opt_options) {
     });
 
     element.addEventListener('mouseout', function(e) {
-        this_.hidePanel();
+        if (!element.contains(e.toElement)) {
+            this_.hidePanel();
+        }
     });
 
     ol.control.Control.call(this, {
@@ -42,7 +44,9 @@ ol.control.LayerSwitcher = function(opt_options) {
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 
 ol.control.LayerSwitcher.prototype.showPanel = function() {
-    this.element.className = this.shownClassName;
+    if (this.element.className != this.shownClassName) {
+        this.element.className = this.shownClassName;
+    }
 };
 
 ol.control.LayerSwitcher.prototype.hidePanel = function() {
