@@ -6,7 +6,15 @@ All layers should have a `title` property and base layers should have a `type` p
 
 ## Demo
 
-Clone or download the repository and open [examples/layerswitcher.html](examples/layerswitcher.html) in a browser or [view the example on RawGit](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/layerswitcher.html)
+Clone or download the repository and open [examples/layerswitcher.html](examples/layerswitcher.html) in a browser or [view the example on RawGit](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/layerswitcher.html).
+
+## Tests
+
+To run the tests you'll need to install the dependencies via `npm`. In the root of the repository run:
+
+    npm install
+
+Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 ## License
 
