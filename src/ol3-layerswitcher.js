@@ -94,7 +94,9 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
         var lyrs = lyr.getLayers().getArray().slice().reverse();
         lyrs.forEach(function(lyr, idx, a) {
-            ul.appendChild(this_.renderLayer(lyr, idx));
+            if (lyr.get('title')) {
+                ul.appendChild(this_.renderLayer(lyr, idx));
+            }
         });
 
     } else {
@@ -136,7 +138,9 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
 
     var lyrs = map.getLayers().getArray().slice().reverse();
     lyrs.forEach(function(lyr, idx, a) {
-        ul.appendChild(this_.renderLayer(lyr, idx));
+        if (lyr.get('title')) {
+            ul.appendChild(this_.renderLayer(lyr, idx));
+        }
     });
 
 };
