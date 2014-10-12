@@ -20,19 +20,20 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var this_ = this;
 
-    element.addEventListener('mouseover', function(e) {
+    element.onmouseover = function(e) {
         this_.showPanel();
-    });
+    };
 
-    button.addEventListener('click', function(e) {
+    button.onclick = function(e) {
         this_.showPanel();
-    });
+    };
 
-    element.addEventListener('mouseout', function(e) {
+    element.onmouseout = function(e) {
+        e = e || window.event;
         if (!element.contains(e.toElement)) {
             this_.hidePanel();
         }
-    });
+    };
 
     ol.control.Control.call(this, {
         element: element,
@@ -93,25 +94,27 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         li.appendChild(ul);
 
         var lyrs = lyr.getLayers().getArray().slice().reverse();
-        lyrs.forEach(function(lyr, idx, a) {
+        for (var idx = 0, lyr; idx < lyrs.length; idx++) {
+            lyr = lyrs[idx];
             if (lyr.get('title')) {
                 ul.appendChild(this_.renderLayer(lyr, idx));
             }
-        });
+        }
 
     } else {
 
         var input = document.createElement('input');
-        input.type = 'checkbox';
         if (lyr.get('type') == 'base') {
             input.type = 'radio';
             input.name = 'base';
+        } else {
+            input.type = 'checkbox';
         }
         input.id = lyrId;
         input.checked = lyr.get('visible');
-        input.addEventListener('change', function(e) {
+        input.onchange = function(e) {
             this_.setState(this_.getMap(), lyr);
-        });
+        };
         li.appendChild(input);
 
         var label = document.createElement('label');
@@ -137,11 +140,12 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     this.panel.appendChild(ul);
 
     var lyrs = map.getLayers().getArray().slice().reverse();
-    lyrs.forEach(function(lyr, idx, a) {
+    for (var idx = 0, lyr; idx < lyrs.length; idx++) {
+        lyr = lyrs[idx];
         if (lyr.get('title')) {
             ul.appendChild(this_.renderLayer(lyr, idx));
         }
-    });
+    }
 
 };
 
