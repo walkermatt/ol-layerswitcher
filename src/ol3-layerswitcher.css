@@ -37,3 +37,11 @@
     padding-left: 1em;
     list-style: none;
 }
+
+.layer-switcher li.group {
+    padding-top: 5px;
+}
+
+.layer-switcher li.group > label {
+    font-weight: bold;
+}

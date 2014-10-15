@@ -87,6 +87,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
     if (lyr.getLayers) {
 
+        li.className = 'group';
         var label = document.createElement('label');
         label.innerHTML = lyr.get('title');
         li.appendChild(label);
@@ -104,7 +105,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
     } else {
 
         var input = document.createElement('input');
-        if (lyr.get('type') == 'base') {
+        if (lyr.get('type') === 'base') {
             input.type = 'radio';
             input.name = 'base';
         } else {
