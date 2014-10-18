@@ -85,20 +85,21 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
     var lyrId = lyr.get('title').replace(' ', '-') + '_' + idx;
 
+    var label = document.createElement('label');
+
     if (lyr.getLayers) {
 
         li.className = 'group';
-        var label = document.createElement('label');
         label.innerHTML = lyr.get('title');
         li.appendChild(label);
         var ul = document.createElement('ul');
         li.appendChild(ul);
 
         var lyrs = lyr.getLayers().getArray().slice().reverse();
-        for (var idx = 0, lyr; idx < lyrs.length; idx++) {
-            lyr = lyrs[idx];
+        for (var i = 0, l; i < lyrs.length; i++) {
+            l = lyrs[i];
             if (lyr.get('title')) {
-                ul.appendChild(this_.renderLayer(lyr, idx));
+                ul.appendChild(this_.renderLayer(l, i));
             }
         }
 
@@ -118,7 +119,6 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         };
         li.appendChild(input);
 
-        var label = document.createElement('label');
         label.htmlFor = lyrId;
         label.innerHTML = lyr.get('title');
         li.appendChild(label);
@@ -141,10 +141,10 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     this.panel.appendChild(ul);
 
     var lyrs = map.getLayers().getArray().slice().reverse();
-    for (var idx = 0, lyr; idx < lyrs.length; idx++) {
-        lyr = lyrs[idx];
-        if (lyr.get('title')) {
-            ul.appendChild(this_.renderLayer(lyr, idx));
+    for (var i = 0, l; i < lyrs.length; i++) {
+        l = lyrs[i];
+        if (l.get('title')) {
+            ul.appendChild(this_.renderLayer(l, i));
         }
     }
 

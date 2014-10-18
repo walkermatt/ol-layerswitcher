@@ -89,28 +89,28 @@ describe('ol.control.LayerSwitcher', function() {
         it('displays all layers with a title in reverse order', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher label').map(function() {
-                return jQuery(this).text()
+                return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Bar', 'Base', 'Too', 'Foo']);
         });
         it('displays normal layers as checkbox', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher input[type=checkbox]').siblings('label').map(function() {
-                return jQuery(this).text()
+                return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Bar']);
         });
         it('displays base layers as radio buttons', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher input[type=radio]').siblings('label').map(function() {
-                return jQuery(this).text()
+                return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Too', 'Foo']);
         });
         it('should display groups without an input', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher label:not([for])').map(function() {
-                return jQuery(this).text()
+                return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Base']);
             expect(jQuery('.layer-switcher label:not([for])').siblings('input').length).to.be(0);
