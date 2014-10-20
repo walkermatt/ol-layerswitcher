@@ -83,6 +83,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
     var li = document.createElement('li');
 
+    var lyrTitle = lyr.get('title');
     var lyrId = lyr.get('title').replace(' ', '-') + '_' + idx;
 
     var label = document.createElement('label');
@@ -90,18 +91,12 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
     if (lyr.getLayers) {
 
         li.className = 'group';
-        label.innerHTML = lyr.get('title');
+        label.innerHTML = lyrTitle;
         li.appendChild(label);
         var ul = document.createElement('ul');
         li.appendChild(ul);
 
-        var lyrs = lyr.getLayers().getArray().slice().reverse();
-        for (var i = 0, l; i < lyrs.length; i++) {
-            l = lyrs[i];
-            if (lyr.get('title')) {
-                ul.appendChild(this_.renderLayer(l, i));
-            }
-        }
+        this.renderLayers(lyr, ul);
 
     } else {
 
@@ -120,7 +115,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         li.appendChild(input);
 
         label.htmlFor = lyrId;
-        label.innerHTML = lyr.get('title');
+        label.innerHTML = lyrTitle;
         li.appendChild(label);
 
     }
@@ -128,6 +123,16 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
     return li;
 
 };
+
+ol.control.LayerSwitcher.prototype.renderLayers = function(lyr, elm) {
+    var lyrs = lyr.getLayers().getArray().slice().reverse();
+    for (var i = 0, l; i < lyrs.length; i++) {
+        l = lyrs[i];
+        if (l.get('title')) {
+            elm.appendChild(this.renderLayer(l, i));
+        }
+    }
+}
 
 ol.control.LayerSwitcher.prototype.render = function(map) {
 
@@ -140,13 +145,7 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     var ul = document.createElement('ul');
     this.panel.appendChild(ul);
 
-    var lyrs = map.getLayers().getArray().slice().reverse();
-    for (var i = 0, l; i < lyrs.length; i++) {
-        l = lyrs[i];
-        if (l.get('title')) {
-            ul.appendChild(this_.renderLayer(l, i));
-        }
-    }
+    this.renderLayers(map, ul);
 
 };
 
