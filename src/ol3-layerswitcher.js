@@ -2,14 +2,11 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var options = opt_options || {};
 
-    var hiddenClassName = 'ol-unselectable ol-control layer-switcher';
-    this.hiddenClassName = hiddenClassName;
-
-    var shownClassName = hiddenClassName + ' shown';
-    this.shownClassName = shownClassName;
+    this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
+    this.shownClassName = this.hiddenClassName + ' shown';
 
     var element = document.createElement('div');
-    element.className = hiddenClassName;
+    element.className = this.hiddenClassName;
 
     var button = document.createElement('button');
     element.appendChild(button);
