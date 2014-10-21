@@ -12,25 +12,47 @@ describe('ol.control.LayerSwitcher', function() {
                 title: 'Base',
                 layers: [
                     new ol.layer.Tile({
-                    title: 'Foo',
-                    type: 'base',
-                    source: new ol.source.TileDebug({
-                        projection: 'EPSG:3857',
-                        tileGrid: new ol.tilegrid.XYZ({
-                            maxZoom: 22
+                        title: 'Foo',
+                        type: 'base',
+                        source: new ol.source.TileDebug({
+                            projection: 'EPSG:3857',
+                            tileGrid: new ol.tilegrid.XYZ({
+                                maxZoom: 22
+                            })
+                        })
+                    }),
+                    new ol.layer.Tile({
+                        title: 'Too',
+                        type: 'base',
+                        source: new ol.source.TileDebug({
+                            projection: 'EPSG:3857',
+                            tileGrid: new ol.tilegrid.XYZ({
+                                maxZoom: 22
+                            })
                         })
                     })
-                }),
-                new ol.layer.Tile({
-                    title: 'Too',
-                    type: 'base',
-                    source: new ol.source.TileDebug({
-                        projection: 'EPSG:3857',
-                        tileGrid: new ol.tilegrid.XYZ({
-                            maxZoom: 22
+                ]
+            }),
+            // Group with no title (group and it's children should be ignored)
+            new ol.layer.Group({
+                layers: [
+                    new ol.layer.Tile({
+                        title: 'Never shown',
+                        source: new ol.source.TileDebug({
+                            projection: 'EPSG:3857',
+                            tileGrid: new ol.tilegrid.XYZ({
+                                maxZoom: 22
+                            })
+                        })
+                    }),
+                    new ol.layer.Tile({
+                        source: new ol.source.TileDebug({
+                            projection: 'EPSG:3857',
+                            tileGrid: new ol.tilegrid.XYZ({
+                                maxZoom: 22
+                            })
                         })
                     })
-                })
                 ]
             }),
             new ol.layer.Tile({
@@ -42,6 +64,7 @@ describe('ol.control.LayerSwitcher', function() {
                     })
                 })
             }),
+            // Layer with no title (should be ignored)
             new ol.layer.Tile({
                 source: new ol.source.TileDebug({
                     projection: 'EPSG:3857',
@@ -93,6 +116,20 @@ describe('ol.control.LayerSwitcher', function() {
             }).get();
             expect(titles).to.eql(['Bar', 'Base', 'Too', 'Foo']);
         });
+        it('only displays layers with a title', function() {
+            switcher.showPanel();
+            var elmTitles = jQuery('.layer-switcher label').map(function() {
+                return jQuery(this).text();
+            }).get();
+            var lyrsWithTitle = shownLyrs(map.getLayerGroup());
+            expect(lyrsWithTitle.length).to.eql(elmTitles.length);
+        });
+        it('don\'t display layers without a title', function() {
+            switcher.showPanel();
+            // This is basically to ensure that our test layers include layers without a title
+            var lyrsWithoutTitle = _.filter(allLyrs(map.getLayerGroup()), function(lyr) {return !lyr.get('title')});
+            expect(lyrsWithoutTitle.length).not.to.equal(0);
+        });
         it('displays normal layers as checkbox', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher input[type=checkbox]').siblings('label').map(function() {
@@ -127,6 +164,16 @@ describe('ol.control.LayerSwitcher', function() {
         });
     });
 
+    /**
+     * Returns the title of a given layer or null if lyr is falsey
+     */
+    function lyrTitle(lyr) {
+        return (lyr) ? lyr.get('title') : null;
+    }
+
+    /**
+     * Returns the Layer instance that has the given title
+     */
     function getLayerByTitle(title) {
         var layer = null;
         ol.control.LayerSwitcher.forEachRecursive(map, function(lyr) {
@@ -136,6 +183,52 @@ describe('ol.control.LayerSwitcher', function() {
             }
         });
         return layer;
+    }
+
+    /**
+     * Return a flattened Array of all layers regardless including those not
+     * shown by the LayerSwitcher
+     */
+    function allLyrs(lyrs) {
+        return flatten(lyrs, function (lyr) {
+            return (lyr.getLayers) ? lyr.getLayers().getArray() : lyr;
+        });
+    }
+
+    /**
+     * Return a flattened Array of only those layers that the LayerSwitcher
+     * should show
+     */
+    function shownLyrs(lyrs) {
+        // Pass in the Array from the root LayerGroup as it doesn't have a
+        // title but we don't want to filter out all layers
+        lyrs = lyrs.getLayers().getArray();
+        var flat = flatten(lyrs, function (lyr) {
+            // Return a Groups layer array only if the group has a title
+            // otherwise just return the group so that it's children will be
+            // skipped
+            return (lyr.getLayers && lyr.get('title')) ? lyr.getLayers().getArray() : lyr;
+        });
+        // Only return layers with a title
+        return _.filter(flat, lyrTitle);
+    }
+
+    /**
+     * Flattens a given nested collection using the provided function getArray
+     * to get an Array of the collections children.
+     */
+    function flatten(srcCollection, getArray) {
+        getArray = getArray || function (item) {return item};
+        var src = getArray(srcCollection),
+            dest = [];
+        for (var i = 0, item; i < src.length; i++) {
+            item = src[i];
+            dest = dest.concat(item);
+            if (_.isArray(getArray(item))) {
+                dest = dest.concat(flatten(item, getArray));
+            }
+        }
+        return dest;
     }
 
 });
