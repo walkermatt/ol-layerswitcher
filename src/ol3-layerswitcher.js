@@ -2,6 +2,8 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var options = opt_options || {};
 
+    this.mapListeners = [];
+
     this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
     this.shownClassName = this.hiddenClassName + ' shown';
 
@@ -49,15 +51,23 @@ ol.control.LayerSwitcher.prototype.showPanel = function() {
 };
 
 ol.control.LayerSwitcher.prototype.hidePanel = function() {
-    this.element.className = this.hiddenClassName;
+    if (this.element.className != this.hiddenClassName) {
+        this.element.className = this.hiddenClassName;
+    }
 };
 
 ol.control.LayerSwitcher.prototype.setMap = function(map) {
+    // Clean up listeners associated with the previous map
+    for (var i = 0, key; i < this.mapListeners.length; i++) {
+        this.getMap().unByKey(this.mapListeners[i]);
+    }
+    this.mapListeners.length = 0;
+    // Wire up listeners etc. and store reference to new map
     ol.control.Control.prototype.setMap.call(this, map);
     var this_ = this;
-    map.on('pointerdown', function() {
+    this.mapListeners.push(map.on('pointerdown', function() {
         this_.hidePanel();
-    });
+    }));
     this.render(map);
 };
 
@@ -106,7 +116,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         }
         input.id = lyrId;
         input.checked = lyr.get('visible');
-        input.onchange = function(e) {
+        input.onchange = function() {
             this_.setState(this_.getMap(), lyr);
         };
         li.appendChild(input);
@@ -129,7 +139,7 @@ ol.control.LayerSwitcher.prototype.renderLayers = function(lyr, elm) {
             elm.appendChild(this.renderLayer(l, i));
         }
     }
-}
+};
 
 ol.control.LayerSwitcher.prototype.render = function(map) {
 
