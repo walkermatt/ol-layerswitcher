@@ -68,10 +68,11 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
     this.mapListeners.push(map.on('pointerdown', function() {
         this_.hidePanel();
     }));
-    this.render(map);
+    this.render();
 };
 
-ol.control.LayerSwitcher.prototype.setState = function(map, lyr) {
+ol.control.LayerSwitcher.prototype.toggleLayer_ = function(lyr) {
+    var map = this.getMap();
     lyr.setVisible(!lyr.getVisible());
     if (lyr.get('type') === 'base') {
         // Hide all other base layers regardless of grouping
@@ -81,10 +82,9 @@ ol.control.LayerSwitcher.prototype.setState = function(map, lyr) {
             }
         });
     }
-    this.render(map);
 };
 
-ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
+ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
 
     var this_ = this;
 
@@ -103,7 +103,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         var ul = document.createElement('ul');
         li.appendChild(ul);
 
-        this.renderLayers(lyr, ul);
+        this.renderLayers_(lyr, ul);
 
     } else {
 
@@ -117,7 +117,7 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
         input.id = lyrId;
         input.checked = lyr.get('visible');
         input.onchange = function() {
-            this_.setState(this_.getMap(), lyr);
+            this_.toggleLayer_(lyr);
         };
         li.appendChild(input);
 
@@ -131,17 +131,17 @@ ol.control.LayerSwitcher.prototype.renderLayer = function(lyr, idx) {
 
 };
 
-ol.control.LayerSwitcher.prototype.renderLayers = function(lyr, elm) {
+ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
     var lyrs = lyr.getLayers().getArray().slice().reverse();
     for (var i = 0, l; i < lyrs.length; i++) {
         l = lyrs[i];
         if (l.get('title')) {
-            elm.appendChild(this.renderLayer(l, i));
+            elm.appendChild(this.renderLayer_(l, i));
         }
     }
 };
 
-ol.control.LayerSwitcher.prototype.render = function(map) {
+ol.control.LayerSwitcher.prototype.render = function() {
 
     var this_ = this;
 
@@ -152,8 +152,7 @@ ol.control.LayerSwitcher.prototype.render = function(map) {
     var ul = document.createElement('ul');
     this.panel.appendChild(ul);
 
-    this.renderLayers(map, ul);
-
+    this.renderLayers_(this.getMap(), ul);
 };
 
 /**
