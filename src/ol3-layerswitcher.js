@@ -1,3 +1,9 @@
+/**
+ * OpenLayers 3 Layer Switcher Control.
+ * @constructor
+ * @extends {ol.control.Control}
+ * @param {olx.control.ControlOptions} options Control options.
+ */
 ol.control.LayerSwitcher = function(opt_options) {
 
     var options = opt_options || {};
@@ -43,19 +49,43 @@ ol.control.LayerSwitcher = function(opt_options) {
 
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 
+/**
+ * Show the layer panel
+ */
 ol.control.LayerSwitcher.prototype.showPanel = function() {
     if (this.element.className != this.shownClassName) {
         this.element.className = this.shownClassName;
-        this.render(this.getMap());
+        this.render();
     }
 };
 
+/**
+ * Hide the layer panel
+ */
 ol.control.LayerSwitcher.prototype.hidePanel = function() {
     if (this.element.className != this.hiddenClassName) {
         this.element.className = this.hiddenClassName;
     }
 };
 
+/**
+ * Cause the panel to be re-draw to represent the current layer state.
+ */
+ol.control.LayerSwitcher.prototype.render = function() {
+
+    while(this.panel.firstChild) {
+        this.panel.removeChild(this.panel.firstChild);
+    }
+
+    var ul = document.createElement('ul');
+    this.panel.appendChild(ul);
+    this.renderLayers_(this.getMap(), ul);
+};
+
+/**
+ * Set the map instance the control is associated with.
+ * @param {ol.Map} map The map instance.
+ */
 ol.control.LayerSwitcher.prototype.setMap = function(map) {
     // Clean up listeners associated with the previous map
     for (var i = 0, key; i < this.mapListeners.length; i++) {
@@ -71,6 +101,13 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
     this.render();
 };
 
+/**
+ * Toggle the visible state of a layer.
+ * Takes care of hiding other layers in the same exclusive group if the layer
+ * is toggle to visible.
+ * @private
+ * @param {ol.layer.Base} The layer whos visibility will be toggled.
+ */
 ol.control.LayerSwitcher.prototype.toggleLayer_ = function(lyr) {
     var map = this.getMap();
     lyr.setVisible(!lyr.getVisible());
@@ -84,6 +121,12 @@ ol.control.LayerSwitcher.prototype.toggleLayer_ = function(lyr) {
     }
 };
 
+/**
+ * Render all layers that are children of a group.
+ * @private
+ * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
+ * @param {Number} idx Position in parent group list.
+ */
 ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
 
     var this_ = this;
@@ -131,6 +174,12 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
 
 };
 
+/**
+ * Render all layers that are children of a group.
+ * @private
+ * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
+ * @param {Element} elm DOM element that children will be appended to.
+ */
 ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
     var lyrs = lyr.getLayers().getArray().slice().reverse();
     for (var i = 0, l; i < lyrs.length; i++) {
@@ -141,24 +190,12 @@ ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
     }
 };
 
-ol.control.LayerSwitcher.prototype.render = function() {
-
-    var this_ = this;
-
-    while(this.panel.firstChild) {
-        this.panel.removeChild(this.panel.firstChild);
-    }
-
-    var ul = document.createElement('ul');
-    this.panel.appendChild(ul);
-
-    this.renderLayers_(this.getMap(), ul);
-};
-
 /**
  * Call the supplied function for each layer in the passed layer group
- * recursing nested groups. Signature for fn is the same as
- * ol.Collection#forEach
+ * recursing nested groups.
+ * @param {ol.layer.Group} lyr The layer group to start iterating from.
+ * @param {Function} fn Callback which will be called for each ol.layer.Base
+ * found under lyr. The signature for fn is the same as ol.Collection#forEach
  */
 ol.control.LayerSwitcher.forEachRecursive = function(lyr, fn) {
     lyr.getLayers().forEach(function(lyr, idx, a) {
