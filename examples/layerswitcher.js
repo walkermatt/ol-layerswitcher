@@ -6,14 +6,23 @@
                 'title': 'Base maps',
                 layers: [
                     new ol.layer.Tile({
-                        title: 'OSM',
+                        title: 'Water color',
                         type: 'base',
                         visible: false,
+                        source: new ol.source.Stamen({
+                            layer: 'watercolor'
+                        })
+                    }),
+                    new ol.layer.Tile({
+                        title: 'OSM',
+                        type: 'base',
+                        visible: true,
                         source: new ol.source.OSM()
                     }),
                     new ol.layer.Tile({
                         title: 'Satellite',
                         type: 'base',
+                        visible: false,
                         source: new ol.source.MapQuest({layer: 'sat'})
                     })
                 ]

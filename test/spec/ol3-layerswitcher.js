@@ -154,13 +154,55 @@ describe('ol.control.LayerSwitcher', function() {
         });
     });
 
-    describe('Layer visibility', function() {
-        it('Toggles layer visibility on click', function() {
+    describe('Overlay layer visibility', function() {
+        it('Toggles overlay layer visibility on click', function() {
             var bar = getLayerByTitle('Bar');
+            bar.setVisible(true);
             jQuery('.layer-switcher label:contains("Bar")').siblings('input').click();
+            expect(bar.getVisible()).to.be(false);
             expect(jQuery('.layer-switcher label:contains("Bar")').siblings('input').get(0).checked).to.be(bar.getVisible());
+            bar.setVisible(false)
             jQuery('.layer-switcher label:contains("Bar")').siblings('input').click();
+            expect(bar.getVisible()).to.be(true);
             expect(jQuery('.layer-switcher label:contains("Bar")').siblings('input').get(0).checked).to.be(bar.getVisible());
+        });
+    });
+
+    describe('Base layer visibility', function() {
+        it('Only one base layer is visible after render', function() {
+            var foo = getLayerByTitle('Foo');
+            var too = getLayerByTitle('Too');
+            // Enable both base layers
+            foo.setVisible(true);
+            too.setVisible(true);
+            switcher.render();
+            var visibleBaseLayerCount = ((too.getVisible()) ? 1 : 0) + ((foo.getVisible()) ? 1 : 0);
+            expect(visibleBaseLayerCount).to.be(1);
+        });
+        it('Only top most base layer is visible after render if more than one is visible', function() {
+            var foo = getLayerByTitle('Foo');
+            var too = getLayerByTitle('Too');
+            // Enable both base layers
+            foo.setVisible(true);
+            too.setVisible(true);
+            switcher.render();
+            expect(too.getVisible()).to.be(true);
+        });
+        it('Clicking on unchecked base layer shows it', function() {
+            var too = getLayerByTitle('Too');
+            too.setVisible(false);
+            switcher.render();
+            jQuery('.layer-switcher label:contains("Too")').siblings('input').click();
+            expect(too.getVisible()).to.be(true);
+            expect(jQuery('.layer-switcher label:contains("Too")').siblings('input').get(0).checked).to.be(true);
+        });
+        it('Clicking on checked base layer does not change base layer', function() {
+            var foo = getLayerByTitle('Foo');
+            foo.setVisible(true);
+            switcher.render();
+            jQuery('.layer-switcher label:contains("Foo")').siblings('input').click();
+            expect(foo.getVisible()).to.be(true);
+            expect(jQuery('.layer-switcher label:contains("Foo")').siblings('input').get(0).checked).to.be(true);
         });
     });
 

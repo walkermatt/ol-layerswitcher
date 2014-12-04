@@ -73,6 +73,8 @@ ol.control.LayerSwitcher.prototype.hidePanel = function() {
  */
 ol.control.LayerSwitcher.prototype.render = function() {
 
+    this.ensureTopVisibleBaseLayerShown_();
+
     while(this.panel.firstChild) {
         this.panel.removeChild(this.panel.firstChild);
     }
@@ -80,6 +82,7 @@ ol.control.LayerSwitcher.prototype.render = function() {
     var ul = document.createElement('ul');
     this.panel.appendChild(ul);
     this.renderLayers_(this.getMap(), ul);
+
 };
 
 /**
@@ -102,19 +105,32 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
 };
 
 /**
+ * Ensure only the top-most base layer is visible if more than one is visible
+ */
+ol.control.LayerSwitcher.prototype.ensureTopVisibleBaseLayerShown_ = function() {
+    var lastVisibleBaseLyr;
+    ol.control.LayerSwitcher.forEachRecursive(this.getMap(), function(l, idx, a) {
+        if (l.get('type') === 'base' && l.getVisible()) {
+            lastVisibleBaseLyr = l;
+        }
+    });
+    if (lastVisibleBaseLyr) this.setVisible_(lastVisibleBaseLyr, true);
+};
+
+/**
  * Toggle the visible state of a layer.
  * Takes care of hiding other layers in the same exclusive group if the layer
  * is toggle to visible.
  * @private
  * @param {ol.layer.Base} The layer whos visibility will be toggled.
  */
-ol.control.LayerSwitcher.prototype.toggleLayer_ = function(lyr) {
+ol.control.LayerSwitcher.prototype.setVisible_ = function(lyr, visible) {
     var map = this.getMap();
-    lyr.setVisible(!lyr.getVisible());
-    if (lyr.get('type') === 'base') {
+    lyr.setVisible(visible);
+    if (visible && lyr.get('type') === 'base') {
         // Hide all other base layers regardless of grouping
         ol.control.LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
-            if (l.get('type') === 'base' && l != lyr) {
+            if (l != lyr && l.get('type') === 'base') {
                 l.setVisible(false);
             }
         });
@@ -159,8 +175,8 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
         }
         input.id = lyrId;
         input.checked = lyr.get('visible');
-        input.onchange = function() {
-            this_.toggleLayer_(lyr);
+        input.onchange = function(e) {
+            this_.setVisible_(lyr, e.target.checked);
         };
         li.appendChild(input);
 
