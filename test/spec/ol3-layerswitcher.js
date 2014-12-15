@@ -206,6 +206,12 @@ describe('ol.control.LayerSwitcher', function() {
         });
     });
 
+    describe('Removes cleanly', function() {
+        it('Removes cleanly when ol.Map#removeControl is called', function() {
+            map.removeControl(switcher);
+        });
+    });
+
     /**
      * Returns the title of a given layer or null if lyr is falsey
      */

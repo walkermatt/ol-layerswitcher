@@ -97,11 +97,13 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
     this.mapListeners.length = 0;
     // Wire up listeners etc. and store reference to new map
     ol.control.Control.prototype.setMap.call(this, map);
-    var this_ = this;
-    this.mapListeners.push(map.on('pointerdown', function() {
-        this_.hidePanel();
-    }));
-    this.render();
+    if (map) {
+        var this_ = this;
+        this.mapListeners.push(map.on('pointerdown', function() {
+            this_.hidePanel();
+        }));
+        this.render();
+    }
 };
 
 /**
