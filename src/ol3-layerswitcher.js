@@ -8,6 +8,9 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var options = opt_options || {};
 
+    var tipLabel = options.tipLabel ?
+      options.tipLabel : 'Legend';
+
     this.mapListeners = [];
 
     this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
@@ -17,6 +20,7 @@ ol.control.LayerSwitcher = function(opt_options) {
     element.className = this.hiddenClassName;
 
     var button = document.createElement('button');
+    button.setAttribute('title', tipLabel);
     element.appendChild(button);
 
     this.panel = document.createElement('div');
