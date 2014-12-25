@@ -59,7 +59,7 @@ ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 ol.control.LayerSwitcher.prototype.showPanel = function() {
     if (this.element.className != this.shownClassName) {
         this.element.className = this.shownClassName;
-        this.render();
+        this.renderPanel();
     }
 };
 
@@ -75,7 +75,7 @@ ol.control.LayerSwitcher.prototype.hidePanel = function() {
 /**
  * Cause the panel to be re-draw to represent the current layer state.
  */
-ol.control.LayerSwitcher.prototype.render = function() {
+ol.control.LayerSwitcher.prototype.renderPanel = function() {
 
     this.ensureTopVisibleBaseLayerShown_();
 
@@ -106,7 +106,7 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
         this.mapListeners.push(map.on('pointerdown', function() {
             this_.hidePanel();
         }));
-        this.render();
+        this.renderPanel();
     }
 };
 

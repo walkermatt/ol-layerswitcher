@@ -36,7 +36,7 @@
 
     // Add a layer to a pre-exiting ol.layer.Group after the LayerSwitcher has
     // been added to the map. The layer will appear in the list the next time
-    // the LayerSwitcher is shown or LayerSwitcher#render is called.
+    // the LayerSwitcher is shown or LayerSwitcher#renderPanel is called.
     overlayGroup.getLayers().push(new ol.layer.Tile({
         title: 'Countries',
         source: new ol.source.TileWMS({
