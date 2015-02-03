@@ -1,8 +1,10 @@
 /**
  * OpenLayers 3 Layer Switcher Control.
+ * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {olx.control.ControlOptions} options Control options.
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions
+ *                              adding a tipLabel option to set the tooltip for the button.
  */
 ol.control.LayerSwitcher = function(opt_options) {
 
@@ -54,7 +56,7 @@ ol.control.LayerSwitcher = function(opt_options) {
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 
 /**
- * Show the layer panel
+ * Show the layer panel.
  */
 ol.control.LayerSwitcher.prototype.showPanel = function() {
     if (this.element.className != this.shownClassName) {
@@ -64,7 +66,7 @@ ol.control.LayerSwitcher.prototype.showPanel = function() {
 };
 
 /**
- * Hide the layer panel
+ * Hide the layer panel.
  */
 ol.control.LayerSwitcher.prototype.hidePanel = function() {
     if (this.element.className != this.hiddenClassName) {
@@ -73,7 +75,7 @@ ol.control.LayerSwitcher.prototype.hidePanel = function() {
 };
 
 /**
- * Cause the panel to be re-draw to represent the current layer state.
+ * Re-draw the layer panel to represent the current state of the layers.
  */
 ol.control.LayerSwitcher.prototype.renderPanel = function() {
 
@@ -111,7 +113,8 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
 };
 
 /**
- * Ensure only the top-most base layer is visible if more than one is visible
+ * Ensure only the top-most base layer is visible if more than one is visible.
+ * @private
  */
 ol.control.LayerSwitcher.prototype.ensureTopVisibleBaseLayerShown_ = function() {
     var lastVisibleBaseLyr;
@@ -213,7 +216,7 @@ ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
 };
 
 /**
- * Call the supplied function for each layer in the passed layer group
+ * **Static** Call the supplied function for each layer in the passed layer group
  * recursing nested groups.
  * @param {ol.layer.Group} lyr The layer group to start iterating from.
  * @param {Function} fn Callback which will be called for each ol.layer.Base
