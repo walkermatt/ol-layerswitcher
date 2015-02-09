@@ -3,8 +3,8 @@
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions
- *                              adding a tipLabel option to set the tooltip for the button.
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
+ *                              **`tipLabel`** `String` - the button tooltip.
  */
 ol.control.LayerSwitcher = function(opt_options) {
 
@@ -219,8 +219,8 @@ ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
  * **Static** Call the supplied function for each layer in the passed layer group
  * recursing nested groups.
  * @param {ol.layer.Group} lyr The layer group to start iterating from.
- * @param {Function} fn Callback which will be called for each ol.layer.Base
- * found under lyr. The signature for fn is the same as ol.Collection#forEach
+ * @param {Function} fn Callback which will be called for each `ol.layer.Base`
+ * found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach`
  */
 ol.control.LayerSwitcher.forEachRecursive = function(lyr, fn) {
     lyr.getLayers().forEach(function(lyr, idx, a) {

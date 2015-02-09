@@ -18,7 +18,7 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 ## API
 
-{% for class in classes %}
+{% for class in classes -%}
 
 ### `new {{ class.longname }}({{ class.signature }})`
 
@@ -36,21 +36,23 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 #### Methods
 
-{% for method in class.methods %}
+{% for method in class.methods -%}
 ##### `{% if method.scope == 'static' %}(static) {{ class.longname }}.{% endif %}{{ method.name }}({{ method.signature }})`
 
 {{ method.description }}
 
-{% if method.params %}
+{% if method.params -%}
 ###### Parameters:
 
 |Name|Type|Description|
 |:---|:---|:----------|
-{% for param in method.params %}|`{{ param.name }}`|`{{ param.type.names[0] }}`| {{ param.description }} |
+{% for param in method.params -%}
+|`{{ param.name }}`|`{{ param.type.names[0] }}`| {{ param.description }} |
 {% endfor %}
+
 {% endif %}
-{% endfor %}
-{% endfor %}
+{%- endfor %}
+{%- endfor -%}
 
 ## License
 

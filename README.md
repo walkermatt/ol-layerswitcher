@@ -18,8 +18,6 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 ## API
 
-
-
 ### `new ol.control.LayerSwitcher(opt_options)`
 
 OpenLayers 3 Layer Switcher Control.
@@ -29,7 +27,7 @@ See [the examples](./examples) for usage.
 
 |Name|Type|Description|
 |:---|:---|:----------|
-|`opt_options`|`Object`| Control options, extends olx.control.ControlOptions                              adding a tipLabel option to set the tooltip for the button. |
+|`opt_options`|`Object`| Control options, extends olx.control.ControlOptions adding: **`tipLabel`** `String` - the button tooltip. |
 
 #### Extends
 
@@ -37,29 +35,21 @@ See [the examples](./examples) for usage.
 
 #### Methods
 
-
 ##### `showPanel()`
 
 Show the layer panel.
-
-
 
 ##### `hidePanel()`
 
 Hide the layer panel.
 
-
-
 ##### `renderPanel()`
 
 Re-draw the layer panel to represent the current state of the layers.
 
-
-
 ##### `setMap(map)`
 
 Set the map instance the control is associated with.
-
 
 ###### Parameters:
 
@@ -68,22 +58,17 @@ Set the map instance the control is associated with.
 |`map`|`ol.Map`| The map instance. |
 
 
-
 ##### `(static) ol.control.LayerSwitcher.forEachRecursive(lyr,fn)`
 
 **Static** Call the supplied function for each layer in the passed layer group
 recursing nested groups.
-
 
 ###### Parameters:
 
 |Name|Type|Description|
 |:---|:---|:----------|
 |`lyr`|`ol.layer.Group`| The layer group to start iterating from. |
-|`fn`|`function`| Callback which will be called for each ol.layer.Base found under lyr. The signature for fn is the same as ol.Collection#forEach |
-
-
-
+|`fn`|`function`| Callback which will be called for each `ol.layer.Base` found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach` |
 
 
 ## License
