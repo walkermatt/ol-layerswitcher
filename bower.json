@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "homepage": "https://github.com/geomatico/ol3-layerswitcher",
   "authors": [
-    "Matt Walker <https://www.linkedin.com/in/walkermatt>"
+    "Matt Walker (https://www.linkedin.com/in/walkermatt)"
   ],
   "description": "Layer switcher control for OpenLayers 3",
   "keywords": [
