@@ -1,11 +1,24 @@
 {
   "name": "ol3-layerswitcher",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Layer switcher control for OpenLayers 3",
   "repository": {
     "type": "git",
     "url": "https://github.com/walkermatt/ol3-layerswitcher.git"
   },
+  "author": "Matt Walker (http://longwayaround.org.uk)",
+  "contributors": [
+    {
+      "name": "Thomas Gratier",
+      "name": "Poul Kjeldager Sørensen <pks@s-innovations.net>",
+      "name": "Micho García <micho.garcia@geomati.co>"
+    }
+  ],
+  "keywords": [
+    "openlayers",
+    "layerswitcher",
+    "ol3"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/walkermatt/ol3-layerswitcher/issues"
@@ -13,7 +26,9 @@
   "scripts": {
     "doc": "node_modules/.bin/jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
   },
-  "dependencies": {},
+  "dependencies": {
+    "openlayers": "~3.3.0"
+  },
   "devDependencies": {
     "expect.js": "~0.3.1",
     "jquery": "~1.11.1",

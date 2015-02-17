@@ -1,0 +1,25 @@
+{
+  "name": "ol3-layerswitcher",
+  "version": "1.0.0",
+  "homepage": "https://github.com/walkermatt/ol3-layerswitcher",
+  "authors": [
+    "Matt Walker (http://longwayaround.org.uk)"
+  ],
+  "description": "Layer switcher control for OpenLayers 3",
+  "main": [
+    "src/ol3-layerswitcher.js",
+    "src/ol3-layerswitcher.css"
+  ],
+  "keywords": [
+    "openlayers",
+    "ol3",
+    "layerswitcher"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ]
+}
