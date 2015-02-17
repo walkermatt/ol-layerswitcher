@@ -6,7 +6,7 @@ All layers should have a `title` property and base layers should have a `type` p
 
 ## Demo
 
-Clone or download the repository and open [examples/layerswitcher.html](examples/layerswitcher.html) in a browser or [view the example on RawGit](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/layerswitcher.html).
+Clone or download the repository and open [examples/layerswitcher.html](examples/layerswitcher.html) in a browser or [view the example on RawGit](http://rawgit.com/geomatico/ol3-layerswitcher/master/examples/layerswitcher.html).
 
 ## Tests
 
