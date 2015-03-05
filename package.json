@@ -4,7 +4,7 @@
   "description": "Layer switcher control for OpenLayers 3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/walkermatt/ol3-layerswitcher"
+    "url": "https://github.com/walkermatt/ol3-layerswitcher.git"
   },
   "author": "Matt Walker (https://www.linkedin.com/in/walkermatt)",
   "contributors": [
