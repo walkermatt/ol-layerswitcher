@@ -6,6 +6,18 @@
     "type": "git",
     "url": "https://github.com/walkermatt/ol3-layerswitcher.git"
   },
+  "author": "Matt Walker (https://www.linkedin.com/in/walkermatt)",
+  "contributors": [
+    {
+      "name": "Micho García",
+      "email": "micho.garcia@geomati.co"
+    }
+  ],
+  "keywords": [
+    "openlayers",
+    "layerswitcher",
+    "ol3"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/walkermatt/ol3-layerswitcher/issues"
@@ -13,7 +25,9 @@
   "scripts": {
     "doc": "node_modules/.bin/jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
   },
-  "dependencies": {},
+  "dependencies": {
+    "openlayers": "~3.2.1"
+  },
   "devDependencies": {
     "expect.js": "~0.3.1",
     "jquery": "~1.11.1",
