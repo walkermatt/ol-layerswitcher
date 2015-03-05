@@ -4,7 +4,7 @@
   "description": "Layer switcher control for OpenLayers 3",
   "repository": {
     "type": "git",
-    "url": "https://github.com/geomatico/ol3-layerswitcher"
+    "url": "https://github.com/walkermatt/ol3-layerswitcher"
   },
   "author": "Matt Walker (https://www.linkedin.com/in/walkermatt)",
   "contributors": [
@@ -20,7 +20,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/geomatico/ol3-layerswitcher/issues"
+    "url": "https://github.com/walkermatt/ol3-layerswitcher/issues"
   },
   "scripts": {
     "doc": "node_modules/.bin/jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
