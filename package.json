@@ -1,6 +1,6 @@
 {
   "name": "ol3-layerswitcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Layer switcher control for OpenLayers 3",
   "repository": {
     "type": "git",
@@ -8,11 +8,9 @@
   },
   "author": "Matt Walker (http://longwayaround.org.uk)",
   "contributors": [
-    {
-      "name": "Thomas Gratier",
-      "name": "Poul Kjeldager Sørensen <pks@s-innovations.net>",
-      "name": "Micho García <micho.garcia@geomati.co>"
-    }
+    "Thomas Gratier <thomas_gratier@yahoo.fr>",
+    "Poul Kjeldager Sørensen <pks@s-innovations.net>",
+    "Micho García <micho.garcia@geomati.co>"
   ],
   "keywords": [
     "openlayers",
