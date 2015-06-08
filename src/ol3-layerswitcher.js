@@ -190,7 +190,7 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
         li.appendChild(input);
 
         label.htmlFor = lyrId;
-        label.innerHTML = lyrTitle;
+        label.innerHTML = '&nbsp' + lyrTitle;
         li.appendChild(label);
 
     }
