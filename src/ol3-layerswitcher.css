@@ -9,9 +9,7 @@
     padding-right: 50px;
     border: 1px solid #cccccc;
     background-color: white;
-}
-
-.layer-switcher .panel {
+    margin: 0;
     display: none;
 }
 
@@ -45,4 +43,8 @@
 
 .layer-switcher li.group > label {
     font-weight: bold;
+}
+
+.layer-switcher input {
+    margin: 4px;
 }
