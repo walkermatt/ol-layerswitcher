@@ -159,7 +159,7 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
     var li = document.createElement('li');
 
     var lyrTitle = lyr.get('title');
-    var lyrId = lyr.get('title').replace(' ', '-') + '_' + idx;
+    var lyrId = lyr.get('title').replace(/\s+/g, '-') + '_' + idx;
 
     var label = document.createElement('label');
 
