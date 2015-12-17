@@ -37,6 +37,7 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     button.onclick = function(e) {
         this_.showPanel();
+        e.preventDefault();
     };
 
     element.onmouseout = function(e) {
