@@ -28,11 +28,16 @@ ol.control.LayerSwitcher = function(opt_options) {
     this.panel = document.createElement('div');
     this.panel.className = 'panel';
     element.appendChild(this.panel);
+    ol.control.LayerSwitcher.enableTouchScroll_(this.panel);
 
     var this_ = this;
 
     element.onmouseover = function(e) {
-        this_.showPanel();
+        if (button.contains(e.toElement) || this_.panel.contains(e.toElement)) {
+            this_.showPanel();
+        } else {
+            this_.hidePanel();
+        }
     };
 
     button.onclick = function(e) {
@@ -42,7 +47,7 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     element.onmouseout = function(e) {
         e = e || window.event;
-        if (!element.contains(e.toElement)) {
+        if (!this_.panel.contains(e.toElement)) {
             this_.hidePanel();
         }
     };
@@ -230,4 +235,35 @@ ol.control.LayerSwitcher.forEachRecursive = function(lyr, fn) {
             ol.control.LayerSwitcher.forEachRecursive(lyr, fn);
         }
     });
+};
+
+/**
+* @private
+* @desc Apply workaround to enable scrolling of overflowing content within an
+* element. Adapted from https://gist.github.com/chrismbarr/4107472
+*/
+ol.control.LayerSwitcher.enableTouchScroll_ = function(elm) {
+   if(ol.control.LayerSwitcher.isTouchDevice_()){
+       var scrollStartPos = 0;
+       elm.addEventListener("touchstart", function(event) {
+           scrollStartPos = this.scrollTop + event.touches[0].pageY;
+       }, false);
+       elm.addEventListener("touchmove", function(event) {
+           this.scrollTop = scrollStartPos - event.touches[0].pageY;
+       }, false);
+   }
+};
+
+/**
+ * @private
+ * @desc Determine if the current browser supports touch events. Adapted from
+ * https://gist.github.com/chrismbarr/4107472
+ */
+ol.control.LayerSwitcher.isTouchDevice_ = function() {
+    try {
+        document.createEvent("TouchEvent");
+        return true;
+    } catch(e) {
+        return false;
+    }
 };

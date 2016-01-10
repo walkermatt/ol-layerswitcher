@@ -1,3 +1,11 @@
+.layer-switcher.shown.ol-control {
+    background-color: transparent;
+}
+
+.layer-switcher.shown.ol-control:hover {
+    background-color: transparent;
+}
+
 .layer-switcher {
     position: absolute;
     top: 3.5em;
@@ -5,12 +13,19 @@
     text-align: left;
 }
 
+.layer-switcher.shown {
+    bottom: 3em;
+}
+
 .layer-switcher .panel {
-    padding-right: 50px;
-    border: 1px solid #cccccc;
-    background-color: white;
+    padding: 2px;
     margin: 0;
+    border: 4px solid #eee;
+    border-radius: 4px;
+    background-color: white;
     display: none;
+    max-height: 100%;
+    overflow-y: scroll;
 }
 
 .layer-switcher.shown .panel {
@@ -26,6 +41,10 @@
     background-position: 2px;
     background-color: white;
     border: none;
+}
+
+.layer-switcher.shown button {
+    display: none;
 }
 
 .layer-switcher button:focus, .layer-switcher button:hover {
