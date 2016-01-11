@@ -18,14 +18,14 @@
 }
 
 .layer-switcher .panel {
-    padding: 2px;
+    padding: 0.25em 1.5em 0.25em 0.25em;
     margin: 0;
     border: 4px solid #eee;
     border-radius: 4px;
     background-color: white;
     display: none;
     max-height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .layer-switcher.shown .panel {
