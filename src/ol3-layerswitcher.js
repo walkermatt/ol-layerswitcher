@@ -16,6 +16,9 @@ ol.control.LayerSwitcher = function(opt_options) {
     this.mapListeners = [];
 
     this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
+    if (ol.control.LayerSwitcher.isTouchDevice_()) {
+        this.hiddenClassName += ' touch';
+    }
     this.shownClassName = this.hiddenClassName + ' shown';
 
     var element = document.createElement('div');
