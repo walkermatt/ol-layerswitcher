@@ -35,12 +35,8 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var this_ = this;
 
-    element.onmouseover = function(e) {
-        if (button.contains(e.toElement) || this_.panel.contains(e.toElement)) {
-            this_.showPanel();
-        } else {
-            this_.hidePanel();
-        }
+    button.onmouseover = function(e) {
+        this_.showPanel();
     };
 
     button.onclick = function(e) {
@@ -48,7 +44,7 @@ ol.control.LayerSwitcher = function(opt_options) {
         e.preventDefault();
     };
 
-    element.onmouseout = function(e) {
+    this_.panel.onmouseout = function(e) {
         e = e || window.event;
         if (!this_.panel.contains(e.toElement)) {
             this_.hidePanel();
