@@ -12,6 +12,8 @@ The examples demonstrate usage and can be viewed online thanks to [RawGit](http:
     * Create a layer switcher control. Each layer to be displayed in the layer switcher has a `title` property as does each Group; each base map layer has a `type: 'base'` property.
 * [Add layer](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/addlayer.html)
     * Add a layer to an existing layer group after the layer switcher has been added to the map.
+* [Scrolling](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/scroll.html)
+    * Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol3-layerswitcher.css](src/ol3-layerswitcher.css)).
 
 The source for all examples can be found in [examples](examples).
 
