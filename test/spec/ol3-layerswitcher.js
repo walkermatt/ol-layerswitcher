@@ -16,7 +16,7 @@ describe('ol.control.LayerSwitcher', function() {
                         type: 'base',
                         source: new ol.source.TileDebug({
                             projection: 'EPSG:3857',
-                            tileGrid: new ol.tilegrid.XYZ({
+                            tileGrid: ol.tilegrid.createXYZ({
                                 maxZoom: 22
                             })
                         })
@@ -26,7 +26,7 @@ describe('ol.control.LayerSwitcher', function() {
                         type: 'base',
                         source: new ol.source.TileDebug({
                             projection: 'EPSG:3857',
-                            tileGrid: new ol.tilegrid.XYZ({
+                            tileGrid: ol.tilegrid.createXYZ({
                                 maxZoom: 22
                             })
                         })
@@ -40,7 +40,7 @@ describe('ol.control.LayerSwitcher', function() {
                         title: 'Never shown',
                         source: new ol.source.TileDebug({
                             projection: 'EPSG:3857',
-                            tileGrid: new ol.tilegrid.XYZ({
+                            tileGrid: ol.tilegrid.createXYZ({
                                 maxZoom: 22
                             })
                         })
@@ -48,7 +48,7 @@ describe('ol.control.LayerSwitcher', function() {
                     new ol.layer.Tile({
                         source: new ol.source.TileDebug({
                             projection: 'EPSG:3857',
-                            tileGrid: new ol.tilegrid.XYZ({
+                            tileGrid: ol.tilegrid.createXYZ({
                                 maxZoom: 22
                             })
                         })
@@ -59,7 +59,7 @@ describe('ol.control.LayerSwitcher', function() {
                 title: 'Bar',
                 source: new ol.source.TileDebug({
                     projection: 'EPSG:3857',
-                    tileGrid: new ol.tilegrid.XYZ({
+                    tileGrid: ol.tilegrid.createXYZ({
                         maxZoom: 22
                     })
                 })
@@ -68,7 +68,7 @@ describe('ol.control.LayerSwitcher', function() {
             new ol.layer.Tile({
                 source: new ol.source.TileDebug({
                     projection: 'EPSG:3857',
-                    tileGrid: new ol.tilegrid.XYZ({
+                    tileGrid: ol.tilegrid.createXYZ({
                         maxZoom: 22
                     })
                 })
