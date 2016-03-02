@@ -8,10 +8,13 @@
  */
 ol.control.LayerSwitcher = function(opt_options) {
 
-    var options = opt_options || {};
+    this.options = opt_options || {};
 
-    var tipLabel = options.tipLabel ?
-      options.tipLabel : 'Legend';
+    var tipLabel = this.options.tipLabel ?
+      this.options.tipLabel : 'Legend';
+    
+    this.options.closeOnMouseOut = this.options.closeOnMouseOut || true;
+    this.options.openOnMouseOver = this.options.openOnMouseOver || true;
 
     this.mapListeners = [];
 
@@ -35,31 +38,50 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var this_ = this;
 
-    button.onmouseover = function(e) {
-        this_.showPanel();
+    button.onmouseover = function(e){
+    	this_.onButtonMouseOver(e);
     };
-
-    button.onclick = function(e) {
-        e = e || window.event;
-        this_.showPanel();
-        e.preventDefault();
+    
+    button.onclick = function(e){
+    	this_.onButtonClick(e);
     };
-
-    this_.panel.onmouseout = function(e) {
-        e = e || window.event;
-        if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-            this_.hidePanel();
-        }
+    
+    this.panel.onmouseout = function(e){
+    	this_.onPanelMouseOut(e);
     };
 
     ol.control.Control.call(this, {
         element: element,
-        target: options.target
+        target: this.options.target
     });
 
 };
 
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
+
+ol.control.LayerSwitcher.prototype.onButtonClick = function(e){
+	e = e || window.event;
+	
+	if (this.element.className != this.shownClassName) {
+		this.showPanel();
+	}else{
+		this.hidePanel();
+	}
+	e.preventDefault();
+};
+
+ol.control.LayerSwitcher.prototype.onButtonMouseOver = function(e){
+	if( this.options.openOnMouseOver ){
+		this.showPanel();
+	}
+};
+
+ol.control.LayerSwitcher.prototype.onPanelMouseOut = function(e) {
+	e = e || window.event;
+    if (this.options.closeOnMouseOut && ( !this.panel.contains(e.toElement || e.relatedTarget)) ) {
+        this.hidePanel();
+    }
+}; 
 
 /**
  * Show the layer panel.
