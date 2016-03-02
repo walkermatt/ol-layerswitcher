@@ -59,6 +59,9 @@ ol.control.LayerSwitcher = function(opt_options) {
 
 ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
 
+/**
+ * Event handler for clicks no the control button.
+ */
 ol.control.LayerSwitcher.prototype.onButtonClick = function(e){
 	e = e || window.event;
 	
@@ -70,12 +73,18 @@ ol.control.LayerSwitcher.prototype.onButtonClick = function(e){
 	e.preventDefault();
 };
 
+/**
+ * Event handler for mouseOver on the control button.
+ */
 ol.control.LayerSwitcher.prototype.onButtonMouseOver = function(e){
 	if( this.options.openOnMouseOver ){
 		this.showPanel();
 	}
 };
 
+/**
+ * Event handler for mouseOut on the menu panel.
+ */
 ol.control.LayerSwitcher.prototype.onPanelMouseOut = function(e) {
 	e = e || window.event;
     if (this.options.closeOnMouseOut && ( !this.panel.contains(e.toElement || e.relatedTarget)) ) {
