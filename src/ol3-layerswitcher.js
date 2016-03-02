@@ -13,8 +13,8 @@ ol.control.LayerSwitcher = function(opt_options) {
     var tipLabel = this.options.tipLabel ?
       this.options.tipLabel : 'Legend';
     
-    this.options.closeOnMouseOut = this.options.closeOnMouseOut || true;
-    this.options.openOnMouseOver = this.options.openOnMouseOver || true;
+    this.options.closeOnMouseOut = this.options.hasOwnProperty('closeOnMouseOut') ? this.options.closeOnMouseOut : true;
+    this.options.openOnMouseOver = this.options.hasOwnProperty('openOnMouseOver') ? this.options.openOnMouseOver : true;
 
     this.mapListeners = [];
 
