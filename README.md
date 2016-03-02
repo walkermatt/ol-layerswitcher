@@ -38,6 +38,14 @@ See [the examples](./examples) for usage.
 |:---|:---|:----------|
 |`opt_options`|`Object`| Control options, extends olx.control.ControlOptions adding: **`tipLabel`** `String` - the button tooltip. |
 
+#### Options:
+
+|Name|Type|Description|Default|
+|:---|:---|:----------|:----------|
+|`tipLabel`|`String`| the button tooltip. | "Legend" |
+|`closeOnMouseOut`|`boolean`| should the menu panel close when the mouse is moved out of it? | `true` |
+|`openOnMouseOver`|`boolean`| should the menu panel open automatically when hovering over the switcher's icon? | `true` |
+
 #### Extends
 
 `ol.control.Control`
