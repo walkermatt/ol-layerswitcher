@@ -165,7 +165,7 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
     var li = document.createElement('li');
 
     var lyrTitle = lyr.get('title');
-    var lyrId = lyr.get('title').replace(/\s+/g, '-') + '_' + idx;
+    var lyrId = ol.control.LayerSwitcher.uuid();
 
     var label = document.createElement('label');
 
@@ -237,6 +237,19 @@ ol.control.LayerSwitcher.forEachRecursive = function(lyr, fn) {
         }
     });
 };
+
+/**
+ * Generate a UUID
+ * @returns {String} UUID
+ *
+ * Adapted from http://stackoverflow.com/a/2117523/526860
+ */
+ol.control.LayerSwitcher.uuid = function() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+    });
+}
 
 /**
 * @private

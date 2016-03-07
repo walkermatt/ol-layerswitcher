@@ -80,6 +80,10 @@ recursing nested groups.
 |`fn`|`function`| Callback which will be called for each `ol.layer.Base` found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach` |
 
 
+##### `(static) ol.control.LayerSwitcher.uuid()`
+
+Generate a UUID
+
 ## License
 
 MIT (c) Matt Walker.
