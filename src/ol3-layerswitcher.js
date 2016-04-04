@@ -169,7 +169,7 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
 
     var label = document.createElement('label');
 
-    if (lyr.getLayers) {
+    if (lyr.getLayers && !lyr.get('combine')) {
 
         li.className = 'group';
         label.innerHTML = lyrTitle;
