@@ -9,70 +9,118 @@ describe('ol.control.LayerSwitcher', function() {
             target: target,
             layers: [
                 new ol.layer.Group({
-                title: 'Base',
-                layers: [
-                    new ol.layer.Tile({
-                        title: 'Foo',
-                        type: 'base',
-                        source: new ol.source.TileDebug({
-                            projection: 'EPSG:3857',
-                            tileGrid: ol.tilegrid.createXYZ({
-                                maxZoom: 22
+                    title: 'Base',
+                    layers: [
+                        new ol.layer.Tile({
+                            title: 'Foo',
+                            type: 'base',
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        }),
+                        new ol.layer.Tile({
+                            title: 'Too',
+                            type: 'base',
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
                             })
                         })
-                    }),
-                    new ol.layer.Tile({
-                        title: 'Too',
-                        type: 'base',
-                        source: new ol.source.TileDebug({
-                            projection: 'EPSG:3857',
-                            tileGrid: ol.tilegrid.createXYZ({
-                                maxZoom: 22
+                    ]
+                }),
+                // Combined base group
+                new ol.layer.Group({
+                    title: 'Combined-Base-Group',
+                    type: 'base',
+                    combine: true,
+                    layers: [
+                        new ol.layer.Tile({
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
                             })
+                        }),
+                        new ol.layer.Tile({
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        })
+                    ]
+                }),
+                // Combined overlay group
+                new ol.layer.Group({
+                    title: 'Combined-Overlay-Group',
+                    type: 'overlay',
+                    combine: true,
+                    layers: [
+                        new ol.layer.Tile({
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        }),
+                        new ol.layer.Tile({
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        })
+                    ]
+                }),
+                // Group with no title (group and it's children should be ignored)
+                new ol.layer.Group({
+                    layers: [
+                        new ol.layer.Tile({
+                            title: 'Never shown',
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        }),
+                        new ol.layer.Tile({
+                            source: new ol.source.TileDebug({
+                                projection: 'EPSG:3857',
+                                tileGrid: ol.tilegrid.createXYZ({
+                                    maxZoom: 22
+                                })
+                            })
+                        })
+                    ]
+                }),
+                new ol.layer.Tile({
+                    title: 'Bar',
+                    source: new ol.source.TileDebug({
+                        projection: 'EPSG:3857',
+                        tileGrid: ol.tilegrid.createXYZ({
+                            maxZoom: 22
                         })
                     })
-                ]
-            }),
-            // Group with no title (group and it's children should be ignored)
-            new ol.layer.Group({
-                layers: [
-                    new ol.layer.Tile({
-                        title: 'Never shown',
-                        source: new ol.source.TileDebug({
-                            projection: 'EPSG:3857',
-                            tileGrid: ol.tilegrid.createXYZ({
-                                maxZoom: 22
-                            })
+                }),
+                // Layer with no title (should be ignored)
+                new ol.layer.Tile({
+                    source: new ol.source.TileDebug({
+                        projection: 'EPSG:3857',
+                        tileGrid: ol.tilegrid.createXYZ({
+                            maxZoom: 22
                         })
-                    }),
-                    new ol.layer.Tile({
-                        source: new ol.source.TileDebug({
-                            projection: 'EPSG:3857',
-                            tileGrid: ol.tilegrid.createXYZ({
-                                maxZoom: 22
-                            })
-                        })
-                    })
-                ]
-            }),
-            new ol.layer.Tile({
-                title: 'Bar',
-                source: new ol.source.TileDebug({
-                    projection: 'EPSG:3857',
-                    tileGrid: ol.tilegrid.createXYZ({
-                        maxZoom: 22
                     })
                 })
-            }),
-            // Layer with no title (should be ignored)
-            new ol.layer.Tile({
-                source: new ol.source.TileDebug({
-                    projection: 'EPSG:3857',
-                    tileGrid: ol.tilegrid.createXYZ({
-                        maxZoom: 22
-                    })
-                })
-            })
             ],
             controls: [switcher]
         });
@@ -114,7 +162,7 @@ describe('ol.control.LayerSwitcher', function() {
             var titles = jQuery('.layer-switcher label').map(function() {
                 return jQuery(this).text();
             }).get();
-            expect(titles).to.eql(['Bar', 'Base', 'Too', 'Foo']);
+            expect(titles).to.eql(['Bar', 'Combined-Overlay-Group', 'Combined-Base-Group', 'Base', 'Too', 'Foo']);
         });
         it('only displays layers with a title', function() {
             switcher.showPanel();
@@ -135,22 +183,36 @@ describe('ol.control.LayerSwitcher', function() {
             var titles = jQuery('.layer-switcher input[type=checkbox]').siblings('label').map(function() {
                 return jQuery(this).text();
             }).get();
-            expect(titles).to.eql(['Bar']);
+            expect(titles).to.eql(['Bar', 'Combined-Overlay-Group']);
         });
         it('displays base layers as radio buttons', function() {
             switcher.showPanel();
             var titles = jQuery('.layer-switcher input[type=radio]').siblings('label').map(function() {
                 return jQuery(this).text();
             }).get();
-            expect(titles).to.eql(['Too', 'Foo']);
+            expect(titles).to.eql(['Combined-Base-Group', 'Too', 'Foo']);
         });
-        it('should display groups without an input', function() {
+        it('should display uncombined groups without an input', function() {
             switcher.showPanel();
-            var titles = jQuery('.layer-switcher label:not([for])').map(function() {
+            var groups = jQuery('.layer-switcher label:not([for])')
+            var titles = groups.map(function() {
                 return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Base']);
-            expect(jQuery('.layer-switcher label:not([for])').siblings('input').length).to.be(0);
+            expect(groups.siblings('input').length).to.be(0);
+        });
+        it('should display combined groups with an input', function () {
+            switcher.showPanel();
+            var titles = jQuery('.layer-switcher label[for]').map(function() {
+                return jQuery(this).text();
+            }).get();
+            expect(titles).to.contain('Combined-Base-Group');
+            expect(titles).to.contain('Combined-Overlay-Group');
+        });
+        it('should display combined groups without sub layers', function () {
+            switcher.showPanel();
+            var groups = jQuery('.layer-switcher label[for]')
+            expect(groups.siblings('ul').length).to.be(0);
         });
     });
 
@@ -173,21 +235,31 @@ describe('ol.control.LayerSwitcher', function() {
         it('Only one base layer is visible after renderPanel', function() {
             var foo = getLayerByTitle('Foo');
             var too = getLayerByTitle('Too');
-            // Enable both base layers
-            foo.setVisible(true);
-            too.setVisible(true);
+            var cbg = getLayerByTitle('Combined-Base-Group');
+            var baseLayers = [foo, too, cbg];
+            // Enable all base layers
+            _.forEach(baseLayers, function (l) {
+                l.setVisible(true);
+            });
+
             switcher.renderPanel();
-            var visibleBaseLayerCount = ((too.getVisible()) ? 1 : 0) + ((foo.getVisible()) ? 1 : 0);
-            expect(visibleBaseLayerCount).to.be(1);
+            var visibleBaseLayerCount = _.countBy(baseLayers, function (l){
+                return l.getVisible();
+            });
+            // var visibleBaseLayerCount = ((too.getVisible()) ? 1 : 0) + ((foo.getVisible()) ? 1 : 0);
+            expect(visibleBaseLayerCount.true).to.be(1);
         });
         it('Only top most base layer is visible after renderPanel if more than one is visible', function() {
             var foo = getLayerByTitle('Foo');
             var too = getLayerByTitle('Too');
-            // Enable both base layers
-            foo.setVisible(true);
-            too.setVisible(true);
+            var cbg = getLayerByTitle('Combined-Base-Group');
+            var baseLayers = [foo, too, cbg];
+            // Enable all base layers
+            _.forEach(baseLayers, function (l) {
+                l.setVisible(true);
+            });
             switcher.renderPanel();
-            expect(too.getVisible()).to.be(true);
+            expect(cbg.getVisible()).to.be(true);
         });
         it('Clicking on unchecked base layer shows it', function() {
             var too = getLayerByTitle('Too');
