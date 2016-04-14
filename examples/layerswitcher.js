@@ -19,6 +19,20 @@
                         visible: true,
                         source: new ol.source.OSM()
                     }),
+                    new ol.layer.Group({
+                        title: 'Satellite and roads',
+                        type: 'base',
+                        combine: true,
+                        visible: false,
+                        layers: [
+                            new ol.layer.Tile({
+                                source: new ol.source.MapQuest({layer: 'sat'})
+                            }),
+                            new ol.layer.Tile({
+                                source: new ol.source.MapQuest({layer: 'hyb'})
+                            })
+                        ]
+                    }),
                     new ol.layer.Tile({
                         title: 'Satellite',
                         type: 'base',
