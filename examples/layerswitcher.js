@@ -1,4 +1,5 @@
-(function() {
+define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], function (require, exports, ol, LayerSwitcher) {
+    "use strict";
     var map = new ol.Map({
         target: 'map',
         layers: [
@@ -26,10 +27,10 @@
                         visible: false,
                         layers: [
                             new ol.layer.Tile({
-                                source: new ol.source.MapQuest({layer: 'sat'})
+                                source: new ol.source.MapQuest({ layer: 'sat' })
                             }),
                             new ol.layer.Tile({
-                                source: new ol.source.MapQuest({layer: 'hyb'})
+                                source: new ol.source.MapQuest({ layer: 'hyb' })
                             })
                         ]
                     }),
@@ -37,7 +38,7 @@
                         title: 'Satellite',
                         type: 'base',
                         visible: false,
-                        source: new ol.source.MapQuest({layer: 'sat'})
+                        source: new ol.source.MapQuest({ layer: 'sat' })
                     })
                 ]
             }),
@@ -48,7 +49,7 @@
                         title: 'Countries',
                         source: new ol.source.TileWMS({
                             url: 'http://demo.opengeo.org/geoserver/wms',
-                            params: {'LAYERS': 'ne:ne_10m_admin_1_states_provinces_lines_shp'},
+                            params: { 'LAYERS': 'ne:ne_10m_admin_1_states_provinces_lines_shp' },
                             serverType: 'geoserver'
                         })
                     })
@@ -60,10 +61,8 @@
             zoom: 6
         })
     });
-
-    var layerSwitcher = new ol.control.LayerSwitcher({
+    var layerSwitcher = new LayerSwitcher({
         tipLabel: 'Légende' // Optional label for button
     });
     map.addControl(layerSwitcher);
-
-})();
+});

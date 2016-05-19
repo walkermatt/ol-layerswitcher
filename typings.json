@@ -1,0 +1,6 @@
+{
+  "globalDependencies": {
+    "openlayers": "registry:dt/openlayers#3.6.0+20160506083408",
+    "require": "registry:dt/require#2.1.20+20160316155526"
+  }
+}

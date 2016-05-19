@@ -1,2 +1,6 @@
+.vscode
+bower_components
 node_modules
-.idea/
+typings
+*.js
+*.css
