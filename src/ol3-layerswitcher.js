@@ -5,16 +5,21 @@ var __extends = (this && this.__extends) || function (d, b) {
 };
 define(["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
-    /**
-     * OpenLayers 3 Layer Switcher Control.
-     * See [the examples](./examples) for usage.
-     * @constructor
-     * @extends {ol.control.Control}
-     * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
-     *                              **`tipLabel`** `String` - the button tooltip.
-     */
+    function AsArray(list) {
+        var result = new Array(list.length);
+        for (var i = 0; i < list.length; i++) {
+            result.push(list[i]);
+        }
+        return result;
+    }
     var LayerSwitcher = (function (_super) {
         __extends(LayerSwitcher, _super);
+        /**
+         * OpenLayers 3 Layer Switcher Control.
+         * See [the examples](./examples) for usage.
+         * @param opt_options Control options, extends olx.control.ControlOptions adding:
+         *                              **`tipLabel`** `String` - the button tooltip.
+         */
         function LayerSwitcher(options) {
             if (options === void 0) { options = {}; }
             // hack to workaround base constructor not being called first
@@ -93,7 +98,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
         ;
         /**
          * Set the map instance the control is associated with.
-         * @param {ol.Map} map The map instance.
+         * @param map The map instance.
          */
         LayerSwitcher.prototype.setMap = function (map) {
             var _this = this;
@@ -131,67 +136,93 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
          */
         LayerSwitcher.prototype.setVisible = function (lyr, visible) {
             var _this = this;
-            var map = this.getMap();
-            lyr.setVisible(visible);
-            if (visible && lyr.get('type') === 'base') {
-                // Hide all other base layers regardless of grouping
-                LayerSwitcher.forEachRecursive(map, function (l) {
-                    if (l != lyr && l.get('type') === 'base') {
-                        l.getVisible() && _this.setVisible(l, false);
-                    }
-                });
+            if (lyr.getVisible() !== visible) {
+                if (visible && lyr.get('type') === 'base') {
+                    // Hide all other base layers regardless of grouping
+                    LayerSwitcher.forEachRecursive(this.getMap(), function (l) {
+                        if (l !== lyr && l.get('type') === 'base' && l.getVisible()) {
+                            _this.setVisible(l, false);
+                        }
+                    });
+                }
+                lyr.setVisible(visible);
+                this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
             }
-            this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
         };
         ;
         /**
          * Render all layers that are children of a group.
          */
-        LayerSwitcher.prototype.renderLayer = function (lyr, idx) {
+        LayerSwitcher.prototype.renderLayer = function (lyr, container) {
             var _this = this;
+            var result;
             var li = document.createElement('li');
+            container.appendChild(li);
             var lyrTitle = lyr.get('title');
             var lyrId = LayerSwitcher.uuid();
             var label = document.createElement('label');
             if (lyr.getLayers && !lyr.get('combine')) {
+                if (!lyr.get('label-only')) {
+                    var input_1 = result = document.createElement('input');
+                    input_1.type = 'checkbox';
+                    input_1.checked = lyr.getVisible();
+                    input_1.addEventListener('change', function () {
+                        _this.setVisible(lyr, input_1.checked);
+                        var childLayers = lyr.getLayers();
+                        childLayers.forEach(function (l, i) {
+                            if (childItems_1[i] && childItems_1[i].checked) {
+                                _this.setVisible(l, input_1.checked);
+                            }
+                        });
+                    });
+                    li.appendChild(input_1);
+                }
                 li.className = 'group';
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
                 var ul = document.createElement('ul');
                 li.appendChild(ul);
-                this.renderLayers(lyr, ul);
+                var childItems_1 = this.renderLayers(lyr, ul);
             }
             else {
                 li.className = 'layer';
-                var input = document.createElement('input');
+                var input_2 = result = document.createElement('input');
+                input_2.classList.add("basemap");
                 if (lyr.get('type') === 'base') {
-                    input.type = 'radio';
-                    input.name = 'base';
+                    input_2.classList.add('basemap');
+                    input_2.type = 'radio';
+                    input_2.addEventListener("change", function () {
+                        if (input_2.checked) {
+                            AsArray(_this.panel.getElementsByClassName("basemap")).filter(function (i) { return i.tagName === "INPUT"; }).forEach(function (i) {
+                                if (i.checked && i !== input_2)
+                                    i.checked = false;
+                            });
+                        }
+                        _this.setVisible(lyr, input_2.checked);
+                    });
                 }
                 else {
-                    input.type = 'checkbox';
+                    input_2.type = 'checkbox';
+                    input_2.addEventListener("change", function () {
+                        _this.setVisible(lyr, input_2.checked);
+                    });
                 }
-                input.id = lyrId;
-                input.checked = lyr.get('visible');
-                input.onchange = function (e) { return _this.setVisible(lyr, input.checked); };
-                li.appendChild(input);
+                input_2.id = lyrId;
+                input_2.checked = lyr.get('visible');
+                li.appendChild(input_2);
                 label.htmlFor = lyrId;
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
             }
-            return li;
+            return result;
         };
         /**
          * Render all layers that are children of a group.
          */
         LayerSwitcher.prototype.renderLayers = function (map, elm) {
+            var _this = this;
             var lyrs = map.getLayers().getArray().slice().reverse();
-            for (var i = 0, l; i < lyrs.length; i++) {
-                l = lyrs[i];
-                if (l.get('title')) {
-                    elm.appendChild(this.renderLayer(l, i));
-                }
-            }
+            return lyrs.map(function (l, i) { return l.get('title') ? _this.renderLayer(l, elm) : null; });
         };
         /**
          * Call the supplied function for each layer in the passed layer group
@@ -211,7 +242,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
         ;
         /**
          * Generate a UUID
-         * @returns {String} UUID
+         * @returns UUID
          *
          * Adapted from http://stackoverflow.com/a/2117523/526860
          */
@@ -222,7 +253,6 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             });
         };
         /**
-        * @private
         * @desc Apply workaround to enable scrolling of overflowing content within an
         * element. Adapted from https://gist.github.com/chrismbarr/4107472
         */
@@ -238,7 +268,6 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             }
         };
         /**
-         * @private
          * @desc Determine if the current browser supports touch events. Adapted from
          * https://gist.github.com/chrismbarr/4107472
          */
