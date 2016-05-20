@@ -23,7 +23,7 @@ $data_uri_0: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrG
 			display: block;
 		}
 		button {
-			display: none;
+			display: block;
 		}
 	}
 	.panel {
@@ -36,6 +36,9 @@ $data_uri_0: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrG
 		display: none;
 		max-height: 100%;
 		overflow-y: auto;
+        ul.hide-layer-group {
+            display:none;
+        }
 	}
 	button {
 		float: right;

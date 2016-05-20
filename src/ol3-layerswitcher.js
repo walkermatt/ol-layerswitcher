@@ -167,6 +167,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                     input_1.type = 'checkbox';
                     input_1.checked = lyr.getVisible();
                     input_1.addEventListener('change', function () {
+                        ul_1.classList.toggle('hide-layer-group', !input_1.checked);
                         _this.setVisible(lyr, input_1.checked);
                         var childLayers = lyr.getLayers();
                         childLayers.forEach(function (l, i) {
@@ -180,9 +181,10 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 li.className = 'group';
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
-                var ul = document.createElement('ul');
-                li.appendChild(ul);
-                var childItems_1 = this.renderLayers(lyr, ul);
+                var ul_1 = document.createElement('ul');
+                result && ul_1.classList.toggle('hide-layer-group', !result.checked);
+                li.appendChild(ul_1);
+                var childItems_1 = this.renderLayers(lyr, ul_1);
             }
             else {
                 li.className = 'layer';

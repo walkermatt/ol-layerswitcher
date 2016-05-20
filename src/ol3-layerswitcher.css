@@ -17,7 +17,7 @@
   display: block; }
 
 .ol-control.layer-switcher.shown button {
-  display: none; }
+  display: block; }
 
 .ol-control.layer-switcher .panel {
   padding: 0 1em 0 0;
@@ -28,6 +28,9 @@
   display: none;
   max-height: 100%;
   overflow-y: auto; }
+
+.ol-control.layer-switcher .panel ul.hide-layer-group {
+  display: none; }
 
 .ol-control.layer-switcher button {
   float: right;

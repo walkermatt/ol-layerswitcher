@@ -8,6 +8,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
                 layers: [
                     new ol.layer.Group({
                         'title': 'OSM and Water Color',
+                        'label-only': true,
                         layers: [
                             new ol.layer.Tile({
                                 title: 'Water color',

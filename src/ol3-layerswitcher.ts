@@ -16,12 +16,12 @@ class LayerSwitcher extends ol.control.Control {
     panel: HTMLDivElement;
     element: HTMLElement;
 
-/**
- * OpenLayers 3 Layer Switcher Control.
- * See [the examples](./examples) for usage.
- * @param opt_options Control options, extends olx.control.ControlOptions adding:
- *                              **`tipLabel`** `String` - the button tooltip.
- */
+    /**
+     * OpenLayers 3 Layer Switcher Control.
+     * See [the examples](./examples) for usage.
+     * @param opt_options Control options, extends olx.control.ControlOptions adding:
+     *                              **`tipLabel`** `String` - the button tooltip.
+     */
     constructor(options = {}) {
         // hack to workaround base constructor not being called first
         super(this.before_create(options));
@@ -187,7 +187,9 @@ class LayerSwitcher extends ol.control.Control {
                 let input = result = document.createElement('input');
                 input.type = 'checkbox';
                 input.checked = lyr.getVisible();
+
                 input.addEventListener('change', () => {
+                    ul.classList.toggle('hide-layer-group', !input.checked);
                     this.setVisible(lyr, input.checked);
                     let childLayers = (<ol.layer.Group>lyr).getLayers();
                     childLayers.forEach((l, i) => {
@@ -202,7 +204,8 @@ class LayerSwitcher extends ol.control.Control {
             li.className = 'group';
             label.innerHTML = lyrTitle;
             li.appendChild(label);
-            var ul = document.createElement('ul');
+            let ul = document.createElement('ul');
+            result && ul.classList.toggle('hide-layer-group', !result.checked);
             li.appendChild(ul);
 
             let childItems = this.renderLayers(<ol.layer.Group>lyr, ul);
@@ -220,7 +223,7 @@ class LayerSwitcher extends ol.control.Control {
                         AsArray<HTMLInputElement>(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
                             if (i.checked && i !== input) i.checked = false;
                         })
-                    }    
+                    }
                     this.setVisible(lyr, input.checked);
                 });
             } else {

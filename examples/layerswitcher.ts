@@ -9,6 +9,7 @@ let map = new ol.Map({
             layers: [
                 new ol.layer.Group({
                     'title': 'OSM and Water Color',
+                    'label-only': true,
                     layers: [
                         new ol.layer.Tile({
                             title: 'Water color',
