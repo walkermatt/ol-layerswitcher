@@ -1,7 +1,7 @@
 import ol = require("openlayers");
 import LayerSwitcher = require("../src/ol3-layerswitcher");
 
-var map = new ol.Map({
+let map = new ol.Map({
     target: 'map',
     layers: [
         new ol.layer.Group({
@@ -58,13 +58,22 @@ var map = new ol.Map({
         })
     ],
     view: new ol.View({
-        center: ol.proj.transform([-0.92, 52.96], 'EPSG:4326', 'EPSG:3857'),
+        center: ol.proj.transform([-85, 35], 'EPSG:4326', 'EPSG:3857'),
         zoom: 6
     })
 });
 
-var layerSwitcher = new LayerSwitcher({
-    tipLabel: 'Légende' // Optional label for button
+let layerSwitcher = new LayerSwitcher({
+    tipLabel: 'Legend'
 });
+
+layerSwitcher.on("show-layer", (args: {layer: ol.layer.Base}) => {
+    console.log("show layer:", args.layer.get("title"));
+});
+
+layerSwitcher.on("hide-layer", (args: {layer: ol.layer.Base}) => {
+    console.log("hide layer:", args.layer.get("title"));
+});
+
 map.addControl(layerSwitcher);
 

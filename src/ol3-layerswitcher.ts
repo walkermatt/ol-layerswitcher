@@ -16,7 +16,7 @@ class LayerSwitcher extends ol.control.Control {
     shownClassName: string;
     panel: HTMLDivElement;
     element: HTMLElement;
-    
+
     constructor(options = {}) {
         // hack to workaround base constructor not being called first
         super(this.before_create(options));
@@ -30,7 +30,7 @@ class LayerSwitcher extends ol.control.Control {
         this.mapListeners = [];
 
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
-        if (LayerSwitcher.isTouchDevice_()) {
+        if (LayerSwitcher.isTouchDevice()) {
             this.hiddenClassName += ' touch';
         }
         this.shownClassName = this.hiddenClassName + ' shown';
@@ -45,24 +45,20 @@ class LayerSwitcher extends ol.control.Control {
         this.panel = document.createElement('div');
         this.panel.className = 'panel';
         element.appendChild(this.panel);
-        LayerSwitcher.enableTouchScroll_(this.panel);
+        LayerSwitcher.enableTouchScroll(this.panel);
 
-        var this_ = this;
+        button.onmouseover = e => this.showPanel();
 
-        button.onmouseover = function (e) {
-            this_.showPanel();
-        };
-
-        button.onclick = function (e) {
+        button.onclick = e => {
             e = e || window.event;
-            this_.showPanel();
+            this.showPanel();
             e.preventDefault();
         };
 
-        this_.panel.onmouseout = function (e) {
+        this.panel.onmouseout = e => {
             e = e || window.event;
-            if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-                this_.hidePanel();
+            if (!this.panel.contains(e.toElement || e.relatedTarget)) {
+                this.hidePanel();
             }
         };
 
@@ -71,6 +67,12 @@ class LayerSwitcher extends ol.control.Control {
             target: options.target
         };
 
+    }
+
+    dispatch(name: string, args?: any) {
+        let event = new Event(name);
+        args && Object.keys(args).forEach(k => event[k] = args[k]);
+        this["dispatchEvent"](event);
     }
 
     /**
@@ -97,7 +99,7 @@ class LayerSwitcher extends ol.control.Control {
      */
     renderPanel() {
 
-        this.ensureTopVisibleBaseLayerShown_();
+        this.ensureTopVisibleBaseLayerShown();
 
         while (this.panel.firstChild) {
             this.panel.removeChild(this.panel.firstChild);
@@ -105,7 +107,7 @@ class LayerSwitcher extends ol.control.Control {
 
         var ul = document.createElement('ul');
         this.panel.appendChild(ul);
-        this.renderLayers_(this.getMap(), ul);
+        this.renderLayers(this.getMap(), ul);
 
     };
 
@@ -120,59 +122,49 @@ class LayerSwitcher extends ol.control.Control {
         }
         this.mapListeners.length = 0;
         // Wire up listeners etc. and store reference to new map
-        ol.control.Control.prototype.setMap.call(this, map);
+        super.setMap(map);
         if (map) {
-            var this_ = this;
-            this.mapListeners.push(map.on('pointerdown', function () {
-                this_.hidePanel();
-            }));
+            this.mapListeners.push(map.on('pointerdown', () => this.hidePanel()));
             this.renderPanel();
         }
     };
 
     /**
      * Ensure only the top-most base layer is visible if more than one is visible.
-     * @private
      */
-    private ensureTopVisibleBaseLayerShown_() {
+    private ensureTopVisibleBaseLayerShown() {
         var lastVisibleBaseLyr;
         LayerSwitcher.forEachRecursive(this.getMap(), function (l, idx, a) {
             if (l.get('type') === 'base' && l.getVisible()) {
                 lastVisibleBaseLyr = l;
             }
         });
-        if (lastVisibleBaseLyr) this.setVisible_(lastVisibleBaseLyr, true);
+        if (lastVisibleBaseLyr) this.setVisible(lastVisibleBaseLyr, true);
     };
 
     /**
      * Toggle the visible state of a layer.
      * Takes care of hiding other layers in the same exclusive group if the layer
      * is toggle to visible.
-     * @private
-     * @param {ol.layer.Base} The layer whos visibility will be toggled.
      */
-    private setVisible_(lyr, visible) {
+    private setVisible(lyr: ol.layer.Base, visible: boolean) {
         var map = this.getMap();
         lyr.setVisible(visible);
         if (visible && lyr.get('type') === 'base') {
             // Hide all other base layers regardless of grouping
-            LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+            LayerSwitcher.forEachRecursive(map, l => {
                 if (l != lyr && l.get('type') === 'base') {
-                    l.setVisible(false);
+                    l.getVisible() && this.setVisible(l, false);
                 }
             });
         }
+        this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
     };
 
     /**
      * Render all layers that are children of a group.
-     * @private
-     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
-     * @param {Number} idx Position in parent group list.
      */
-    private renderLayer_(lyr, idx) {
-
-        var this_ = this;
+    private renderLayer(lyr: ol.layer.Base, idx: number) {
 
         var li = document.createElement('li');
 
@@ -189,7 +181,7 @@ class LayerSwitcher extends ol.control.Control {
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
-            this.renderLayers_(lyr, ul);
+            this.renderLayers(lyr, ul);
 
         } else {
 
@@ -203,9 +195,7 @@ class LayerSwitcher extends ol.control.Control {
             }
             input.id = lyrId;
             input.checked = lyr.get('visible');
-            input.onchange = function (e) {
-                this_.setVisible_(lyr, e.target.checked);
-            };
+            input.onchange = e => this.setVisible(lyr, input.checked);
             li.appendChild(input);
 
             label.htmlFor = lyrId;
@@ -216,36 +206,33 @@ class LayerSwitcher extends ol.control.Control {
 
         return li;
 
-    };
+    }
 
     /**
      * Render all layers that are children of a group.
-     * @private
-     * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
-     * @param {Element} elm DOM element that children will be appended to.
      */
-    private renderLayers_(lyr, elm) {
-        var lyrs = lyr.getLayers().getArray().slice().reverse();
+    private renderLayers(map: ol.Map | ol.layer.Group, elm: HTMLElement) {
+        var lyrs = map.getLayers().getArray().slice().reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(this.renderLayer_(l, i));
+                elm.appendChild(this.renderLayer(l, i));
             }
         }
-    };
+    }
 
     /**
-     * **Static** Call the supplied function for each layer in the passed layer group
+     * Call the supplied function for each layer in the passed layer group
      * recursing nested groups.
-     * @param {ol.layer.Group} lyr The layer group to start iterating from.
-     * @param {Function} fn Callback which will be called for each `ol.layer.Base`
+     * @param lyr The layer group to start iterating from.
+     * @param fn Callback which will be called for each `ol.layer.Base`
      * found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach`
      */
-    static forEachRecursive(lyr, fn) {
+    static forEachRecursive(lyr: ol.Map | ol.layer.Group, fn: (element: ol.layer.Base, index: number, array: ol.layer.Base[]) => void) {
         lyr.getLayers().forEach(function (lyr, idx, a) {
             fn(lyr, idx, a);
             if (lyr.getLayers) {
-                LayerSwitcher.forEachRecursive(lyr, fn);
+                LayerSwitcher.forEachRecursive(<ol.layer.Group>lyr, fn);
             }
         });
     };
@@ -268,8 +255,8 @@ class LayerSwitcher extends ol.control.Control {
     * @desc Apply workaround to enable scrolling of overflowing content within an
     * element. Adapted from https://gist.github.com/chrismbarr/4107472
     */
-    private static enableTouchScroll_(elm) {
-        if (LayerSwitcher.isTouchDevice_()) {
+    private static enableTouchScroll(elm) {
+        if (LayerSwitcher.isTouchDevice()) {
             var scrollStartPos = 0;
             elm.addEventListener("touchstart", function (event) {
                 scrollStartPos = this.scrollTop + event.touches[0].pageY;
@@ -285,7 +272,7 @@ class LayerSwitcher extends ol.control.Control {
      * @desc Determine if the current browser supports touch events. Adapted from
      * https://gist.github.com/chrismbarr/4107472
      */
-    private static isTouchDevice_() {
+    private static isTouchDevice() {
         try {
             document.createEvent("TouchEvent");
             return true;

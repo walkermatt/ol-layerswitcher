@@ -24,6 +24,7 @@
     "url": "https://github.com/ca0v/ol3-layerswitcher/issues"
   },
   "scripts": {
+    "sass": "node-sass src/ -o src/"
   },
   "dependencies": {
   },

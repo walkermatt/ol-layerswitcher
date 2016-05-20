@@ -57,12 +57,18 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
             })
         ],
         view: new ol.View({
-            center: ol.proj.transform([-0.92, 52.96], 'EPSG:4326', 'EPSG:3857'),
+            center: ol.proj.transform([-85, 35], 'EPSG:4326', 'EPSG:3857'),
             zoom: 6
         })
     });
     var layerSwitcher = new LayerSwitcher({
-        tipLabel: 'Légende' // Optional label for button
+        tipLabel: 'Legend'
+    });
+    layerSwitcher.on("show-layer", function (args) {
+        console.log("show layer:", args.layer.get("title"));
+    });
+    layerSwitcher.on("hide-layer", function (args) {
+        console.log("hide layer:", args.layer.get("title"));
     });
     map.addControl(layerSwitcher);
 });
