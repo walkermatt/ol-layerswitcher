@@ -1,6 +1,19 @@
 import ol = require("openlayers");
 
-function AsArray<T extends HTMLInputElement>(list: NodeList) {
+/**
+ * assigns undefined values
+ */
+function defaults<A, B>(a: A, ...b: B[]): A & B {
+    b.forEach(b => {
+        Object.keys(b).filter(k => a[k] === undefined).forEach(k => a[k] = b[k]);
+    });
+    return <A & B>a;
+}
+
+/**
+ * NodeList -> array
+ */
+function asArray<T extends HTMLInputElement>(list: NodeList) {
     let result = <Array<T>>new Array(list.length);
     for (let i = 0; i < list.length; i++) {
         result.push(<T>list[i]);
@@ -8,13 +21,74 @@ function AsArray<T extends HTMLInputElement>(list: NodeList) {
     return result;
 }
 
+/**
+ * Creates an array containing all sub-layers
+ */
+function allLayers(lyr: ol.Map | ol.layer.Group) {
+    let result = <Array<ol.layer.Base>>[];
+    lyr.getLayers().forEach(function (lyr, idx, a) {
+        result.push(lyr);
+        if ("getLayers" in lyr) {
+            result = result.concat(allLayers(<ol.layer.Group>lyr));
+        }
+    });
+    return result;
+}
+
+/**
+ * Generate a UUID
+ * @returns UUID
+ *
+ * Adapted from http://stackoverflow.com/a/2117523/526860
+ */
+function uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+/**
+* @desc Apply workaround to enable scrolling of overflowing content within an
+* element. Adapted from https://gist.github.com/chrismbarr/4107472
+*/
+function enableTouchScroll(elm) {
+    if (isTouchDevice()) {
+        var scrollStartPos = 0;
+        elm.addEventListener("touchstart", function (event) {
+            scrollStartPos = this.scrollTop + event.touches[0].pageY;
+        }, false);
+        elm.addEventListener("touchmove", function (event) {
+            this.scrollTop = scrollStartPos - event.touches[0].pageY;
+        }, false);
+    }
+}
+
+/**
+ * @desc Determine if the current browser supports touch events. Adapted from
+ * https://gist.github.com/chrismbarr/4107472
+ */
+function isTouchDevice() {
+    try {
+        document.createEvent("TouchEvent");
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+const DEFAULT_OPTIONS = {
+    tipLabel: 'Layers',
+    target: <HTMLElement>null
+};
+
 class LayerSwitcher extends ol.control.Control {
 
-    mapListeners: Array<any>;
     hiddenClassName: string;
     shownClassName: string;
     panel: HTMLDivElement;
     element: HTMLElement;
+    button: HTMLButtonElement;
 
     /**
      * OpenLayers 3 Layer Switcher Control.
@@ -22,50 +96,36 @@ class LayerSwitcher extends ol.control.Control {
      * @param opt_options Control options, extends olx.control.ControlOptions adding:
      *                              **`tipLabel`** `String` - the button tooltip.
      */
-    constructor(options = {}) {
+    constructor(options?: typeof DEFAULT_OPTIONS) {
+        options = defaults(options || {}, DEFAULT_OPTIONS);       
         // hack to workaround base constructor not being called first
-        super(this.before_create(options));
+        super(this.beforeCreate(options));
     }
 
-    private before_create(options) {
-
-        var tipLabel = options.tipLabel ?
-            options.tipLabel : 'Legend';
-
-        this.mapListeners = [];
+    private beforeCreate(options: typeof DEFAULT_OPTIONS) {
 
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
-        if (LayerSwitcher.isTouchDevice()) {
+        if (isTouchDevice()) {
             this.hiddenClassName += ' touch';
         }
         this.shownClassName = this.hiddenClassName + ' shown';
 
-        var element = document.createElement('div');
+        let element = document.createElement('div');
         element.className = this.hiddenClassName;
 
-        var button = document.createElement('button');
-        button.setAttribute('title', tipLabel);
+        let button = this.button = document.createElement('button');
+        button.setAttribute('title', options.tipLabel);
         element.appendChild(button);
 
         this.panel = document.createElement('div');
         this.panel.className = 'panel';
         element.appendChild(this.panel);
-        LayerSwitcher.enableTouchScroll(this.panel);
+        enableTouchScroll(this.panel);
 
-        button.onmouseover = e => this.showPanel();
-
-        button.onclick = e => {
-            e = e || window.event;
-            this.showPanel();
+        button.addEventListener('click', e => {
+            this.isVisible() ? this.hidePanel() : this.showPanel();
             e.preventDefault();
-        };
-
-        this.panel.onmouseout = e => {
-            e = e || window.event;
-            if (!this.panel.contains(e.toElement || e.relatedTarget)) {
-                this.hidePanel();
-            }
-        };
+        });
 
         return {
             element: element,
@@ -78,6 +138,10 @@ class LayerSwitcher extends ol.control.Control {
         let event = new Event(name);
         args && Object.keys(args).forEach(k => event[k] = args[k]);
         this["dispatchEvent"](event);
+    }
+
+    isVisible() {
+        return this.element.className != this.hiddenClassName
     }
 
     /**
@@ -94,9 +158,7 @@ class LayerSwitcher extends ol.control.Control {
      * Hide the layer panel.
      */
     hidePanel() {
-        if (this.element.className != this.hiddenClassName) {
-            this.element.className = this.hiddenClassName;
-        }
+        this.element.className = this.hiddenClassName;
     }
 
     /**
@@ -117,34 +179,11 @@ class LayerSwitcher extends ol.control.Control {
     };
 
     /**
-     * Set the map instance the control is associated with.
-     * @param map The map instance.
-     */
-    setMap(map) {
-        // Clean up listeners associated with the previous map
-        for (var i = 0, key; i < this.mapListeners.length; i++) {
-            this.getMap().unByKey(this.mapListeners[i]);
-        }
-        this.mapListeners.length = 0;
-        // Wire up listeners etc. and store reference to new map
-        super.setMap(map);
-        if (map) {
-            this.mapListeners.push(map.on('pointerdown', () => this.hidePanel()));
-            this.renderPanel();
-        }
-    };
-
-    /**
      * Ensure only the top-most base layer is visible if more than one is visible.
      */
     private ensureTopVisibleBaseLayerShown() {
-        var lastVisibleBaseLyr;
-        LayerSwitcher.forEachRecursive(this.getMap(), function (l, idx, a) {
-            if (l.get('type') === 'base' && l.getVisible()) {
-                lastVisibleBaseLyr = l;
-            }
-        });
-        if (lastVisibleBaseLyr) this.setVisible(lastVisibleBaseLyr, true);
+        let visibleBaseLyrs = allLayers(this.getMap()).filter(l => l.get('type') === 'base' && l.getVisible());
+        if (visibleBaseLyrs.length) this.setVisible(visibleBaseLyrs.shift(), true);
     };
 
     /**
@@ -156,11 +195,7 @@ class LayerSwitcher extends ol.control.Control {
         if (lyr.getVisible() !== visible) {
             if (visible && lyr.get('type') === 'base') {
                 // Hide all other base layers regardless of grouping
-                LayerSwitcher.forEachRecursive(this.getMap(), l => {
-                    if (l !== lyr && l.get('type') === 'base' && l.getVisible()) {
-                        this.setVisible(l, false);
-                    }
-                });
+                allLayers(this.getMap()).filter(l => l !== lyr && l.get('type') === 'base' && l.getVisible()).forEach(l => this.setVisible(l, false));
             }
             lyr.setVisible(visible);
             this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
@@ -177,11 +212,11 @@ class LayerSwitcher extends ol.control.Control {
         container.appendChild(li);
 
         let lyrTitle = lyr.get('title');
-        let lyrId = LayerSwitcher.uuid();
+        let lyrId = uuid();
 
         let label = document.createElement('label');
 
-        if (lyr.getLayers && !lyr.get('combine')) {
+        if ('getLayers' in lyr && !lyr.get('combine')) {
 
             if (!lyr.get('label-only')) {
                 let input = result = document.createElement('input');
@@ -201,7 +236,7 @@ class LayerSwitcher extends ol.control.Control {
                 li.appendChild(input);
             }
 
-            li.className = 'group';
+            li.classList.add('group');
             label.innerHTML = lyrTitle;
             li.appendChild(label);
             let ul = document.createElement('ul');
@@ -212,7 +247,7 @@ class LayerSwitcher extends ol.control.Control {
 
         } else {
 
-            li.className = 'layer';
+            li.classList.add('layer');
             let input = result = document.createElement('input');
             input.classList.add("basemap");
             if (lyr.get('type') === 'base') {
@@ -220,7 +255,7 @@ class LayerSwitcher extends ol.control.Control {
                 input.type = 'radio';
                 input.addEventListener("change", () => {
                     if (input.checked) {
-                        AsArray<HTMLInputElement>(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
+                        asArray<HTMLInputElement>(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
                             if (i.checked && i !== input) i.checked = false;
                         })
                     }
@@ -252,64 +287,6 @@ class LayerSwitcher extends ol.control.Control {
     private renderLayers(map: ol.Map | ol.layer.Group, elm: HTMLElement) {
         var lyrs = map.getLayers().getArray().slice().reverse();
         return lyrs.map((l, i) => l.get('title') ? this.renderLayer(l, elm) : null);
-    }
-
-    /**
-     * Call the supplied function for each layer in the passed layer group
-     * recursing nested groups.
-     * @param lyr The layer group to start iterating from.
-     * @param fn Callback which will be called for each `ol.layer.Base`
-     * found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach`
-     */
-    static forEachRecursive(lyr: ol.Map | ol.layer.Group, fn: (element: ol.layer.Base, index: number, array: ol.layer.Base[]) => void) {
-        lyr.getLayers().forEach(function (lyr, idx, a) {
-            fn(lyr, idx, a);
-            if (lyr.getLayers) {
-                LayerSwitcher.forEachRecursive(<ol.layer.Group>lyr, fn);
-            }
-        });
-    };
-
-    /**
-     * Generate a UUID
-     * @returns UUID
-     *
-     * Adapted from http://stackoverflow.com/a/2117523/526860
-     */
-    static uuid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-
-    /**
-    * @desc Apply workaround to enable scrolling of overflowing content within an
-    * element. Adapted from https://gist.github.com/chrismbarr/4107472
-    */
-    private static enableTouchScroll(elm) {
-        if (LayerSwitcher.isTouchDevice()) {
-            var scrollStartPos = 0;
-            elm.addEventListener("touchstart", function (event) {
-                scrollStartPos = this.scrollTop + event.touches[0].pageY;
-            }, false);
-            elm.addEventListener("touchmove", function (event) {
-                this.scrollTop = scrollStartPos - event.touches[0].pageY;
-            }, false);
-        }
-    }
-
-    /**
-     * @desc Determine if the current browser supports touch events. Adapted from
-     * https://gist.github.com/chrismbarr/4107472
-     */
-    private static isTouchDevice() {
-        try {
-            document.createEvent("TouchEvent");
-            return true;
-        } catch (e) {
-            return false;
-        }
     }
 
 }

@@ -49,7 +49,7 @@ let map = new ol.Map({
                 new ol.layer.Tile({
                     title: 'Roads',
                     type: 'base',
-                    visible: false,
+                    visible: true,
                     source: new ol.source.MapQuest({ layer: 'osm' })
                 })
             ]
@@ -79,9 +79,7 @@ let map = new ol.Map({
     })
 });
 
-let layerSwitcher = new LayerSwitcher({
-    tipLabel: 'Legend'
-});
+let layerSwitcher = new LayerSwitcher();
 
 layerSwitcher.on("show-layer", (args: { layer: ol.layer.Base }) => {
     console.log("show layer:", args.layer.get("title"));

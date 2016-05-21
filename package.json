@@ -24,6 +24,7 @@
     "url": "https://github.com/ca0v/ol3-layerswitcher/issues"
   },
   "scripts": {
+    "install": "bower install & typings install",
     "sass": "node-sass src/ -o src/",
     "sass-watch": "node-sass -w src/ -o src/"
   },

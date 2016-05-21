@@ -48,7 +48,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
                     new ol.layer.Tile({
                         title: 'Roads',
                         type: 'base',
-                        visible: false,
+                        visible: true,
                         source: new ol.source.MapQuest({ layer: 'osm' })
                     })
                 ]
@@ -77,9 +77,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
             zoom: 6
         })
     });
-    var layerSwitcher = new LayerSwitcher({
-        tipLabel: 'Legend'
-    });
+    var layerSwitcher = new LayerSwitcher();
     layerSwitcher.on("show-layer", function (args) {
         console.log("show layer:", args.layer.get("title"));
     });
