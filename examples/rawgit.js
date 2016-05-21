@@ -1,5 +1,4 @@
 require.config({
-    baseUrl: '../src',
     packages: [
         {
             name: 'openlayers',
