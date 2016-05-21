@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1/ol.css"></link>
     <link rel="stylesheet" href="../src/ol3-layerswitcher.css" />
     <link rel="stylesheet" href="layerswitcher.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="./rawgit.js"></script>
     <style>
         #map {
             height: 80%;
@@ -18,19 +17,7 @@
 <body>
     <a href="https://rawgit.com/ca0v/ol3-layerswitcher/master/examples/rawgit.html?run=./layerswitcher">layerswitcher</a>
     <div id="map"></div>
-    <script>
-        function getParameterByName(name, url) {
-            if (!url) url = window.location.href;
-            name = name.replace(/[\[\]]/g, "\\$&");
-            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
-        
-        require([getParameterByName("run")]);
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="./rawgit.js"></script>
 </body>
 
 </html>
