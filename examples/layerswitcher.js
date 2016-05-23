@@ -95,7 +95,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
         layers: []
     });
     map.addLayer(rootGroup);
-    let service = new AgsDiscovery.Catalog('http://sampleserver1.arcgisonline.com/arcgis/rest/services');
+    let service = new AgsDiscovery.Catalog(`${location.protocol}//sampleserver1.arcgisonline.com/arcgis/rest/services`);
     service
         .about()
         .then(value => {

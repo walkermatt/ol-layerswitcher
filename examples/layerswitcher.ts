@@ -103,7 +103,7 @@ let rootGroup = new ol.layer.Group({
 });
 map.addLayer(rootGroup);
 
-let service = new AgsDiscovery.Catalog('http://sampleserver1.arcgisonline.com/arcgis/rest/services');
+let service = new AgsDiscovery.Catalog(`${location.protocol}//sampleserver1.arcgisonline.com/arcgis/rest/services`);
 service
     .about()
     .then(value => {
