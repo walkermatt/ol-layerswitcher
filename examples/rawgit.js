@@ -1,5 +1,4 @@
-function getParameterByName(name, url) {
-    if (url === void 0) { url = window.location.href; }
+function getParameterByName(name, url = window.location.href) {
     name = name.replace(/[\[\]]/g, "\\$&");
     var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"), results = regex.exec(url);
     if (!results)
@@ -16,7 +15,7 @@ require.config({
             main: 'ol'
         }
     ],
-    callback: function () {
+    callback: () => {
         require([getParameterByName("run")]);
     }
 });

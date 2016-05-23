@@ -97,12 +97,12 @@ class LayerSwitcher extends ol.control.Control {
      *                              **`tipLabel`** `String` - the button tooltip.
      */
     constructor(options?: typeof DEFAULT_OPTIONS) {
-        options = defaults(options || {}, DEFAULT_OPTIONS);       
-        // hack to workaround base constructor not being called first
-        super(this.beforeCreate(options));
+        options = defaults(options || {}, DEFAULT_OPTIONS);
+        super(options);
+        this.afterCreate(options);
     }
 
-    private beforeCreate(options: typeof DEFAULT_OPTIONS) {
+    private afterCreate(options: typeof DEFAULT_OPTIONS) {
 
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
         if (isTouchDevice()) {
@@ -127,10 +127,8 @@ class LayerSwitcher extends ol.control.Control {
             e.preventDefault();
         });
 
-        return {
-            element: element,
-            target: options.target
-        };
+        this.element = element;
+        this.setTarget(options.target);
 
     }
 

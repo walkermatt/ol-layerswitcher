@@ -1,11 +1,9 @@
+@charset "UTF-8";
 .ol-control.layer-switcher {
   position: absolute;
   top: 3.5em;
   right: 0.5em;
   text-align: left; }
-
-.ol-control.layer-switcher.shown {
-  bottom: 3em; }
 
 .ol-control.layer-switcher.shown.ol-control {
   background-color: transparent; }
@@ -17,7 +15,15 @@
   display: block; }
 
 .ol-control.layer-switcher.shown button {
-  display: block; }
+  position: absolute;
+  right: 18px;
+  top: 14px;
+  width: 0;
+  height: 0;
+  color: black; }
+
+.ol-control.layer-switcher.shown button::after {
+  content: "✖"; }
 
 .ol-control.layer-switcher .panel {
   padding: 0 1em 0 0;
@@ -34,9 +40,9 @@
 
 .ol-control.layer-switcher button {
   float: right;
-  width: 64px;
-  height: 64px;
-  background-image: url("./layers.png");
+  width: 24px;
+  height: 24px;
+  background-image: url("./ic_layers_black_24dp_1x.png");
   background-repeat: no-repeat;
   background-position: 0px;
   background-color: transparent;

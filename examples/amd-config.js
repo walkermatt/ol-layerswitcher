@@ -1,4 +1,5 @@
 require.config({
+    waitSeconds: 30,
     packages: [
         {
             name: "openlayers",

@@ -1,20 +1,11 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
     /**
      * assigns undefined values
      */
-    function defaults(a) {
-        var b = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            b[_i - 1] = arguments[_i];
-        }
-        b.forEach(function (b) {
-            Object.keys(b).filter(function (k) { return a[k] === undefined; }).forEach(function (k) { return a[k] = b[k]; });
+    function defaults(a, ...b) {
+        b.forEach(b => {
+            Object.keys(b).filter(k => a[k] === undefined).forEach(k => a[k] = b[k]);
         });
         return a;
     }
@@ -22,8 +13,8 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
      * NodeList -> array
      */
     function asArray(list) {
-        var result = new Array(list.length);
-        for (var i = 0; i < list.length; i++) {
+        let result = new Array(list.length);
+        for (let i = 0; i < list.length; i++) {
             result.push(list[i]);
         }
         return result;
@@ -32,7 +23,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
      * Creates an array containing all sub-layers
      */
     function allLayers(lyr) {
-        var result = [];
+        let result = [];
         lyr.getLayers().forEach(function (lyr, idx, a) {
             result.push(lyr);
             if ("getLayers" in lyr) {
@@ -81,75 +72,71 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             return false;
         }
     }
-    var DEFAULT_OPTIONS = {
+    const DEFAULT_OPTIONS = {
         tipLabel: 'Layers',
         target: null
     };
-    var LayerSwitcher = (function (_super) {
-        __extends(LayerSwitcher, _super);
+    class LayerSwitcher extends ol.control.Control {
         /**
          * OpenLayers 3 Layer Switcher Control.
          * See [the examples](./examples) for usage.
          * @param opt_options Control options, extends olx.control.ControlOptions adding:
          *                              **`tipLabel`** `String` - the button tooltip.
          */
-        function LayerSwitcher(options) {
+        constructor(options) {
             options = defaults(options || {}, DEFAULT_OPTIONS);
-            // hack to workaround base constructor not being called first
-            _super.call(this, this.beforeCreate(options));
+            super(options);
+            this.afterCreate(options);
         }
-        LayerSwitcher.prototype.beforeCreate = function (options) {
-            var _this = this;
+        afterCreate(options) {
             this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
             if (isTouchDevice()) {
                 this.hiddenClassName += ' touch';
             }
             this.shownClassName = this.hiddenClassName + ' shown';
-            var element = document.createElement('div');
+            let element = document.createElement('div');
             element.className = this.hiddenClassName;
-            var button = this.button = document.createElement('button');
+            let button = this.button = document.createElement('button');
             button.setAttribute('title', options.tipLabel);
             element.appendChild(button);
             this.panel = document.createElement('div');
             this.panel.className = 'panel';
             element.appendChild(this.panel);
             enableTouchScroll(this.panel);
-            button.addEventListener('click', function (e) {
-                _this.isVisible() ? _this.hidePanel() : _this.showPanel();
+            button.addEventListener('click', e => {
+                this.isVisible() ? this.hidePanel() : this.showPanel();
                 e.preventDefault();
             });
-            return {
-                element: element,
-                target: options.target
-            };
-        };
-        LayerSwitcher.prototype.dispatch = function (name, args) {
-            var event = new Event(name);
-            args && Object.keys(args).forEach(function (k) { return event[k] = args[k]; });
+            this.element = element;
+            this.setTarget(options.target);
+        }
+        dispatch(name, args) {
+            let event = new Event(name);
+            args && Object.keys(args).forEach(k => event[k] = args[k]);
             this["dispatchEvent"](event);
-        };
-        LayerSwitcher.prototype.isVisible = function () {
+        }
+        isVisible() {
             return this.element.className != this.hiddenClassName;
-        };
+        }
         /**
          * Show the layer panel.
          */
-        LayerSwitcher.prototype.showPanel = function () {
+        showPanel() {
             if (this.element.className != this.shownClassName) {
                 this.element.className = this.shownClassName;
                 this.renderPanel();
             }
-        };
+        }
         /**
          * Hide the layer panel.
          */
-        LayerSwitcher.prototype.hidePanel = function () {
+        hidePanel() {
             this.element.className = this.hiddenClassName;
-        };
+        }
         /**
          * Re-draw the layer panel to represent the current state of the layers.
          */
-        LayerSwitcher.prototype.renderPanel = function () {
+        renderPanel() {
             this.ensureTopVisibleBaseLayerShown();
             while (this.panel.firstChild) {
                 this.panel.removeChild(this.panel.firstChild);
@@ -157,111 +144,107 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             var ul = document.createElement('ul');
             this.panel.appendChild(ul);
             this.renderLayers(this.getMap(), ul);
-        };
+        }
         ;
         /**
          * Ensure only the top-most base layer is visible if more than one is visible.
          */
-        LayerSwitcher.prototype.ensureTopVisibleBaseLayerShown = function () {
-            var visibleBaseLyrs = allLayers(this.getMap()).filter(function (l) { return l.get('type') === 'base' && l.getVisible(); });
+        ensureTopVisibleBaseLayerShown() {
+            let visibleBaseLyrs = allLayers(this.getMap()).filter(l => l.get('type') === 'base' && l.getVisible());
             if (visibleBaseLyrs.length)
                 this.setVisible(visibleBaseLyrs.shift(), true);
-        };
+        }
         ;
         /**
          * Toggle the visible state of a layer.
          * Takes care of hiding other layers in the same exclusive group if the layer
          * is toggle to visible.
          */
-        LayerSwitcher.prototype.setVisible = function (lyr, visible) {
-            var _this = this;
+        setVisible(lyr, visible) {
             if (lyr.getVisible() !== visible) {
                 if (visible && lyr.get('type') === 'base') {
                     // Hide all other base layers regardless of grouping
-                    allLayers(this.getMap()).filter(function (l) { return l !== lyr && l.get('type') === 'base' && l.getVisible(); }).forEach(function (l) { return _this.setVisible(l, false); });
+                    allLayers(this.getMap()).filter(l => l !== lyr && l.get('type') === 'base' && l.getVisible()).forEach(l => this.setVisible(l, false));
                 }
                 lyr.setVisible(visible);
                 this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
             }
-        };
+        }
         ;
         /**
          * Render all layers that are children of a group.
          */
-        LayerSwitcher.prototype.renderLayer = function (lyr, container) {
-            var _this = this;
-            var result;
-            var li = document.createElement('li');
+        renderLayer(lyr, container) {
+            let result;
+            let li = document.createElement('li');
             container.appendChild(li);
-            var lyrTitle = lyr.get('title');
-            var lyrId = uuid();
-            var label = document.createElement('label');
+            let lyrTitle = lyr.get('title');
+            let lyrId = uuid();
+            let label = document.createElement('label');
             if ('getLayers' in lyr && !lyr.get('combine')) {
                 if (!lyr.get('label-only')) {
-                    var input_1 = result = document.createElement('input');
-                    input_1.type = 'checkbox';
-                    input_1.checked = lyr.getVisible();
-                    input_1.addEventListener('change', function () {
-                        ul_1.classList.toggle('hide-layer-group', !input_1.checked);
-                        _this.setVisible(lyr, input_1.checked);
-                        var childLayers = lyr.getLayers();
-                        childLayers.forEach(function (l, i) {
-                            if (childItems_1[i] && childItems_1[i].checked) {
-                                _this.setVisible(l, input_1.checked);
+                    let input = result = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.checked = lyr.getVisible();
+                    input.addEventListener('change', () => {
+                        ul.classList.toggle('hide-layer-group', !input.checked);
+                        this.setVisible(lyr, input.checked);
+                        let childLayers = lyr.getLayers();
+                        childLayers.forEach((l, i) => {
+                            if (childItems[i] && childItems[i].checked) {
+                                this.setVisible(l, input.checked);
                             }
                         });
                     });
-                    li.appendChild(input_1);
+                    li.appendChild(input);
                 }
                 li.classList.add('group');
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
-                var ul_1 = document.createElement('ul');
-                result && ul_1.classList.toggle('hide-layer-group', !result.checked);
-                li.appendChild(ul_1);
-                var childItems_1 = this.renderLayers(lyr, ul_1);
+                let ul = document.createElement('ul');
+                result && ul.classList.toggle('hide-layer-group', !result.checked);
+                li.appendChild(ul);
+                let childItems = this.renderLayers(lyr, ul);
             }
             else {
                 li.classList.add('layer');
-                var input_2 = result = document.createElement('input');
-                input_2.classList.add("basemap");
+                let input = result = document.createElement('input');
+                input.classList.add("basemap");
                 if (lyr.get('type') === 'base') {
-                    input_2.classList.add('basemap');
-                    input_2.type = 'radio';
-                    input_2.addEventListener("change", function () {
-                        if (input_2.checked) {
-                            asArray(_this.panel.getElementsByClassName("basemap")).filter(function (i) { return i.tagName === "INPUT"; }).forEach(function (i) {
-                                if (i.checked && i !== input_2)
+                    input.classList.add('basemap');
+                    input.type = 'radio';
+                    input.addEventListener("change", () => {
+                        if (input.checked) {
+                            asArray(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
+                                if (i.checked && i !== input)
                                     i.checked = false;
                             });
                         }
-                        _this.setVisible(lyr, input_2.checked);
+                        this.setVisible(lyr, input.checked);
                     });
                 }
                 else {
-                    input_2.type = 'checkbox';
-                    input_2.addEventListener("change", function () {
-                        _this.setVisible(lyr, input_2.checked);
+                    input.type = 'checkbox';
+                    input.addEventListener("change", () => {
+                        this.setVisible(lyr, input.checked);
                     });
                 }
-                input_2.id = lyrId;
-                input_2.checked = lyr.get('visible');
-                li.appendChild(input_2);
+                input.id = lyrId;
+                input.checked = lyr.get('visible');
+                li.appendChild(input);
                 label.htmlFor = lyrId;
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
             }
             return result;
-        };
+        }
         /**
          * Render all layers that are children of a group.
          */
-        LayerSwitcher.prototype.renderLayers = function (map, elm) {
-            var _this = this;
+        renderLayers(map, elm) {
             var lyrs = map.getLayers().getArray().slice().reverse();
-            return lyrs.map(function (l, i) { return l.get('title') ? _this.renderLayer(l, elm) : null; });
-        };
-        return LayerSwitcher;
-    }(ol.control.Control));
+            return lyrs.map((l, i) => l.get('title') ? this.renderLayer(l, elm) : null);
+        }
+    }
     return LayerSwitcher;
 });

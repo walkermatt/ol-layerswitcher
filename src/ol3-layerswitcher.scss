@@ -8,7 +8,6 @@ $white: white;
 	right: 0.5em;
 	text-align: left;
 	&.shown {
-		bottom: 3em;
 		&.ol-control {
 			background-color: transparent;
 			&:hover {
@@ -19,7 +18,15 @@ $white: white;
 			display: block;
 		}
 		button {
-			display: block;
+			position:absolute;
+			right:18px;
+			top:14px;
+			width: 0;
+			height:0;
+			color:black;
+			&::after {
+				content: "✖"
+			}
 		}
 	}
 	.panel {
@@ -38,9 +45,9 @@ $white: white;
 	}
 	button {
 		float: right;
-		width: 64px;
-		height: 64px;
-		background-image: url('./layers.png');
+		width: 24px;
+		height: 24px;
+		background-image: url('./ic_layers_black_24dp_1x.png');
 		background-repeat: no-repeat;
 		background-position: 0px;
 		background-color: transparent;
