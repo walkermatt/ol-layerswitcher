@@ -85,8 +85,8 @@ let layerSwitcher = new LayerSwitcher();
 layerSwitcher.on("show-layer", (args: { layer: ol.layer.Base }) => {
     console.log("show layer:", args.layer.get("title"));
     if (args.layer.get("extent")) {
-        let extent = <ol.Extent>args.layer.get("extent");        
-        map.getView().setCenter(ol.extent.getCenter(extent));
+        let extent = <ol.Extent>args.layer.get("extent");
+        map.getView().fit(extent, map.getSize());
     }
 });
 
@@ -154,6 +154,7 @@ service
                                     extent: extent,
                                     source: source
                                 });
+
                                 folderGroup.getLayers().push(layer);
 
                             } else {
@@ -173,6 +174,17 @@ service
                                         source: source
                                     });
                                     folderGroup.getLayers().push(layer);
+
+                                    let loadCount = 0;
+                                    source.on("tileloadstart", () => {
+                                        if (0 === loadCount++) layer.dispatchEvent("load:start");
+                                        layer.set("loading", true);
+                                    });
+                                    source.on("tileloadend", () => {
+                                        if (0 === --loadCount) layer.dispatchEvent("load:end");
+                                        layer.set("loading", false);
+                                    });
+
                                 })
                             }
                         });

@@ -3,6 +3,8 @@
   position: absolute;
   top: 3.5em;
   right: 0.5em;
+  max-height: calc(100% - 3.5em);
+  overflow-y: auto;
   text-align: left; }
 
 .ol-control.layer-switcher.shown.ol-control {
@@ -32,7 +34,6 @@
   border-radius: 4px;
   background-color: white;
   display: none;
-  max-height: 100%;
   overflow-y: auto; }
 
 .ol-control.layer-switcher .panel ul.hide-layer-group {
@@ -66,6 +67,11 @@
 
 .ol-control.layer-switcher li.layer {
   display: table; }
+
+.ol-control.layer-switcher li.layer.loading::after {
+  padding-left: 3px;
+  padding-right: 5px;
+  content: url("./progress-16.gif"); }
 
 .ol-control.layer-switcher li.layer label {
   display: table-cell;

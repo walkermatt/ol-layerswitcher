@@ -6,6 +6,9 @@ $white: white;
 	position: absolute;
 	top: 3.5em;
 	right: 0.5em;
+	max-height: calc(100% - 3.5em);
+	overflow-y: auto;
+	
 	text-align: left;
 	&.shown {
 		&.ol-control {
@@ -37,7 +40,6 @@ $white: white;
 		border-radius: 4px;
 		background-color: $white;
 		display: none;
-		max-height: 100%;
 		overflow-y: auto;
         ul.hide-layer-group {
             display:none;
@@ -72,6 +74,11 @@ $white: white;
 		}
 		&.layer {
 			display: table;
+			&.loading::after {
+				padding-left: 3px;
+				padding-right: 5px;
+				content: url('./progress-16.gif');
+			}
 			label {
 				display: table-cell;
 				vertical-align: sub;

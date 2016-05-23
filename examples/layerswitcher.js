@@ -82,7 +82,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
         console.log("show layer:", args.layer.get("title"));
         if (args.layer.get("extent")) {
             let extent = args.layer.get("extent");
-            map.getView().setCenter(ol.extent.getCenter(extent));
+            map.getView().fit(extent, map.getSize());
         }
     });
     layerSwitcher.on("hide-layer", (args) => {
@@ -153,6 +153,17 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
                                         source: source
                                     });
                                     folderGroup.getLayers().push(layer);
+                                    let loadCount = 0;
+                                    source.on("tileloadstart", () => {
+                                        if (0 === loadCount++)
+                                            layer.dispatchEvent("load:start");
+                                        layer.set("loading", true);
+                                    });
+                                    source.on("tileloadend", () => {
+                                        if (0 === --loadCount)
+                                            layer.dispatchEvent("load:end");
+                                        layer.set("loading", false);
+                                    });
                                 });
                             }
                         });

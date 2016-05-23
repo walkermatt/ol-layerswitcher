@@ -181,9 +181,13 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             let lyrTitle = lyr.get('title');
             let lyrId = uuid();
             let label = document.createElement('label');
+            label.htmlFor = lyrId;
+            lyr.on('load:start', () => li.classList.add("loading"));
+            lyr.on('load:end', () => li.classList.remove("loading"));
             if ('getLayers' in lyr && !lyr.get('combine')) {
                 if (!lyr.get('label-only')) {
                     let input = result = document.createElement('input');
+                    input.id = lyrId;
                     input.type = 'checkbox';
                     input.checked = lyr.getVisible();
                     input.addEventListener('change', () => {
@@ -209,6 +213,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             else {
                 li.classList.add('layer');
                 let input = result = document.createElement('input');
+                input.id = lyrId;
                 input.classList.add("basemap");
                 if (lyr.get('type') === 'base') {
                     input.classList.add('basemap');
@@ -229,10 +234,8 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                         this.setVisible(lyr, input.checked);
                     });
                 }
-                input.id = lyrId;
                 input.checked = lyr.get('visible');
                 li.appendChild(input);
-                label.htmlFor = lyrId;
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
             }
