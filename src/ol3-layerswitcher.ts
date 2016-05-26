@@ -85,6 +85,8 @@ const DEFAULT_OPTIONS = {
 class LayerSwitcher extends ol.control.Control {
 
     private state: Array<{ container: HTMLElement; input: HTMLInputElement; layer: ol.layer.Base }>;
+    private unwatch: Array<() => void>;
+
     hiddenClassName: string;
     shownClassName: string;
     panel: HTMLDivElement;
@@ -128,6 +130,8 @@ class LayerSwitcher extends ol.control.Control {
             e.preventDefault();
         });
 
+        this.unwatch = [];
+
         this.element = element;
         this.setTarget(options.target);
 
@@ -158,6 +162,7 @@ class LayerSwitcher extends ol.control.Control {
      */
     hidePanel() {
         this.element.className = this.hiddenClassName;
+        this.unwatch.forEach(f => f());
     }
 
     /**
@@ -175,8 +180,27 @@ class LayerSwitcher extends ol.control.Control {
         this.panel.appendChild(ul);
 
         this.state = [];
-        this.renderLayers(this.getMap(), ul);
 
+        let map = this.getMap();
+        let view = map.getView();
+
+        this.renderLayers(map, ul);
+
+        {
+            let doit = () => {
+                let res = view.getResolution();
+                this.state.filter(s => !!s.input).forEach(s => {
+                    let min = s.layer.getMinResolution();
+                    let max = s.layer.getMaxResolution();
+                    console.log(res, min, max, s.layer.get("title"));
+                    s.input.disabled = !(min <= res && (max === 0 || res <= max));
+                });
+            };
+            let h = view.on("change:resolution", doit);
+            doit();
+            
+            this.unwatch.push(() => view.unByKey(h));
+        }
     };
 
     /**
@@ -256,7 +280,6 @@ class LayerSwitcher extends ol.control.Control {
             let input = result = document.createElement('input');
             input.id = lyrId;
 
-            input.classList.add("basemap");
             if (lyr.get('type') === 'base') {
                 input.classList.add('basemap');
                 input.type = 'radio';
