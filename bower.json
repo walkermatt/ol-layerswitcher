@@ -26,6 +26,7 @@
   ],
   "devDependencies": {
     "requirejs": "^2.2.0",
-    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.15.1/v3.15.1-dist.zip"
+    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.15.1/v3.15.1-dist.zip",
+    "proj4": "^2.3.14"
   }
 }

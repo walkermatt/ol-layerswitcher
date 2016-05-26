@@ -14,6 +14,11 @@ require.config({
             name: 'openlayers',
             location: 'https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1',
             main: 'ol'
+        },
+        {
+            name: "proj4",
+            location: "../bower_components/proj4",
+            main: "dist/proj4-src.js"
         }
     ],
 

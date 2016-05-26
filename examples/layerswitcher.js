@@ -1,5 +1,17 @@
-define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/ags-catalog"], function (require, exports, ol, LayerSwitcher, AgsDiscovery) {
+define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/ags-catalog", "proj4"], function (require, exports, ol, LayerSwitcher, AgsDiscovery, proj4) {
     "use strict";
+    ol.proj.setProj4(proj4);
+    /**
+     * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
+     * resolution is how many
+     */
+    function asRes(scale, dpi = 90.71428571428572) {
+        const inchesPerFoot = 12.0;
+        const inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
+        const dotsPerUnit = dpi * inchesPerMeter;
+        return scale / dotsPerUnit;
+    }
+    proj4.defs("EPSG:4269", "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs");
     let map = new ol.Map({
         target: 'map',
         layers: [
@@ -81,8 +93,12 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
     layerSwitcher.on("show-layer", (args) => {
         console.log("show layer:", args.layer.get("title"));
         if (args.layer.get("extent")) {
+            let view = map.getView();
             let extent = args.layer.get("extent");
-            map.getView().fit(extent, map.getSize());
+            let currentExtent = view.calculateExtent(map.getSize());
+            if (!ol.extent.intersects(currentExtent, extent)) {
+                view.fit(extent, map.getSize());
+            }
         }
     });
     layerSwitcher.on("hide-layer", (args) => {
@@ -122,19 +138,38 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
                     services.forEach(serviceInfo => {
                         let p = service.aboutMapServer(serviceInfo.name);
                         p.then(s => {
-                            let extent = ol.proj.transformExtent([s.fullExtent.xmin, s.fullExtent.ymin, s.fullExtent.xmax, s.fullExtent.ymax], 'EPSG:4326', 'EPSG:3857');
+                            let inSrs = "EPSG:4326";
+                            let extent = null;
+                            [s.initialExtent, s.fullExtent].some(agsExtent => {
+                                let olExtent = ol.proj.transformExtent([agsExtent.xmin, agsExtent.ymin, agsExtent.xmax, agsExtent.ymax], inSrs, 'EPSG:3857');
+                                // not always valid!
+                                if (olExtent.every(v => !isNaN(v))) {
+                                    extent = olExtent;
+                                    return true;
+                                }
+                            });
+                            if (s.spatialReference) {
+                                if (s.spatialReference.wkid) {
+                                    inSrs = `EPSG:${s.spatialReference.wkid}`;
+                                }
+                                if (s.spatialReference.wkt) {
+                                    inSrs = proj4.Proj(s.spatialReference.wkt).srsCode;
+                                    proj4.defs(inSrs, s.spatialReference.wkt);
+                                }
+                            }
                             if (s.singleFusedMapCache) {
                                 let source = new ol.source.XYZ({
                                     url: p.url
                                 });
-                                let layer = new ol.layer.Tile({
+                                let tileOptions = {
                                     id: serviceInfo.name,
                                     title: serviceInfo.name,
                                     type: 'base',
                                     visible: false,
                                     extent: extent,
                                     source: source
-                                });
+                                };
+                                let layer = new ol.layer.Tile(tileOptions);
                                 folderGroup.getLayers().push(layer);
                             }
                             else {
@@ -145,13 +180,18 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
                                             layers: `show:${layerInfo.id}`
                                         }
                                     });
-                                    let layer = new ol.layer.Tile({
+                                    let tileOptions = {
                                         id: `${serviceInfo.name}/${layerInfo.id}`,
                                         title: layerInfo.name,
                                         visible: false,
                                         extent: extent,
                                         source: source
-                                    });
+                                    };
+                                    if (layerInfo.minScale)
+                                        tileOptions.maxResolution = asRes(layerInfo.minScale);
+                                    if (layerInfo.maxScale)
+                                        tileOptions.minResolution = asRes(layerInfo.maxScale);
+                                    let layer = new ol.layer.Tile(tileOptions);
                                     folderGroup.getLayers().push(layer);
                                     // make the layer progress aware                                
                                     {
