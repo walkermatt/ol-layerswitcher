@@ -143,6 +143,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             }
             var ul = document.createElement('ul');
             this.panel.appendChild(ul);
+            this.state = [];
             this.renderLayers(this.getMap(), ul);
         }
         ;
@@ -194,10 +195,8 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                         ul.classList.toggle('hide-layer-group', !input.checked);
                         this.setVisible(lyr, input.checked);
                         let childLayers = lyr.getLayers();
-                        childLayers.forEach((l, i) => {
-                            if (childItems[i] && childItems[i].checked) {
-                                this.setVisible(l, input.checked);
-                            }
+                        this.state.filter(s => s.container === ul && s.input.checked).forEach(state => {
+                            this.setVisible(state.layer, input.checked);
                         });
                     });
                     li.appendChild(input);
@@ -208,7 +207,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 let ul = document.createElement('ul');
                 result && ul.classList.toggle('hide-layer-group', !result.checked);
                 li.appendChild(ul);
-                let childItems = this.renderLayers(lyr, ul);
+                this.renderLayers(lyr, ul);
             }
             else {
                 li.classList.add('layer');
@@ -218,6 +217,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 if (lyr.get('type') === 'base') {
                     input.classList.add('basemap');
                     input.type = 'radio';
+                    input.checked = lyr.get('visible');
                     input.addEventListener("change", () => {
                         if (input.checked) {
                             asArray(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
@@ -230,23 +230,27 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 }
                 else {
                     input.type = 'checkbox';
+                    input.checked = false;
                     input.addEventListener("change", () => {
                         this.setVisible(lyr, input.checked);
                     });
                 }
-                input.checked = lyr.get('visible');
                 li.appendChild(input);
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
             }
-            return result;
+            this.state.push({
+                container: container,
+                input: result,
+                layer: lyr
+            });
         }
         /**
          * Render all layers that are children of a group.
          */
         renderLayers(map, elm) {
             var lyrs = map.getLayers().getArray().slice().reverse();
-            return lyrs.map((l, i) => l.get('title') ? this.renderLayer(l, elm) : null);
+            return lyrs.filter(l => !!l.get('title')).forEach(l => this.renderLayer(l, elm));
         }
     }
     return LayerSwitcher;

@@ -84,6 +84,7 @@ const DEFAULT_OPTIONS = {
 
 class LayerSwitcher extends ol.control.Control {
 
+    private state: Array<{ container: HTMLElement; input: HTMLInputElement; layer: ol.layer.Base }>;
     hiddenClassName: string;
     shownClassName: string;
     panel: HTMLDivElement;
@@ -172,6 +173,8 @@ class LayerSwitcher extends ol.control.Control {
 
         var ul = document.createElement('ul');
         this.panel.appendChild(ul);
+
+        this.state = [];
         this.renderLayers(this.getMap(), ul);
 
     };
@@ -230,10 +233,8 @@ class LayerSwitcher extends ol.control.Control {
                     ul.classList.toggle('hide-layer-group', !input.checked);
                     this.setVisible(lyr, input.checked);
                     let childLayers = (<ol.layer.Group>lyr).getLayers();
-                    childLayers.forEach((l, i) => {
-                        if (childItems[i] && childItems[i].checked) {
-                            this.setVisible(l, input.checked);
-                        }
+                    this.state.filter(s => s.container === ul && s.input.checked).forEach(state => {
+                        this.setVisible(state.layer, input.checked);
                     });
                 });
                 li.appendChild(input);
@@ -246,7 +247,7 @@ class LayerSwitcher extends ol.control.Control {
             result && ul.classList.toggle('hide-layer-group', !result.checked);
             li.appendChild(ul);
 
-            let childItems = this.renderLayers(<ol.layer.Group>lyr, ul);
+            this.renderLayers(<ol.layer.Group>lyr, ul);
 
         } else {
 
@@ -258,6 +259,7 @@ class LayerSwitcher extends ol.control.Control {
             if (lyr.get('type') === 'base') {
                 input.classList.add('basemap');
                 input.type = 'radio';
+                input.checked = lyr.get('visible');
                 input.addEventListener("change", () => {
                     if (input.checked) {
                         asArray<HTMLInputElement>(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
@@ -268,11 +270,11 @@ class LayerSwitcher extends ol.control.Control {
                 });
             } else {
                 input.type = 'checkbox';
+                input.checked = false;
                 input.addEventListener("change", () => {
                     this.setVisible(lyr, input.checked);
                 });
             }
-            input.checked = lyr.get('visible');
             li.appendChild(input);
 
             label.innerHTML = lyrTitle;
@@ -280,7 +282,11 @@ class LayerSwitcher extends ol.control.Control {
 
         }
 
-        return result;
+        this.state.push({
+            container: container,
+            input: result,
+            layer: lyr
+        });
 
     }
 
@@ -289,7 +295,7 @@ class LayerSwitcher extends ol.control.Control {
      */
     private renderLayers(map: ol.Map | ol.layer.Group, elm: HTMLElement) {
         var lyrs = map.getLayers().getArray().slice().reverse();
-        return lyrs.map((l, i) => l.get('title') ? this.renderLayer(l, elm) : null);
+        return lyrs.filter(l => !!l.get('title')).forEach(l => this.renderLayer(l, elm));
     }
 
 }
