@@ -95,7 +95,7 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
         layers: []
     });
     map.addLayer(rootGroup);
-    let service = new AgsDiscovery.Catalog(`${location.protocol}//sampleserver1.arcgisonline.com/arcgis/rest/services`);
+    let service = new AgsDiscovery.Catalog(`${location.protocol === 'file:' ? 'http:' : location.protocol}//sampleserver1.arcgisonline.com/arcgis/rest/services`);
     service
         .about()
         .then(value => {
@@ -153,17 +153,20 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
                                         source: source
                                     });
                                     folderGroup.getLayers().push(layer);
-                                    let loadCount = 0;
-                                    source.on("tileloadstart", () => {
-                                        if (0 === loadCount++)
-                                            layer.dispatchEvent("load:start");
-                                        layer.set("loading", true);
-                                    });
-                                    source.on("tileloadend", () => {
-                                        if (0 === --loadCount)
-                                            layer.dispatchEvent("load:end");
-                                        layer.set("loading", false);
-                                    });
+                                    // make the layer progress aware                                
+                                    {
+                                        let loadCount = 0;
+                                        source.on("tileloadstart", () => {
+                                            if (0 === loadCount++)
+                                                layer.dispatchEvent("load:start");
+                                            layer.set("loading", true);
+                                        });
+                                        source.on("tileloadend", () => {
+                                            if (0 === --loadCount)
+                                                layer.dispatchEvent("load:end");
+                                            layer.set("loading", false);
+                                        });
+                                    }
                                 });
                             }
                         });

@@ -220,6 +220,7 @@ class LayerSwitcher extends ol.control.Control {
 
         lyr.on('load:start', () => li.classList.add("loading"));
         lyr.on('load:end', () => li.classList.remove("loading"));
+        li.classList.toggle("loading", true === lyr.get("loading"));
 
         if ('getLayers' in lyr && !lyr.get('combine')) {
 
@@ -233,7 +234,7 @@ class LayerSwitcher extends ol.control.Control {
                     ul.classList.toggle('hide-layer-group', !input.checked);
                     this.setVisible(lyr, input.checked);
                     let childLayers = (<ol.layer.Group>lyr).getLayers();
-                    this.state.filter(s => s.container === ul && s.input.checked).forEach(state => {
+                    this.state.filter(s => s.container === ul && s.input && s.input.checked).forEach(state => {
                         this.setVisible(state.layer, input.checked);
                     });
                 });
@@ -259,7 +260,6 @@ class LayerSwitcher extends ol.control.Control {
             if (lyr.get('type') === 'base') {
                 input.classList.add('basemap');
                 input.type = 'radio';
-                input.checked = lyr.get('visible');
                 input.addEventListener("change", () => {
                     if (input.checked) {
                         asArray<HTMLInputElement>(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
@@ -270,11 +270,11 @@ class LayerSwitcher extends ol.control.Control {
                 });
             } else {
                 input.type = 'checkbox';
-                input.checked = false;
                 input.addEventListener("change", () => {
                     this.setVisible(lyr, input.checked);
                 });
             }
+            input.checked = lyr.get('visible');
             li.appendChild(input);
 
             label.innerHTML = lyrTitle;

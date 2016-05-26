@@ -185,6 +185,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             label.htmlFor = lyrId;
             lyr.on('load:start', () => li.classList.add("loading"));
             lyr.on('load:end', () => li.classList.remove("loading"));
+            li.classList.toggle("loading", true === lyr.get("loading"));
             if ('getLayers' in lyr && !lyr.get('combine')) {
                 if (!lyr.get('label-only')) {
                     let input = result = document.createElement('input');
@@ -195,7 +196,7 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                         ul.classList.toggle('hide-layer-group', !input.checked);
                         this.setVisible(lyr, input.checked);
                         let childLayers = lyr.getLayers();
-                        this.state.filter(s => s.container === ul && s.input.checked).forEach(state => {
+                        this.state.filter(s => s.container === ul && s.input && s.input.checked).forEach(state => {
                             this.setVisible(state.layer, input.checked);
                         });
                     });
@@ -217,7 +218,6 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 if (lyr.get('type') === 'base') {
                     input.classList.add('basemap');
                     input.type = 'radio';
-                    input.checked = lyr.get('visible');
                     input.addEventListener("change", () => {
                         if (input.checked) {
                             asArray(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
@@ -230,11 +230,11 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
                 }
                 else {
                     input.type = 'checkbox';
-                    input.checked = false;
                     input.addEventListener("change", () => {
                         this.setVisible(lyr, input.checked);
                     });
                 }
+                input.checked = lyr.get('visible');
                 li.appendChild(input);
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
