@@ -17,8 +17,8 @@ require.config({
         },
         {
             name: "proj4",
-            location: "../bower_components/proj4",
-            main: "dist/proj4-src.js"
+            location: "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14",
+            main: "proj4.js"
         }
     ],
 
