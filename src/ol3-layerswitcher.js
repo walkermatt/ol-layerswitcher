@@ -74,6 +74,10 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
     }
     const DEFAULT_OPTIONS = {
         tipLabel: 'Layers',
+        openOnMouseOver: false,
+        closeOnMouseOut: false,
+        openOnClick: true,
+        closeOnClick: true,
         target: null
     };
     class LayerSwitcher extends ol.control.Control {
@@ -103,13 +107,21 @@ define(["require", "exports", "openlayers"], function (require, exports, ol) {
             this.panel.className = 'panel';
             element.appendChild(this.panel);
             enableTouchScroll(this.panel);
-            button.addEventListener('click', e => {
-                this.isVisible() ? this.hidePanel() : this.showPanel();
-                e.preventDefault();
-            });
             this.unwatch = [];
             this.element = element;
             this.setTarget(options.target);
+            if (options.openOnMouseOver) {
+                button.addEventListener("mouseover", () => this.showPanel());
+            }
+            if (options.closeOnMouseOut) {
+                this.panel.addEventListener("mouseover", () => this.hidePanel());
+            }
+            if (options.openOnClick || options.closeOnClick) {
+                button.addEventListener('click', e => {
+                    this.isVisible() ? options.closeOnClick && this.hidePanel() : options.openOnClick && this.showPanel();
+                    e.preventDefault();
+                });
+            }
         }
         dispatch(name, args) {
             let event = new Event(name);

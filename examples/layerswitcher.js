@@ -89,7 +89,9 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
             zoom: 6
         })
     });
-    let layerSwitcher = new LayerSwitcher();
+    let layerSwitcher = new LayerSwitcher({
+        openOnMouseOver: true
+    });
     layerSwitcher.on("show-layer", (args) => {
         console.log("show layer:", args.layer.get("title"));
         if (args.layer.get("extent")) {

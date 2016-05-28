@@ -96,7 +96,9 @@ let map = new ol.Map({
     })
 });
 
-let layerSwitcher = new LayerSwitcher();
+let layerSwitcher = new LayerSwitcher({
+    openOnMouseOver: true
+});
 
 layerSwitcher.on("show-layer", (args: { layer: ol.layer.Base }) => {
     console.log("show layer:", args.layer.get("title"));
