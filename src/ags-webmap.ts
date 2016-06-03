@@ -28,9 +28,10 @@ export interface OperationalLayer {
     url: string;
     visibility: boolean;
     opacity: number;
-    mode: number;
     title: string;
-    popupInfo: PopupInfo;
+    // in addition to base layer
+    mode?: number;
+    popupInfo?: PopupInfo;
 }
 
 export interface BaseMapLayer {

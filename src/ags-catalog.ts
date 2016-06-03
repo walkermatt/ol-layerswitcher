@@ -14,6 +14,7 @@ interface CatalogInfo {
 interface SpatialReference {
     wkid: number;
     latestWkid: number;
+    wkt: string;
 }
 
 interface Extent {

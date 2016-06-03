@@ -6,15 +6,12 @@ All layers should have a `title` property and base layers should have a `type` p
 
 ## Examples
 
-The examples demonstrate usage and can be viewed online thanks to [RawGit](http://rawgit.com/):
-
-* [Basic usage](https://rawgit.com/ca0v/ol3-layerswitcher/master/examples/rawgit.html?run=./layerswitcher)
-    * Create a layer switcher control. Each layer to be displayed in the layer switcher has a `title` property as does each Group; each base map layer has a `type: 'base'` property.
-
-The source for all examples can be found in [examples](examples).
+* [layerswitcher](https://rawgit.com/ca0v/ol3-layerswitcher/master/examples/rawgit.html?run=./layerswitcher)
+* [ags-discovery](https://rawgit.com/ca0v/ol3-layerswitcher/master/examples/rawgit.html?run=./ags-discovery)
+* [ags-webmap](https://rawgit.com/ca0v/ol3-layerswitcher/master/examples/rawgit.html?run=./ags-webmap)
 
 ## Also see
 
 If you find the layer switcher useful you might also like the
-[ol3-popup](https://github.com/walkermatt/ol3-popup).
+[ol3-popup](https://github.com/ca0v/ol3-popup).
 

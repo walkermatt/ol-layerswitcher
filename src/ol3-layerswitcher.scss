@@ -74,9 +74,12 @@ $white: white;
 		}
 		&.layer {
 			display: table;
-			&.loading::after {
+			&::after {
 				padding-left: 3px;
 				padding-right: 5px;
+				content: "";
+			}
+			&.loading::after {
 				content: url('./progress-16.gif');
 			}
 			label {
