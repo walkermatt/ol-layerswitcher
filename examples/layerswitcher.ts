@@ -1,6 +1,7 @@
 import ol = require("openlayers");
 import LayerSwitcher = require("../src/ol3-layerswitcher");
 import AgsDiscovery = require("../src/ags-catalog");
+import WebMap = require("../src/ags-webmap");
 import proj4 = require("proj4");
 
 ol.proj.setProj4(proj4);
@@ -251,3 +252,11 @@ service
         addFolders(rootGroup, value.folders);
 
     });
+
+
+let webmap = new WebMap.WebMap();
+webmap.get().then(result => {
+    debugger;
+    console.log(result.layers);
+})
+

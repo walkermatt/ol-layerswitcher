@@ -1,4 +1,4 @@
-define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/ags-catalog", "proj4"], function (require, exports, ol, LayerSwitcher, AgsDiscovery, proj4) {
+define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/ags-catalog", "../src/ags-webmap", "proj4"], function (require, exports, ol, LayerSwitcher, AgsDiscovery, WebMap, proj4) {
     "use strict";
     ol.proj.setProj4(proj4);
     /**
@@ -217,5 +217,10 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher", "../src/
             });
         };
         addFolders(rootGroup, value.folders);
+    });
+    let webmap = new WebMap.WebMap();
+    webmap.get().then(result => {
+        debugger;
+        console.log(result.layers);
     });
 });
