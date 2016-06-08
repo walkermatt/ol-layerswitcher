@@ -47,7 +47,10 @@ layerSwitcher.on("hide-layer", (args: { layer: ol.layer.Base }) => {
 
 map.addControl(layerSwitcher);
 
-function webmap(options: { appid: string }) {
+function webmap(options: {
+    appid?: string;
+    url?: string
+}) {
     let webmap = new WebMap.WebMap();
 
     let webmapGroup = new ol.layer.Group({
@@ -57,7 +60,9 @@ function webmap(options: { appid: string }) {
     });
     map.addLayer(webmapGroup);
 
-    webmap.get(`https://www.arcgis.com/sharing/rest/content/items/${options.appid}/data?f=json`).then(result => {
+    options.url = options.url || `https://www.arcgis.com/sharing/rest/content/items/${options.appid}/data?f=json`; 
+
+    webmap.get(options.url).then(result => {
 
         if (result.baseMap) {
             let baseLayers = new ol.layer.Group({
@@ -92,4 +97,6 @@ function webmap(options: { appid: string }) {
 
 }
 
-webmap({ appid: "a193c5459e6e4fd99ebf09d893d65cf0" });
+webmap({
+    url: "http://infor1.maps.arcgis.com/sharing/rest/content/items/313b7327133f4802affee46893b4bec7/data?f=json"
+});

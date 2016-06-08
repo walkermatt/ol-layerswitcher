@@ -1,5 +1,5 @@
 import ol = require("openlayers");
-import WebMap = require("./ags-webmap");
+import {PortalForArcGis, WebMap} from "./ags-webmap";
 
 /**
  * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
@@ -14,7 +14,7 @@ function asRes(scale: number, dpi = 90.71428571428572) {
 
 class AgsLayerFactory {
 
-    asExtent(appInfo: WebMap.WebMap) {
+    asExtent(appInfo: PortalForArcGis.WebMap) {
         // not defined?
     }
 
@@ -35,9 +35,10 @@ class AgsLayerFactory {
         return layer;
     }
 
-    asAgsLayer(layerInfo: WebMap.OperationalLayer, appInfo: WebMap.WebMap) {
+    asAgsLayer(layerInfo: PortalForArcGis.OperationalLayer, appInfo: PortalForArcGis.WebMap) {
         switch (layerInfo.layerType) {
             case "ArcGISFeatureLayer":
+                if (layerInfo.featureCollection) return this.asFeatureCollection(layerInfo, appInfo);
                 return this.asEvented(this.asArcGISFeatureLayer(layerInfo, appInfo));
             case "ArcGISTiledMapServiceLayer":
                 return this.asEvented(this.asArcGISTiledMapServiceLayer(layerInfo, appInfo));
@@ -48,17 +49,20 @@ class AgsLayerFactory {
 
     }
 
-    asArcGISTiledMapServiceLayer(layerInfo: WebMap.OperationalLayer, appInfo?: WebMap.WebMap) {
+    asArcGISTiledMapServiceLayer(layerInfo: PortalForArcGis.BaseMapLayer, appInfo?: PortalForArcGis.WebMap) {
 
         // doesn't seem to care about the projection
+        let srs = layerInfo.spatialReference || appInfo.spatialReference;
+        let srsCode = srs && srs.latestWkid || "3857";
+
         let source = new ol.source.XYZ({
             url: layerInfo.url + '/tile/{z}/{y}/{x}',
-            projection: layerInfo.spatialReference
+            projection: `EPSG:${srsCode}`
         });
 
         let tileOptions: olx.layer.TileOptions = {
             id: layerInfo.id,
-            title: layerInfo.title,
+            title: layerInfo.title || layerInfo.id,
             type: 'base',
             visible: false,
             source: source
@@ -69,7 +73,55 @@ class AgsLayerFactory {
         return layer;
     }
 
-    asArcGISFeatureLayer(layerInfo: WebMap.OperationalLayer, appInfo?: WebMap.WebMap) {
+    /**
+     * Renders the features of the featureset (can be points, lines or polygons) into a feature layer
+     */
+    asFeatureCollection(layerInfo: PortalForArcGis.OperationalLayer, appInfo?: PortalForArcGis.WebMap) {
+        let source = new ol.source.Vector();
+        let layer = new ol.layer.Vector({
+            title: layerInfo.id,
+            source: source
+        });
+
+        // obviously we don't want everything to be red, there's all this still to consider....
+        // layerInfo.featureCollection.layers[0].layerDefinition.drawingInfo.renderer.uniqueValueInfos[0].symbol.color;
+        let style = new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: "red"
+            })
+        });
+
+        layer.setStyle((feature: ol.Feature, resolution: number) => {
+            debugger;
+            return style;
+        });
+
+        layer.setVisible(true);
+        layerInfo.featureCollection.layers.forEach(l => {
+            switch (l.featureSet.geometryType) {
+                case "esriGeometryPolygon":
+                    let features = this.asEsriGeometryPolygon(l.featureSet);
+                    debugger;
+                    features.forEach(f => source.addFeature(f));
+                    break;
+            }
+        });
+
+        return layer;
+    }
+
+    /**
+     * Creates a polygon feature from esri data
+     */
+    private asEsriGeometryPolygon(featureSet: PortalForArcGis.FeatureSet) {
+        console.assert(featureSet.geometryType === "esriGeometryPolygon");
+        return featureSet.features.map(f => new ol.Feature({
+            attributes: f.attributes,
+            geometry: new ol.geom.Polygon(f.geometry.rings)
+        }));
+    }
+
+    asArcGISFeatureLayer(layerInfo: PortalForArcGis.OperationalLayer, appInfo?: PortalForArcGis.WebMap) {
         // will want to support feature services at some point but just a demo so re-route to MapServer
         layerInfo.url = layerInfo.url.replace("FeatureServer", "MapServer");
         layerInfo.id = layerInfo.url.substring(1 + layerInfo.url.lastIndexOf("/"));
