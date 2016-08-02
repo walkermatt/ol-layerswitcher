@@ -30,30 +30,6 @@
                         })
                     }),
                     new ol.layer.Tile({
-                        title: 'MapQuest - OSM',
-                        type: 'base',
-                        visible: false,
-                        source: new ol.source.MapQuest({
-                            layer: 'osm'
-                        })
-                    }),
-                    new ol.layer.Tile({
-                        title: 'MapQuest - Satellite',
-                        type: 'base',
-                        visible: false,
-                        source: new ol.source.MapQuest({
-                            layer: 'sat'
-                        })
-                    }),
-                    new ol.layer.Tile({
-                        title: 'MapQuest - Hybrid',
-                        type: 'base',
-                        visible: false,
-                        source: new ol.source.MapQuest({
-                            layer: 'hyb'
-                        })
-                    }),
-                    new ol.layer.Tile({
                         title: 'Thunderforest - OpenCycleMap',
                         type: 'base',
                         visible: false,

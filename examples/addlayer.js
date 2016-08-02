@@ -16,9 +16,9 @@
                 'title': 'Base maps',
                 layers: [
                     new ol.layer.Tile({
-                        title: 'Satellite',
+                        title: 'OSM',
                         type: 'base',
-                        source: new ol.source.MapQuest({layer: 'sat'})
+                        source: new ol.source.OSM()
                     })
                 ]
             }),

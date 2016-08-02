@@ -20,24 +20,24 @@
                         source: new ol.source.OSM()
                     }),
                     new ol.layer.Group({
-                        title: 'Satellite and roads',
+                        title: 'Satellite and labels',
                         type: 'base',
                         combine: true,
                         visible: false,
                         layers: [
                             new ol.layer.Tile({
-                                source: new ol.source.MapQuest({layer: 'sat'})
+                                source: new ol.source.BingMaps({
+                                    // Get your own key at https://www.bingmapsportal.com/
+                                    key: 'Ahd_32h3fT3C7xFHrqhpKzoixGJGHvOlcvXWy6k2RRYARRsrfu7KDctzDT2ei9xB',
+                                    imagerySet: 'Aerial'
+                                })
                             }),
                             new ol.layer.Tile({
-                                source: new ol.source.MapQuest({layer: 'hyb'})
+                                source: new ol.source.Stamen({
+                                    layer: 'terrain-labels'
+                                })
                             })
                         ]
-                    }),
-                    new ol.layer.Tile({
-                        title: 'Satellite',
-                        type: 'base',
-                        visible: false,
-                        source: new ol.source.MapQuest({layer: 'sat'})
                     })
                 ]
             }),
