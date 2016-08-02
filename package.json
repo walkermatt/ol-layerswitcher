@@ -26,7 +26,7 @@
     "doc": "node_modules/.bin/jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
   },
   "dependencies": {
-    "openlayers": "~3.14.0"
+    "openlayers": "~3.17.1"
   },
   "devDependencies": {
     "expect.js": "~0.3.1",
