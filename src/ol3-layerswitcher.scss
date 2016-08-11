@@ -4,19 +4,13 @@ $white: white;
 
 .ol-control.layer-switcher {
 	position: absolute;
-	top: 3.5em;
+	top: 0.5em;
 	right: 0.5em;
 	max-height: calc(100% - 3.5em);
 	overflow-y: auto;
 	
 	text-align: left;
 	&.shown {
-		&.ol-control {
-			background-color: transparent;
-			&:hover {
-				background-color: transparent;
-			}
-		}
 		.panel {
 			display: block;
 		}
@@ -35,9 +29,6 @@ $white: white;
 	.panel {
 		padding: 0 1em 0 0;
 		margin: 0;
-		border: 4px solid $color_gallery_approx;
-		//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
-		border-radius: 4px;
 		background-color: $white;
 		display: none;
 		overflow-y: auto;
@@ -46,19 +37,8 @@ $white: white;
         }
 	}
 	button {
-		float: right;
-		width: 24px;
-		height: 24px;
-		background-image: url('./ic_layers_black_24dp_1x.png');
-		background-repeat: no-repeat;
-		background-position: 0px;
-		background-color: transparent;
-		border: none;
-		&:focus {
-			background-color: $white;
-		}
-		&:hover {
-			background-color: $white;
+		&::after {
+			content: "☑"
 		}
 	}
 	ul {
@@ -94,18 +74,5 @@ $white: white;
 	}
 	input {
 		margin: 4px;
-	}
-	&.touch {
-		::-webkit-scrollbar {
-			width: 4px;
-		}
-		::-webkit-scrollbar-track {
-			//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
-			border-radius: 10px;
-		}
-		::-webkit-scrollbar-thumb {
-			//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
-			border-radius: 10px;
-		}
 	}
 }

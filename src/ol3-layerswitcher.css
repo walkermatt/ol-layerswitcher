@@ -1,15 +1,11 @@
 @charset "UTF-8";
 .ol-control.layer-switcher {
   position: absolute;
-  top: 3.5em;
+  top: 0.5em;
   right: 0.5em;
   max-height: calc(100% - 3.5em);
   overflow-y: auto;
   text-align: left; }
-  .ol-control.layer-switcher.shown.ol-control {
-    background-color: transparent; }
-    .ol-control.layer-switcher.shown.ol-control:hover {
-      background-color: transparent; }
   .ol-control.layer-switcher.shown .panel {
     display: block; }
   .ol-control.layer-switcher.shown button {
@@ -24,26 +20,13 @@
   .ol-control.layer-switcher .panel {
     padding: 0 1em 0 0;
     margin: 0;
-    border: 4px solid #eee;
-    border-radius: 4px;
     background-color: white;
     display: none;
     overflow-y: auto; }
     .ol-control.layer-switcher .panel ul.hide-layer-group {
       display: none; }
-  .ol-control.layer-switcher button {
-    float: right;
-    width: 24px;
-    height: 24px;
-    background-image: url("./ic_layers_black_24dp_1x.png");
-    background-repeat: no-repeat;
-    background-position: 0px;
-    background-color: transparent;
-    border: none; }
-    .ol-control.layer-switcher button:focus {
-      background-color: white; }
-    .ol-control.layer-switcher button:hover {
-      background-color: white; }
+  .ol-control.layer-switcher button::after {
+    content: "☑"; }
   .ol-control.layer-switcher ul {
     padding-left: 1em;
     list-style: none; }
@@ -67,9 +50,3 @@
       vertical-align: sub; }
   .ol-control.layer-switcher input {
     margin: 4px; }
-  .ol-control.layer-switcher.touch ::-webkit-scrollbar {
-    width: 4px; }
-  .ol-control.layer-switcher.touch ::-webkit-scrollbar-track {
-    border-radius: 10px; }
-  .ol-control.layer-switcher.touch ::-webkit-scrollbar-thumb {
-    border-radius: 10px; }
