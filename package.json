@@ -25,8 +25,8 @@
   },
   "scripts": {
     "install": "bower install & typings install",
-    "sass": "node-sass src/ -o src/",
-    "sass-watch": "node-sass -w src/ -o src/"
+    "sass": "node-sass src/css -o built/css",
+    "sass-watch": "node-sass -w src/css -o built/css"
   },
   "dependencies": {
   },

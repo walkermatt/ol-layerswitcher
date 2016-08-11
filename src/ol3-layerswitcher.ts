@@ -48,35 +48,6 @@ function uuid() {
     });
 }
 
-/**
-* @desc Apply workaround to enable scrolling of overflowing content within an
-* element. Adapted from https://gist.github.com/chrismbarr/4107472
-*/
-function enableTouchScroll(elm) {
-    if (isTouchDevice()) {
-        var scrollStartPos = 0;
-        elm.addEventListener("touchstart", function (event) {
-            scrollStartPos = this.scrollTop + event.touches[0].pageY;
-        }, false);
-        elm.addEventListener("touchmove", function (event) {
-            this.scrollTop = scrollStartPos - event.touches[0].pageY;
-        }, false);
-    }
-}
-
-/**
- * @desc Determine if the current browser supports touch events. Adapted from
- * https://gist.github.com/chrismbarr/4107472
- */
-function isTouchDevice() {
-    try {
-        document.createEvent("TouchEvent");
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
 const DEFAULT_OPTIONS = {
     tipLabel: 'Layers',
     openOnMouseOver: false,
@@ -112,9 +83,6 @@ class LayerSwitcher extends ol.control.Control {
     private afterCreate(options: typeof DEFAULT_OPTIONS) {
 
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
-        if (isTouchDevice()) {
-            this.hiddenClassName += ' touch';
-        }
         this.shownClassName = this.hiddenClassName + ' shown';
 
         let element = document.createElement('div');
@@ -127,7 +95,6 @@ class LayerSwitcher extends ol.control.Control {
         this.panel = document.createElement('div');
         this.panel.className = 'panel';
         element.appendChild(this.panel);
-        enableTouchScroll(this.panel);
 
         this.unwatch = [];
 
@@ -135,10 +102,10 @@ class LayerSwitcher extends ol.control.Control {
         this.setTarget(options.target);
 
         if (options.openOnMouseOver) {
-            button.addEventListener("mouseover", () => this.showPanel());
+            element.addEventListener("mouseover", () => this.showPanel());
         }
         if (options.closeOnMouseOut) {
-            this.panel.addEventListener("mouseover", () => this.hidePanel());
+            element.addEventListener("mouseout", () => this.hidePanel());            
         }
         if (options.openOnClick || options.closeOnClick) {
             button.addEventListener('click', e => {
@@ -249,10 +216,9 @@ class LayerSwitcher extends ol.control.Control {
         container.appendChild(li);
 
         let lyrTitle = lyr.get('title');
-        let lyrId = uuid();
 
         let label = document.createElement('label');
-        label.htmlFor = lyrId;
+        label.htmlFor = uuid();
 
         lyr.on('load:start', () => li.classList.add("loading"));
         lyr.on('load:end', () => li.classList.remove("loading"));
@@ -262,7 +228,7 @@ class LayerSwitcher extends ol.control.Control {
 
             if (!lyr.get('label-only')) {
                 let input = result = document.createElement('input');
-                input.id = lyrId;
+                input.id = label.htmlFor;
                 input.type = 'checkbox';
                 input.checked = lyr.getVisible();
 
@@ -290,7 +256,7 @@ class LayerSwitcher extends ol.control.Control {
 
             li.classList.add('layer');
             let input = result = document.createElement('input');
-            input.id = lyrId;
+            input.id = label.htmlFor;
 
             if (lyr.get('type') === 'base') {
                 input.classList.add('basemap');

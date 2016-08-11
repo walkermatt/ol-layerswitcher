@@ -1,5 +1,7 @@
-define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], function (require, exports, ol, LayerSwitcher) {
-    "use strict";
+import ol = require("openlayers");
+import LayerSwitcher = require("./ol3-layerswitcher");
+
+export function run() {
     let map = new ol.Map({
         target: 'map',
         layers: [
@@ -21,35 +23,10 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
                             new ol.layer.Tile({
                                 title: 'OSM',
                                 type: 'base',
-                                visible: false,
+                                visible: true,
                                 source: new ol.source.OSM()
                             })
                         ]
-                    }),
-                    new ol.layer.Group({
-                        title: 'Satellite Views',
-                        combine: false,
-                        visible: false,
-                        layers: [
-                            new ol.layer.Tile({
-                                title: 'Satellite',
-                                type: 'base',
-                                visible: false,
-                                source: new ol.source.MapQuest({ layer: 'sat' })
-                            }),
-                            new ol.layer.Tile({
-                                title: 'Hybrid',
-                                type: 'base',
-                                visible: false,
-                                source: new ol.source.MapQuest({ layer: 'hyb' })
-                            })
-                        ]
-                    }),
-                    new ol.layer.Tile({
-                        title: 'Roads',
-                        type: 'base',
-                        visible: true,
-                        source: new ol.source.MapQuest({ layer: 'osm' })
                     })
                 ]
             }),
@@ -77,14 +54,23 @@ define(["require", "exports", "openlayers", "../src/ol3-layerswitcher"], functio
             zoom: 6
         })
     });
+
     let layerSwitcher = new LayerSwitcher({
-        openOnMouseOver: true
+        tipLabel: 'Layers',
+        openOnMouseOver: true,
+        closeOnMouseOut: true,
+        openOnClick: false,
+        closeOnClick: true,
+        target: null
     });
-    layerSwitcher.on("show-layer", (args) => {
+
+    layerSwitcher.on("show-layer", (args: { layer: ol.layer.Base }) => {
         console.log("show layer:", args.layer.get("title"));
     });
-    layerSwitcher.on("hide-layer", (args) => {
+
+    layerSwitcher.on("hide-layer", (args: { layer: ol.layer.Base }) => {
         console.log("hide layer:", args.layer.get("title"));
     });
+
     map.addControl(layerSwitcher);
-});
+}

@@ -1,0 +1,52 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>OpenLayers 3 - LayerSwitcher</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1/ol.css"></link>
+    <link rel="stylesheet" href="./built/css/ol3-layerswitcher.css" />
+    <style>
+        #map {
+            height: 80%;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        require.config({
+
+            packages: [
+                {
+                    name: 'openlayers',
+                    location: 'https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1',
+                    main: 'ol'
+                },
+                {
+                    name: "proj4",
+                    location: "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14",
+                    main: "proj4.js"
+                }
+            ],
+
+            deps: ['built/run'],
+            callback: () => {
+                require([getParameterByName("run") || "examples/index"], example => example.run());
+            }
+        });
+    </script>
+</body>
+
+</html>
