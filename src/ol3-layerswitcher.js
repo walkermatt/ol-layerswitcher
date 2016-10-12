@@ -26,6 +26,7 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var button = document.createElement('button');
     button.setAttribute('title', tipLabel);
+    button.innerHTML = "+";
     element.appendChild(button);
 
     this.panel = document.createElement('div');
@@ -35,11 +36,17 @@ ol.control.LayerSwitcher = function(opt_options) {
 
     var this_ = this;
 
-    button.onmouseover = function(e) {
-        this_.showPanel();
+    button.onclick = function(e) {
+        if(button.innerHTML=="+"){
+          this_.showPanel();
+          button.innerHTML="-";
+        }else{
+          this_.hidePanel();
+          button.innerHTML="+";
+        }
     };
 
-    button.onclick = function(e) {
+    /*button.onclick = function(e) {
         e = e || window.event;
         this_.showPanel();
         e.preventDefault();
@@ -50,7 +57,7 @@ ol.control.LayerSwitcher = function(opt_options) {
         if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
             this_.hidePanel();
         }
-    };
+    };*/
 
     ol.control.Control.call(this, {
         element: element,
@@ -111,9 +118,9 @@ ol.control.LayerSwitcher.prototype.setMap = function(map) {
     ol.control.Control.prototype.setMap.call(this, map);
     if (map) {
         var this_ = this;
-        this.mapListeners.push(map.on('pointerdown', function() {
-            this_.hidePanel();
-        }));
+//         this.mapListeners.push(map.on('pointerdown', function() {
+//             this_.hidePanel();
+//         }));
         this.renderPanel();
     }
 };
@@ -213,7 +220,7 @@ ol.control.LayerSwitcher.prototype.renderLayer_ = function(lyr, idx) {
  * @param {Element} elm DOM element that children will be appended to.
  */
 ol.control.LayerSwitcher.prototype.renderLayers_ = function(lyr, elm) {
-    var lyrs = lyr.getLayers().getArray().slice().reverse();
+    var lyrs = lyr.getLayers().getArray().slice();//.reverse();
     for (var i = 0, l; i < lyrs.length; i++) {
         l = lyrs[i];
         if (l.get('title')) {
