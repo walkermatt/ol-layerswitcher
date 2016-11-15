@@ -5,6 +5,24 @@
             new ol.layer.Group({
                 'title': 'Base maps',
                 layers: [
+                    new ol.layer.Group({
+                        title: 'Water color with labels',
+                        type: 'base',
+                        combine: true,
+                        visible: false,
+                        layers: [
+                            new ol.layer.Tile({
+                                source: new ol.source.Stamen({
+                                    layer: 'watercolor'
+                                })
+                            }),
+                            new ol.layer.Tile({
+                                source: new ol.source.Stamen({
+                                    layer: 'terrain-labels'
+                                })
+                            })
+                        ]
+                    }),
                     new ol.layer.Tile({
                         title: 'Water color',
                         type: 'base',
@@ -18,26 +36,6 @@
                         type: 'base',
                         visible: true,
                         source: new ol.source.OSM()
-                    }),
-                    new ol.layer.Group({
-                        title: 'Satellite and labels',
-                        type: 'base',
-                        combine: true,
-                        visible: false,
-                        layers: [
-                            new ol.layer.Tile({
-                                source: new ol.source.BingMaps({
-                                    // Get your own key at https://www.bingmapsportal.com/
-                                    key: 'Ahd_32h3fT3C7xFHrqhpKzoixGJGHvOlcvXWy6k2RRYARRsrfu7KDctzDT2ei9xB',
-                                    imagerySet: 'Aerial'
-                                })
-                            }),
-                            new ol.layer.Tile({
-                                source: new ol.source.Stamen({
-                                    layer: 'terrain-labels'
-                                })
-                            })
-                        ]
                     })
                 ]
             }),
