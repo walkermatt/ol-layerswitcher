@@ -1,5 +1,12 @@
-var ol = require("openlayers");
-var factory = function(ol) {
+(function (root, factory) {
+  if(typeof define === "function" && define.amd) {
+    define(["openlayers"], factory);
+  } else if(typeof module === "object" && module.exports) {
+    module.exports = factory(require("openlayers"));
+  } else {
+    root.LayerSwitcher = factory(root.ol);
+  }
+}(this, function(ol) {
     /**
      * OpenLayers 3 Layer Switcher Control.
      * See [the examples](./examples) for usage.
@@ -285,5 +292,4 @@ var factory = function(ol) {
     };
     var LayerSwitcher = ol.control.LayerSwitcher;
     return LayerSwitcher;
-}
-module.exports = factory(ol);
+}));
