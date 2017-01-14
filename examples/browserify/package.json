@@ -1,0 +1,18 @@
+{
+  "name": "ol3-layerswitcher-browserify",
+  "version": "1.1.2",
+  "description": "Example of using ol3-layerswitcher with Browserify",
+  "main": "index.js",
+  "scripts": {
+    "start": "watchify index.js --outfile bundle.js",
+    "build": "browserify index.js | uglifyjs --compress --output bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^13.3.0",
+    "openlayers": "^3.20.1",
+    "uglify-js": "^2.7.5",
+    "watchify": "^3.8.0"
+  }
+}
