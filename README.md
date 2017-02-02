@@ -6,5 +6,7 @@ All layers should have a `title` property and base layers should have a `type` p
 
 ## Examples
 
-* [examples](https://cdn.rawgit.com/ca0v/ol3-layerswitcher/v2.0.4/rawgit.html)
+* [master](https://rawgit.com/ca0v/ol3-layerswitcher/master/rawgit.html)
+* [2.0.5](https://rawgit.com/ca0v/ol3-layerswitcher/v2.0.5/rawgit.html)
+* [2.0.4](https://cdn.rawgit.com/ca0v/ol3-layerswitcher/v2.0.4/rawgit.html)
 

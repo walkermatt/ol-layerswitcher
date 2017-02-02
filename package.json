@@ -1,6 +1,6 @@
 {
   "name": "ol3-layerswitcher",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Layer switcher control for OpenLayers 3",
   "repository": {
     "type": "git",

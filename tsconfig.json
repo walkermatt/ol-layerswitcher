@@ -2,9 +2,10 @@
     "compilerOptions": {
         "module": "amd",
         "target": "es6",
-        "outFile": "built/run.js",
-        "noImplicitAny": false,
-        "sourceMap": false
+        "outFile": "built/index.js",
+        "noImplicitAny": false,    
+        "sourceMap": true,
+        "declarations": true
     },
     "exclude": [
         "bower_components"

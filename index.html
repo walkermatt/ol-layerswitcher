@@ -25,38 +25,40 @@
     <script src="./bower_components/requirejs/require.js"></script>
 
     <script>
-  function getParameterByName(name, url = window.location.href) {
-      name = name.replace(/[\[\]]/g, "\\$&");
-      var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-          results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
-  }
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
 
-  require.config({
-      waitSeconds: 30,
-      packages: [
-          {
-              name: "openlayers",
-              location: "./bower_components/openlayers",
-              main: "ol-debug.js"
-          },
-          {
-              name: "proj4",
-              location: "./bower_components/proj4",
-              main: "dist/proj4-src.js"
-          }
-      ],
-      
-      deps: ['built/run'],
+        let debug = getParameterByName("debug") === "1";
 
-      callback: () => {
-          require([getParameterByName("run") || "examples/index"], example => example.run());
-      }
-      
-  });  
-  </script>
+        require.config({
+            waitSeconds: 30,
+            packages: [
+                {
+                    name: "openlayers",
+                    location: "./bower_components/openlayers",
+                    main: debug ? "ol-debug.js" : "ol"
+                },
+                {
+                    name: "proj4",
+                    location: "./bower_components/proj4",
+                    main: debug ? "dist/proj4-src.js" : "dist/proj4.js"
+                }
+            ],
+
+            deps: ['built/index'],
+
+            callback: () => {
+                require([getParameterByName("run") || "examples/index"], example => example.run());
+            }
+
+        });  
+    </script>
 </body>
 
 </html>

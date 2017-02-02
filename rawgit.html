@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>OpenLayers 3 - LayerSwitcher</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1/ol.css"></link>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.20.1/ol.css"></link>
     <link rel="stylesheet" href="./built/css/ol3-layerswitcher.css" />
     <style>
         html,
@@ -18,7 +18,7 @@
             padding: 0;
         }
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js"></script>
 </head>
 
 <body>
@@ -33,22 +33,24 @@
             return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
 
+        let debug = getParameterByName("debug") === "1";
+
         require.config({
 
             packages: [
                 {
                     name: 'openlayers',
-                    location: 'https://cdnjs.cloudflare.com/ajax/libs/ol3/3.15.1',
-                    main: 'ol'
+                    location: 'https://cdnjs.cloudflare.com/ajax/libs/ol3/3.20.1',
+                    main: debug ? 'ol-debug' : 'ol'
                 },
                 {
                     name: "proj4",
                     location: "https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.14",
-                    main: "proj4.js"
+                    main: debug ? "proj4-src.js" : 'proj4.js'
                 }
             ],
 
-            deps: ['built/run'],
+            deps: ['built/index'],
             callback: () => {
                 require([getParameterByName("run") || "examples/index"], example => example.run());
             }

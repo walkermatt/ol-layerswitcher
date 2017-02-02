@@ -1,9 +1,8 @@
 {
   "name": "ol3-layerswitcher",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "homepage": "https://github.com/ca0v/ol3-layerswitcher",
   "authors": [
-    "Matt Walker (http://longwayaround.org.uk)",
     "Corey Alix (http://github.com/ca0v)"
   ],
   "description": "Layer switcher control for OpenLayers 3",
@@ -25,8 +24,8 @@
     "test"
   ],
   "devDependencies": {
-    "requirejs": "^2.2.0",
-    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.15.1/v3.15.1-dist.zip",
-    "proj4": "^2.3.14"
+    "requirejs": "^2.3.2",
+    "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.20.1/v3.20.1-dist.zip",
+    "proj4": "^2.3.17"
   }
 }
