@@ -1,5 +1,5 @@
 import ol = require("openlayers");
-import LayerSwitcher = require("../ol3-layerswitcher");
+import { LayerSwitcher } from "../ol3-layerswitcher";
 
 export function run() {
     let map = new ol.Map({

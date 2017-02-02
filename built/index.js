@@ -1,11 +1,20 @@
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
     /**
      * assigns undefined values
      */
-    function defaults(a, ...b) {
-        b.forEach(b => {
-            Object.keys(b).filter(k => a[k] === undefined).forEach(k => a[k] = b[k]);
+    function defaults(a) {
+        var b = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            b[_i - 1] = arguments[_i];
+        }
+        b.forEach(function (b) {
+            Object.keys(b).filter(function (k) { return a[k] === undefined; }).forEach(function (k) { return a[k] = b[k]; });
         });
         return a;
     }
@@ -13,8 +22,8 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
      * NodeList -> array
      */
     function asArray(list) {
-        let result = new Array(list.length);
-        for (let i = 0; i < list.length; i++) {
+        var result = new Array(list.length);
+        for (var i = 0; i < list.length; i++) {
             result.push(list[i]);
         }
         return result;
@@ -23,7 +32,7 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
      * Creates an array containing all sub-layers
      */
     function allLayers(lyr) {
-        let result = [];
+        var result = [];
         lyr.getLayers().forEach(function (lyr, idx, a) {
             result.push(lyr);
             if ("getLayers" in lyr) {
@@ -44,32 +53,35 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
             return v.toString(16);
         });
     }
-    const DEFAULT_OPTIONS = {
+    var DEFAULT_OPTIONS = {
         tipLabel: 'Layers',
         openOnMouseOver: false,
         closeOnMouseOut: false,
         openOnClick: true,
         closeOnClick: true,
+        className: 'layer-switcher',
         target: null
     };
-    class LayerSwitcher extends ol.control.Control {
+    var LayerSwitcher = (function (_super) {
+        __extends(LayerSwitcher, _super);
         /**
          * OpenLayers 3 Layer Switcher Control.
          * See [the examples](./examples) for usage.
          * @param opt_options Control options, extends olx.control.ControlOptions adding:
          *                              **`tipLabel`** `String` - the button tooltip.
          */
-        constructor(options) {
+        function LayerSwitcher(options) {
             options = defaults(options || {}, DEFAULT_OPTIONS);
-            super(options);
+            _super.call(this, options);
             this.afterCreate(options);
         }
-        afterCreate(options) {
-            this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
+        LayerSwitcher.prototype.afterCreate = function (options) {
+            var _this = this;
+            this.hiddenClassName = "ol-unselectable ol-control " + options.className;
             this.shownClassName = this.hiddenClassName + ' shown';
-            let element = document.createElement('div');
+            var element = document.createElement('div');
             element.className = this.hiddenClassName;
-            let button = this.button = document.createElement('button');
+            var button = this.button = document.createElement('button');
             button.setAttribute('title', options.tipLabel);
             element.appendChild(button);
             this.panel = document.createElement('div');
@@ -79,46 +91,47 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
             this.element = element;
             this.setTarget(options.target);
             if (options.openOnMouseOver) {
-                element.addEventListener("mouseover", () => this.showPanel());
+                element.addEventListener("mouseover", function () { return _this.showPanel(); });
             }
             if (options.closeOnMouseOut) {
-                element.addEventListener("mouseout", () => this.hidePanel());
+                element.addEventListener("mouseout", function () { return _this.hidePanel(); });
             }
             if (options.openOnClick || options.closeOnClick) {
-                button.addEventListener('click', e => {
-                    this.isVisible() ? options.closeOnClick && this.hidePanel() : options.openOnClick && this.showPanel();
+                button.addEventListener('click', function (e) {
+                    _this.isVisible() ? options.closeOnClick && _this.hidePanel() : options.openOnClick && _this.showPanel();
                     e.preventDefault();
                 });
             }
-        }
-        dispatch(name, args) {
-            let event = new Event(name);
-            args && Object.keys(args).forEach(k => event[k] = args[k]);
+        };
+        LayerSwitcher.prototype.dispatch = function (name, args) {
+            var event = new Event(name);
+            args && Object.keys(args).forEach(function (k) { return event[k] = args[k]; });
             this["dispatchEvent"](event);
-        }
-        isVisible() {
+        };
+        LayerSwitcher.prototype.isVisible = function () {
             return this.element.className != this.hiddenClassName;
-        }
+        };
         /**
          * Show the layer panel.
          */
-        showPanel() {
+        LayerSwitcher.prototype.showPanel = function () {
             if (this.element.className != this.shownClassName) {
                 this.element.className = this.shownClassName;
                 this.renderPanel();
             }
-        }
+        };
         /**
          * Hide the layer panel.
          */
-        hidePanel() {
+        LayerSwitcher.prototype.hidePanel = function () {
             this.element.className = this.hiddenClassName;
-            this.unwatch.forEach(f => f());
-        }
+            this.unwatch.forEach(function (f) { return f(); });
+        };
         /**
          * Re-draw the layer panel to represent the current state of the layers.
          */
-        renderPanel() {
+        LayerSwitcher.prototype.renderPanel = function () {
+            var _this = this;
             this.ensureTopVisibleBaseLayerShown();
             while (this.panel.firstChild) {
                 this.panel.removeChild(this.panel.firstChild);
@@ -126,112 +139,114 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
             var ul = document.createElement('ul');
             this.panel.appendChild(ul);
             this.state = [];
-            let map = this.getMap();
-            let view = map.getView();
+            var map = this.getMap();
+            var view = map.getView();
             this.renderLayers(map, ul);
             {
-                let doit = () => {
-                    let res = view.getResolution();
-                    this.state.filter(s => !!s.input).forEach(s => {
-                        let min = s.layer.getMinResolution();
-                        let max = s.layer.getMaxResolution();
+                var doit = function () {
+                    var res = view.getResolution();
+                    _this.state.filter(function (s) { return !!s.input; }).forEach(function (s) {
+                        var min = s.layer.getMinResolution();
+                        var max = s.layer.getMaxResolution();
                         console.log(res, min, max, s.layer.get("title"));
-                        s.input.disabled = !(min <= res && (max === 0 || res <= max));
+                        s.input.disabled = !(min <= res && (max === 0 || res < max));
                     });
                 };
-                let h = view.on("change:resolution", doit);
+                var h_1 = view.on("change:resolution", doit);
                 doit();
-                this.unwatch.push(() => view.unByKey(h));
+                this.unwatch.push(function () { return view.unByKey(h_1); });
             }
-        }
+        };
         ;
         /**
          * Ensure only the top-most base layer is visible if more than one is visible.
          */
-        ensureTopVisibleBaseLayerShown() {
-            let visibleBaseLyrs = allLayers(this.getMap()).filter(l => l.get('type') === 'base' && l.getVisible());
+        LayerSwitcher.prototype.ensureTopVisibleBaseLayerShown = function () {
+            var visibleBaseLyrs = allLayers(this.getMap()).filter(function (l) { return l.get('type') === 'base' && l.getVisible(); });
             if (visibleBaseLyrs.length)
                 this.setVisible(visibleBaseLyrs.shift(), true);
-        }
+        };
         ;
         /**
          * Toggle the visible state of a layer.
          * Takes care of hiding other layers in the same exclusive group if the layer
          * is toggle to visible.
          */
-        setVisible(lyr, visible) {
+        LayerSwitcher.prototype.setVisible = function (lyr, visible) {
+            var _this = this;
             if (lyr.getVisible() !== visible) {
                 if (visible && lyr.get('type') === 'base') {
                     // Hide all other base layers regardless of grouping
-                    allLayers(this.getMap()).filter(l => l !== lyr && l.get('type') === 'base' && l.getVisible()).forEach(l => this.setVisible(l, false));
+                    allLayers(this.getMap()).filter(function (l) { return l !== lyr && l.get('type') === 'base' && l.getVisible(); }).forEach(function (l) { return _this.setVisible(l, false); });
                 }
                 lyr.setVisible(visible);
                 this.dispatch(visible ? "show-layer" : "hide-layer", { layer: lyr });
             }
-        }
+        };
         ;
         /**
          * Render all layers that are children of a group.
          */
-        renderLayer(lyr, container) {
-            let result;
-            let li = document.createElement('li');
+        LayerSwitcher.prototype.renderLayer = function (lyr, container) {
+            var _this = this;
+            var result;
+            var li = document.createElement('li');
             container.appendChild(li);
-            let lyrTitle = lyr.get('title');
-            let label = document.createElement('label');
+            var lyrTitle = lyr.get('title');
+            var label = document.createElement('label');
             label.htmlFor = uuid();
-            lyr.on('load:start', () => li.classList.add("loading"));
-            lyr.on('load:end', () => li.classList.remove("loading"));
+            lyr.on('load:start', function () { return li.classList.add("loading"); });
+            lyr.on('load:end', function () { return li.classList.remove("loading"); });
             li.classList.toggle("loading", true === lyr.get("loading"));
             if ('getLayers' in lyr && !lyr.get('combine')) {
                 if (!lyr.get('label-only')) {
-                    let input = result = document.createElement('input');
-                    input.id = label.htmlFor;
-                    input.type = 'checkbox';
-                    input.checked = lyr.getVisible();
-                    input.addEventListener('change', () => {
-                        ul.classList.toggle('hide-layer-group', !input.checked);
-                        this.setVisible(lyr, input.checked);
-                        let childLayers = lyr.getLayers();
-                        this.state.filter(s => s.container === ul && s.input && s.input.checked).forEach(state => {
-                            this.setVisible(state.layer, input.checked);
+                    var input_1 = result = document.createElement('input');
+                    input_1.id = label.htmlFor;
+                    input_1.type = 'checkbox';
+                    input_1.checked = lyr.getVisible();
+                    input_1.addEventListener('change', function () {
+                        ul_1.classList.toggle('hide-layer-group', !input_1.checked);
+                        _this.setVisible(lyr, input_1.checked);
+                        var childLayers = lyr.getLayers();
+                        _this.state.filter(function (s) { return s.container === ul_1 && s.input && s.input.checked; }).forEach(function (state) {
+                            _this.setVisible(state.layer, input_1.checked);
                         });
                     });
-                    li.appendChild(input);
+                    li.appendChild(input_1);
                 }
                 li.classList.add('group');
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
-                let ul = document.createElement('ul');
-                result && ul.classList.toggle('hide-layer-group', !result.checked);
-                li.appendChild(ul);
-                this.renderLayers(lyr, ul);
+                var ul_1 = document.createElement('ul');
+                result && ul_1.classList.toggle('hide-layer-group', !result.checked);
+                li.appendChild(ul_1);
+                this.renderLayers(lyr, ul_1);
             }
             else {
                 li.classList.add('layer');
-                let input = result = document.createElement('input');
-                input.id = label.htmlFor;
+                var input_2 = result = document.createElement('input');
+                input_2.id = label.htmlFor;
                 if (lyr.get('type') === 'base') {
-                    input.classList.add('basemap');
-                    input.type = 'radio';
-                    input.addEventListener("change", () => {
-                        if (input.checked) {
-                            asArray(this.panel.getElementsByClassName("basemap")).filter(i => i.tagName === "INPUT").forEach(i => {
-                                if (i.checked && i !== input)
+                    input_2.classList.add('basemap');
+                    input_2.type = 'radio';
+                    input_2.addEventListener("change", function () {
+                        if (input_2.checked) {
+                            asArray(_this.panel.getElementsByClassName("basemap")).filter(function (i) { return i.tagName === "INPUT"; }).forEach(function (i) {
+                                if (i.checked && i !== input_2)
                                     i.checked = false;
                             });
                         }
-                        this.setVisible(lyr, input.checked);
+                        _this.setVisible(lyr, input_2.checked);
                     });
                 }
                 else {
-                    input.type = 'checkbox';
-                    input.addEventListener("change", () => {
-                        this.setVisible(lyr, input.checked);
+                    input_2.type = 'checkbox';
+                    input_2.addEventListener("change", function () {
+                        _this.setVisible(lyr, input_2.checked);
                     });
                 }
-                input.checked = lyr.get('visible');
-                li.appendChild(input);
+                input_2.checked = lyr.get('visible');
+                li.appendChild(input_2);
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
             }
@@ -240,96 +255,98 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
                 input: result,
                 layer: lyr
             });
-        }
+        };
         /**
          * Render all layers that are children of a group.
          */
-        renderLayers(map, elm) {
+        LayerSwitcher.prototype.renderLayers = function (map, elm) {
+            var _this = this;
             var lyrs = map.getLayers().getArray().slice().reverse();
-            return lyrs.filter(l => !!l.get('title')).forEach(l => this.renderLayer(l, elm));
-        }
-    }
-    return LayerSwitcher;
+            return lyrs.filter(function (l) { return !!l.get('title'); }).forEach(function (l) { return _this.renderLayer(l, elm); });
+        };
+        return LayerSwitcher;
+    }(ol.control.Control));
+    exports.LayerSwitcher = LayerSwitcher;
 });
-define("extras/ajax", ["require", "exports"], function (require, exports) {
+define("extras/ajax", ["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
-    class Ajax {
-        constructor(url) {
+    var Ajax = (function () {
+        function Ajax(url) {
             this.url = url;
             this.options = {
                 use_json: true,
                 use_cors: true
             };
         }
-        jsonp(args, url = this.url) {
-            return new Promise((resolve, reject) => {
-                args["callback"] = "define";
-                let uri = url + "?" + Object.keys(args).map(k => `${k}=${args[k]}`).join('&');
-                require([uri], (data) => resolve(data));
-            });
-        }
+        Ajax.prototype.jsonp = function (args, url) {
+            if (url === void 0) { url = this.url; }
+            var d = $.Deferred();
+            args["callback"] = "define";
+            var uri = url + "?" + Object.keys(args).map(function (k) { return (k + "=" + args[k]); }).join('&');
+            require([uri], function (data) { return d.resolve(data); });
+            return d;
+        };
         // http://www.html5rocks.com/en/tutorials/cors/    
-        ajax(method, args, url = this.url) {
-            let isData = method === "POST" || method === "PUT";
-            let isJson = this.options.use_json;
-            let isCors = this.options.use_cors;
-            let promise = new Promise((resolve, reject) => {
-                let client = new XMLHttpRequest();
-                if (isCors)
-                    client.withCredentials = true;
-                let uri = url;
-                let data = null;
-                if (args) {
-                    if (isData) {
-                        data = JSON.stringify(args);
-                    }
-                    else {
-                        uri += '?';
-                        let argcount = 0;
-                        for (let key in args) {
-                            if (args.hasOwnProperty(key)) {
-                                if (argcount++) {
-                                    uri += '&';
-                                }
-                                uri += encodeURIComponent(key) + '=' + encodeURIComponent(args[key]);
+        Ajax.prototype.ajax = function (method, args, url) {
+            if (url === void 0) { url = this.url; }
+            var isData = method === "POST" || method === "PUT";
+            var isJson = this.options.use_json;
+            var isCors = this.options.use_cors;
+            var d = $.Deferred();
+            var client = new XMLHttpRequest();
+            if (isCors)
+                client.withCredentials = true;
+            var uri = url;
+            var data = null;
+            if (args) {
+                if (isData) {
+                    data = JSON.stringify(args);
+                }
+                else {
+                    uri += '?';
+                    var argcount = 0;
+                    for (var key in args) {
+                        if (args.hasOwnProperty(key)) {
+                            if (argcount++) {
+                                uri += '&';
                             }
+                            uri += encodeURIComponent(key) + '=' + encodeURIComponent(args[key]);
                         }
                     }
                 }
-                client.open(method, uri, true);
-                if (isData && isJson)
-                    client.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-                client.send(data);
-                client.onload = () => {
-                    console.log("content-type", client.getResponseHeader("Content-Type"));
-                    if (client.status >= 200 && client.status < 300) {
-                        isJson = isJson || 0 === client.getResponseHeader("Content-Type").indexOf("application/json");
-                        resolve(isJson ? JSON.parse(client.response) : client.response);
-                    }
-                    else {
-                        reject(client.statusText);
-                    }
-                };
-                client.onerror = function () {
-                    reject(this.statusText);
-                };
-            });
+            }
+            client.open(method, uri, true);
+            if (isData && isJson)
+                client.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            client.send(data);
+            client.onload = function () {
+                console.log("content-type", client.getResponseHeader("Content-Type"));
+                if (client.status >= 200 && client.status < 300) {
+                    isJson = isJson || 0 === client.getResponseHeader("Content-Type").indexOf("application/json");
+                    d.resolve(isJson ? JSON.parse(client.response) : client.response);
+                }
+                else {
+                    d.reject(client.statusText);
+                }
+            };
+            client.onerror = function () { return d.reject(client.statusText); };
             // Return the promise
-            return promise;
-        }
-        get(args) {
+            return d;
+        };
+        Ajax.prototype.get = function (args) {
             return this.ajax('GET', args);
-        }
-        post(args) {
+        };
+        Ajax.prototype.post = function (args) {
             return this.ajax('POST', args);
-        }
-        put(args) {
+        };
+        Ajax.prototype.put = function (args) {
             return this.ajax('PUT', args);
-        }
-        delete(args) {
+        };
+        Ajax.prototype.delete = function (args) {
             return this.ajax('DELETE', args);
-        }
-    }
+        };
+        return Ajax;
+    }());
     return Ajax;
 });
 define("extras/ags-catalog", ["require", "exports", "extras/ajax"], function (require, exports, Ajax) {
@@ -337,65 +354,74 @@ define("extras/ags-catalog", ["require", "exports", "extras/ajax"], function (re
     /**
      * assigns undefined values
      */
-    function defaults(a, ...b) {
-        b.filter(b => !!b).forEach(b => {
-            Object.keys(b).filter(k => a[k] === undefined).forEach(k => a[k] = b[k]);
+    function defaults(a) {
+        var b = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            b[_i - 1] = arguments[_i];
+        }
+        b.filter(function (b) { return !!b; }).forEach(function (b) {
+            Object.keys(b).filter(function (k) { return a[k] === undefined; }).forEach(function (k) { return a[k] = b[k]; });
         });
         return a;
     }
-    class Catalog {
-        constructor(url) {
+    var Catalog = (function () {
+        function Catalog(url) {
             this.ajax = new Ajax(url);
         }
-        about(data) {
-            let req = defaults({
+        Catalog.prototype.about = function (data) {
+            var req = defaults({
                 f: "pjson"
             }, data);
             return this.ajax.jsonp(req);
-        }
-        aboutFolder(folder) {
-            let ajax = new Ajax(`${this.ajax.url}/${folder}`);
-            let req = {
+        };
+        Catalog.prototype.aboutFolder = function (folder) {
+            var ajax = new Ajax(this.ajax.url + "/" + folder);
+            var req = {
                 f: "pjson"
             };
             return ajax.jsonp(req);
-        }
-        aboutFeatureServer(name) {
-            let ajax = new Ajax(`${this.ajax.url}/${name}/FeatureServer`);
-            let req = {
+        };
+        Catalog.prototype.aboutFeatureServer = function (name) {
+            var ajax = new Ajax(this.ajax.url + "/" + name + "/FeatureServer");
+            var req = {
                 f: "pjson"
             };
             return defaults(ajax.jsonp(req), { url: ajax.url });
-        }
-        aboutMapServer(name) {
-            let ajax = new Ajax(`${this.ajax.url}/${name}/MapServer`);
-            let req = {
+        };
+        Catalog.prototype.aboutMapServer = function (name) {
+            var ajax = new Ajax(this.ajax.url + "/" + name + "/MapServer");
+            var req = {
                 f: "pjson"
             };
             return defaults(ajax.jsonp(req), { url: ajax.url });
-        }
-        aboutLayer(layer) {
-            let ajax = new Ajax(`${this.ajax.url}/${layer}`);
-            let req = {
+        };
+        Catalog.prototype.aboutLayer = function (layer) {
+            var ajax = new Ajax(this.ajax.url + "/" + layer);
+            var req = {
                 f: "pjson"
             };
             return ajax.jsonp(req);
-        }
-    }
+        };
+        return Catalog;
+    }());
     exports.Catalog = Catalog;
 });
 define("extras/ags-webmap", ["require", "exports", "extras/ajax"], function (require, exports, Ajax) {
     "use strict";
-    const DEFAULT_URLS = [
+    var DEFAULT_URLS = [
         "https://www.arcgis.com/sharing/rest/content/items/204d94c9b1374de9a21574c9efa31164/data?f=json",
         "https://www.arcgis.com/sharing/rest/content/items/a193c5459e6e4fd99ebf09d893d65cf0/data?f=json"
     ];
-    class WebMap {
-        get(url = DEFAULT_URLS[1]) {
-            let service = new Ajax(url);
-            return service.get();
+    var WebMap = (function () {
+        function WebMap() {
         }
-    }
+        WebMap.prototype.get = function (url) {
+            if (url === void 0) { url = DEFAULT_URLS[1]; }
+            var service = new Ajax(url);
+            return service.get();
+        };
+        return WebMap;
+    }());
     exports.WebMap = WebMap;
 });
 define("extras/ags-layer-factory", ["require", "exports", "openlayers"], function (require, exports, ol) {
@@ -404,35 +430,38 @@ define("extras/ags-layer-factory", ["require", "exports", "openlayers"], functio
      * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
      * resolution is how many
      */
-    function asRes(scale, dpi = 90.71428571428572) {
-        const inchesPerFoot = 12.0;
-        const inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
-        const dotsPerUnit = dpi * inchesPerMeter;
+    function asRes(scale, dpi) {
+        if (dpi === void 0) { dpi = 90.71428571428572; }
+        var inchesPerFoot = 12.0;
+        var inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
+        var dotsPerUnit = dpi * inchesPerMeter;
         return scale / dotsPerUnit;
     }
-    class AgsLayerFactory {
-        asExtent(appInfo) {
-            // not defined?
+    var AgsLayerFactory = (function () {
+        function AgsLayerFactory() {
         }
+        AgsLayerFactory.prototype.asExtent = function (appInfo) {
+            // not defined?
+        };
         // make the layer progress aware                                
-        asEvented(layer) {
-            let loadCount = 0;
-            let source = layer.getSource();
+        AgsLayerFactory.prototype.asEvented = function (layer) {
+            var loadCount = 0;
+            var source = layer.getSource();
             if (source.on && layer.dispatchEvent) {
-                source.on("tileloadstart", () => {
+                source.on("tileloadstart", function () {
                     if (0 === loadCount++)
                         layer.dispatchEvent("load:start");
                     layer.set("loading", true);
                 });
-                source.on("tileloadend", () => {
+                source.on("tileloadend", function () {
                     if (0 === --loadCount)
                         layer.dispatchEvent("load:end");
                     layer.set("loading", false);
                 });
             }
             return layer;
-        }
-        asAgsLayer(layerInfo, appInfo) {
+        };
+        AgsLayerFactory.prototype.asAgsLayer = function (layerInfo, appInfo) {
             switch (layerInfo.layerType) {
                 case "ArcGISFeatureLayer":
                     if (layerInfo.featureCollection)
@@ -444,79 +473,80 @@ define("extras/ags-layer-factory", ["require", "exports", "openlayers"], functio
                     debugger;
                     break;
             }
-        }
-        asArcGISTiledMapServiceLayer(layerInfo, appInfo) {
+        };
+        AgsLayerFactory.prototype.asArcGISTiledMapServiceLayer = function (layerInfo, appInfo) {
             // doesn't seem to care about the projection
-            let srs = layerInfo.spatialReference || appInfo.spatialReference;
-            let srsCode = srs && srs.latestWkid || "3857";
-            let source = new ol.source.XYZ({
+            var srs = layerInfo.spatialReference || appInfo.spatialReference;
+            var srsCode = srs && srs.latestWkid || "3857";
+            var source = new ol.source.XYZ({
                 url: layerInfo.url + '/tile/{z}/{y}/{x}',
-                projection: `EPSG:${srsCode}`
+                projection: "EPSG:" + srsCode
             });
-            let tileOptions = {
+            var tileOptions = {
                 id: layerInfo.id,
                 title: layerInfo.title || layerInfo.id,
                 type: 'base',
                 visible: false,
                 source: source
             };
-            let layer = new ol.layer.Tile(tileOptions);
+            var layer = new ol.layer.Tile(tileOptions);
             return layer;
-        }
+        };
         /**
          * Renders the features of the featureset (can be points, lines or polygons) into a feature layer
          */
-        asFeatureCollection(layerInfo, appInfo) {
-            let source = new ol.source.Vector();
-            let layer = new ol.layer.Vector({
+        AgsLayerFactory.prototype.asFeatureCollection = function (layerInfo, appInfo) {
+            var _this = this;
+            var source = new ol.source.Vector();
+            var layer = new ol.layer.Vector({
                 title: layerInfo.id,
                 source: source
             });
             // obviously we don't want everything to be red, there's all this still to consider....
             // layerInfo.featureCollection.layers[0].layerDefinition.drawingInfo.renderer.uniqueValueInfos[0].symbol.color;
-            let style = new ol.style.Style({
+            var style = new ol.style.Style({
                 fill: new ol.style.Fill({
                     color: "red"
                 })
             });
-            layer.setStyle((feature, resolution) => {
+            layer.setStyle(function (feature, resolution) {
                 debugger;
                 return style;
             });
             layer.setVisible(true);
-            layerInfo.featureCollection.layers.forEach(l => {
+            layerInfo.featureCollection.layers.forEach(function (l) {
                 switch (l.featureSet.geometryType) {
                     case "esriGeometryPolygon":
-                        let features = this.asEsriGeometryPolygon(l.featureSet);
+                        var features = _this.asEsriGeometryPolygon(l.featureSet);
                         debugger;
-                        features.forEach(f => source.addFeature(f));
+                        features.forEach(function (f) { return source.addFeature(f); });
                         break;
                 }
             });
             return layer;
-        }
+        };
         /**
          * Creates a polygon feature from esri data
          */
-        asEsriGeometryPolygon(featureSet) {
+        AgsLayerFactory.prototype.asEsriGeometryPolygon = function (featureSet) {
             console.assert(featureSet.geometryType === "esriGeometryPolygon");
-            return featureSet.features.map(f => new ol.Feature({
+            return featureSet.features.map(function (f) { return new ol.Feature({
                 attributes: f.attributes,
                 geometry: new ol.geom.Polygon(f.geometry.rings)
-            }));
-        }
-        asArcGISFeatureLayer(layerInfo, appInfo) {
+            }); });
+        };
+        AgsLayerFactory.prototype.asArcGISFeatureLayer = function (layerInfo, appInfo) {
             // will want to support feature services at some point but just a demo so re-route to MapServer
             layerInfo.url = layerInfo.url.replace("FeatureServer", "MapServer");
             layerInfo.id = layerInfo.url.substring(1 + layerInfo.url.lastIndexOf("/"));
             layerInfo.url = layerInfo.url.substring(0, layerInfo.url.lastIndexOf("/"));
-            let source = new ol.source.TileArcGISRest({
+            var source = new ol.source.TileArcGISRest({
                 url: layerInfo.url,
                 params: {
-                    layers: `show:${layerInfo.id}`
+                    layers: "show:" + layerInfo.id
                 }
             });
-            let tileOptions = {
+            var tileOptions = {
                 id: layerInfo.id,
                 title: layerInfo.title,
                 visible: false,
@@ -528,10 +558,11 @@ define("extras/ags-layer-factory", ["require", "exports", "openlayers"], functio
                 if (appInfo.maxScale)
                     tileOptions.minResolution = asRes(appInfo.maxScale);
             }
-            let layer = new ol.layer.Tile(tileOptions);
+            var layer = new ol.layer.Tile(tileOptions);
             return layer;
-        }
-    }
+        };
+        return AgsLayerFactory;
+    }());
     return AgsLayerFactory;
 });
 define("examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswitcher", "extras/ags-webmap", "extras/ags-layer-factory"], function (require, exports, ol, LayerSwitcher, WebMap, AgsLayerFactory) {
@@ -541,14 +572,15 @@ define("examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswi
          * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
          * resolution is how many
          */
-        function asRes(scale, dpi = 90.71428571428572) {
-            const inchesPerFoot = 12.0;
-            const inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
-            const dotsPerUnit = dpi * inchesPerMeter;
+        function asRes(scale, dpi) {
+            if (dpi === void 0) { dpi = 90.71428571428572; }
+            var inchesPerFoot = 12.0;
+            var inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
+            var dotsPerUnit = dpi * inchesPerMeter;
             return scale / dotsPerUnit;
         }
-        let agsLayerFactory = new AgsLayerFactory();
-        let map = new ol.Map({
+        var agsLayerFactory = new AgsLayerFactory();
+        var map = new ol.Map({
             target: 'map',
             layers: [],
             view: new ol.View({
@@ -556,56 +588,56 @@ define("examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswi
                 zoom: 6
             })
         });
-        let layerSwitcher = new LayerSwitcher({
+        var layerSwitcher = new LayerSwitcher({
             openOnMouseOver: true
         });
-        layerSwitcher.on("show-layer", (args) => {
+        layerSwitcher.on("show-layer", function (args) {
             console.log("show layer:", args.layer.get("title"));
             if (args.layer.get("extent")) {
-                let view = map.getView();
-                let extent = args.layer.get("extent");
-                let currentExtent = view.calculateExtent(map.getSize());
+                var view = map.getView();
+                var extent = args.layer.get("extent");
+                var currentExtent = view.calculateExtent(map.getSize());
                 if (!ol.extent.intersects(currentExtent, extent)) {
                     view.fit(extent, map.getSize());
                 }
             }
         });
-        layerSwitcher.on("hide-layer", (args) => {
+        layerSwitcher.on("hide-layer", function (args) {
             console.log("hide layer:", args.layer.get("title"));
         });
         map.addControl(layerSwitcher);
         function webmap(options) {
-            let webmap = new WebMap.WebMap();
-            let webmapGroup = new ol.layer.Group({
+            var webmap = new WebMap.WebMap();
+            var webmapGroup = new ol.layer.Group({
                 title: "WebMap",
                 visible: false,
                 layers: []
             });
             map.addLayer(webmapGroup);
-            options.url = options.url || `https://www.arcgis.com/sharing/rest/content/items/${options.appid}/data?f=json`;
-            webmap.get(options.url).then(result => {
+            options.url = options.url || "https://www.arcgis.com/sharing/rest/content/items/" + options.appid + "/data?f=json";
+            webmap.get(options.url).then(function (result) {
                 if (result.baseMap) {
-                    let baseLayers = new ol.layer.Group({
+                    var baseLayers_1 = new ol.layer.Group({
                         title: "Basemap Layers",
                         visible: false,
                         layers: []
                     });
-                    webmapGroup.getLayers().push(baseLayers);
-                    result.baseMap.baseMapLayers.forEach(l => {
-                        let opLayer = agsLayerFactory.asArcGISTiledMapServiceLayer(l, result);
-                        baseLayers.getLayers().push(opLayer);
+                    webmapGroup.getLayers().push(baseLayers_1);
+                    result.baseMap.baseMapLayers.forEach(function (l) {
+                        var opLayer = agsLayerFactory.asArcGISTiledMapServiceLayer(l, result);
+                        baseLayers_1.getLayers().push(opLayer);
                     });
                 }
                 if (result.operationalLayers) {
-                    let opLayers = new ol.layer.Group({
+                    var opLayers_1 = new ol.layer.Group({
                         title: "Operational Layers",
                         visible: false,
                         layers: []
                     });
-                    webmapGroup.getLayers().push(opLayers);
-                    result.operationalLayers.forEach(l => {
-                        let opLayer = agsLayerFactory.asAgsLayer(l, result);
-                        opLayers.getLayers().push(opLayer);
+                    webmapGroup.getLayers().push(opLayers_1);
+                    result.operationalLayers.forEach(function (l) {
+                        var opLayer = agsLayerFactory.asAgsLayer(l, result);
+                        opLayers_1.getLayers().push(opLayer);
                     });
                 }
             });
@@ -624,15 +656,16 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
          * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
          * resolution is how many
          */
-        function asRes(scale, dpi = 90.71428571428572) {
-            const inchesPerFoot = 12.0;
-            const inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
-            const dotsPerUnit = dpi * inchesPerMeter;
+        function asRes(scale, dpi) {
+            if (dpi === void 0) { dpi = 90.71428571428572; }
+            var inchesPerFoot = 12.0;
+            var inchesPerMeter = (inchesPerFoot / ol.proj.METERS_PER_UNIT["ft"]); //39.37007874015748;
+            var dotsPerUnit = dpi * inchesPerMeter;
             return scale / dotsPerUnit;
         }
         proj4.defs("EPSG:4269", "+proj=longlat +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +no_defs");
-        let agsLayerFactory = new AgsLayerFactory();
-        let map = new ol.Map({
+        var agsLayerFactory = new AgsLayerFactory();
+        var map = new ol.Map({
             target: 'map',
             layers: [],
             view: new ol.View({
@@ -640,71 +673,71 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
                 zoom: 6
             })
         });
-        let layerSwitcher = new LayerSwitcher({
+        var layerSwitcher = new LayerSwitcher({
             openOnMouseOver: true
         });
-        layerSwitcher.on("show-layer", (args) => {
+        layerSwitcher.on("show-layer", function (args) {
             console.log("show layer:", args.layer.get("title"));
             if (args.layer.get("extent")) {
-                let view = map.getView();
-                let extent = args.layer.get("extent");
-                let currentExtent = view.calculateExtent(map.getSize());
+                var view = map.getView();
+                var extent = args.layer.get("extent");
+                var currentExtent = view.calculateExtent(map.getSize());
                 if (!ol.extent.intersects(currentExtent, extent)) {
                     view.fit(extent, map.getSize());
                 }
             }
         });
-        layerSwitcher.on("hide-layer", (args) => {
+        layerSwitcher.on("hide-layer", function (args) {
             console.log("hide layer:", args.layer.get("title"));
         });
         map.addControl(layerSwitcher);
         function discover(url) {
-            let rootGroup = new ol.layer.Group({
+            var rootGroup = new ol.layer.Group({
                 title: "sampleserver1",
                 visible: false,
                 layers: []
             });
             map.addLayer(rootGroup);
-            let service = new AgsDiscovery.Catalog(`${location.protocol === 'file:' ? 'http:' : location.protocol}${url}`);
+            var service = new AgsDiscovery.Catalog("" + (location.protocol === 'file:' ? 'http:' : location.protocol) + url);
             service
                 .about()
-                .then(value => {
-                false && value.services.filter(s => s.type === "FeatureServer").forEach(s => {
-                    service.aboutFeatureServer(s.name).then(s => console.log("featureServer", s));
+                .then(function (value) {
+                false && value.services.filter(function (s) { return s.type === "FeatureServer"; }).forEach(function (s) {
+                    service.aboutFeatureServer(s.name).then(function (s) { return console.log("featureServer", s); });
                 });
-                false && value.services.filter(s => s.type === "MapServer").forEach(s => {
-                    service.aboutMapServer(s.name).then(s => console.log("MapServer", s));
+                false && value.services.filter(function (s) { return s.type === "MapServer"; }).forEach(function (s) {
+                    service.aboutMapServer(s.name).then(function (s) { return console.log("MapServer", s); });
                 });
-                let addFolders = (group, folders) => {
-                    folders.forEach(f => {
-                        let folderGroup = new ol.layer.Group({
+                var addFolders = function (group, folders) {
+                    folders.forEach(function (f) {
+                        var folderGroup = new ol.layer.Group({
                             title: f,
                             visible: false,
                             layers: []
                         });
-                        service.aboutFolder(f).then(folderInfo => {
-                            let folders = folderInfo.folders;
-                            let services = folderInfo.services.filter(serviceInfo => serviceInfo.type === "MapServer");
+                        service.aboutFolder(f).then(function (folderInfo) {
+                            var folders = folderInfo.folders;
+                            var services = folderInfo.services.filter(function (serviceInfo) { return serviceInfo.type === "MapServer"; });
                             if (!folders.length && !services.length)
                                 return;
                             rootGroup.getLayers().push(folderGroup);
                             addFolders(folderGroup, folders);
-                            services.forEach(serviceInfo => {
-                                let p = service.aboutMapServer(serviceInfo.name);
-                                p.then(s => {
-                                    let inSrs = "EPSG:4326";
-                                    let extent = null;
-                                    [s.initialExtent, s.fullExtent].some(agsExtent => {
-                                        let olExtent = ol.proj.transformExtent([agsExtent.xmin, agsExtent.ymin, agsExtent.xmax, agsExtent.ymax], inSrs, 'EPSG:3857');
+                            services.forEach(function (serviceInfo) {
+                                var p = service.aboutMapServer(serviceInfo.name);
+                                p.then(function (s) {
+                                    var inSrs = "EPSG:4326";
+                                    var extent = null;
+                                    [s.initialExtent, s.fullExtent].some(function (agsExtent) {
+                                        var olExtent = ol.proj.transformExtent([agsExtent.xmin, agsExtent.ymin, agsExtent.xmax, agsExtent.ymax], inSrs, 'EPSG:3857');
                                         // not always valid!
-                                        if (olExtent.every(v => !isNaN(v))) {
+                                        if (olExtent.every(function (v) { return !isNaN(v); })) {
                                             extent = olExtent;
                                             return true;
                                         }
                                     });
                                     if (s.spatialReference) {
                                         if (s.spatialReference.wkid) {
-                                            inSrs = `EPSG:${s.spatialReference.wkid}`;
+                                            inSrs = "EPSG:" + s.spatialReference.wkid;
                                         }
                                         if (s.spatialReference.wkt) {
                                             inSrs = proj4.Proj(s.spatialReference.wkt).srsCode;
@@ -712,7 +745,7 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
                                         }
                                     }
                                     if (s.singleFusedMapCache) {
-                                        let layer = agsLayerFactory.asArcGISTiledMapServiceLayer({
+                                        var layer = agsLayerFactory.asArcGISTiledMapServiceLayer({
                                             id: serviceInfo.name,
                                             layerType: "ArcGISTiledMapServiceLayer",
                                             url: p.url,
@@ -724,15 +757,15 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
                                         folderGroup.getLayers().push(layer);
                                     }
                                     else {
-                                        s.layers.forEach(layerInfo => {
-                                            let source = new ol.source.TileArcGISRest({
+                                        s.layers.forEach(function (layerInfo) {
+                                            var source = new ol.source.TileArcGISRest({
                                                 url: p.url,
                                                 params: {
-                                                    layers: `show:${layerInfo.id}`
+                                                    layers: "show:" + layerInfo.id
                                                 }
                                             });
-                                            let tileOptions = {
-                                                id: `${serviceInfo.name}/${layerInfo.id}`,
+                                            var tileOptions = {
+                                                id: serviceInfo.name + "/" + layerInfo.id,
                                                 title: layerInfo.name,
                                                 visible: false,
                                                 extent: extent,
@@ -742,18 +775,18 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
                                                 tileOptions.maxResolution = asRes(layerInfo.minScale);
                                             if (layerInfo.maxScale)
                                                 tileOptions.minResolution = asRes(layerInfo.maxScale);
-                                            let layer = new ol.layer.Tile(tileOptions);
+                                            var layer = new ol.layer.Tile(tileOptions);
                                             folderGroup.getLayers().push(layer);
                                             // make the layer progress aware                                
                                             {
-                                                let loadCount = 0;
-                                                source.on("tileloadstart", () => {
-                                                    if (0 === loadCount++)
+                                                var loadCount_1 = 0;
+                                                source.on("tileloadstart", function () {
+                                                    if (0 === loadCount_1++)
                                                         layer.dispatchEvent("load:start");
                                                     layer.set("loading", true);
                                                 });
-                                                source.on("tileloadend", () => {
-                                                    if (0 === --loadCount)
+                                                source.on("tileloadend", function () {
+                                                    if (0 === --loadCount_1)
                                                         layer.dispatchEvent("load:end");
                                                     layer.set("loading", false);
                                                 });
@@ -1840,35 +1873,25 @@ define("examples/data/webmap2", ["require", "exports"], function (require, expor
 define("examples/index", ["require", "exports"], function (require, exports) {
     "use strict";
     function run() {
-        let l = window.location;
-        let path = `${l.origin}${l.pathname}?run=examples/`;
-        let labs = `
-    ags-discovery
-    ags-webmap
-    layerswitcher
-
-    index
-    `;
-        document.writeln(`
-    <p>
-    Watch the console output for failed assertions (blank is good).
-    </p>
-    `);
+        var l = window.location;
+        var path = "" + l.origin + l.pathname + "?run=examples/";
+        var labs = "\n    ags-discovery\n    ags-webmap\n    layerswitcher\n\n    index\n    ";
+        document.writeln("\n    <p>\n    Watch the console output for failed assertions (blank is good).\n    </p>\n    ");
         document.writeln(labs
             .split(/ /)
-            .map(v => v.trim())
-            .filter(v => !!v)
+            .map(function (v) { return v.trim(); })
+            .filter(function (v) { return !!v; })
             .sort()
-            .map(lab => `<a href=${path}${lab}&debug=1>${lab}</a>`)
+            .map(function (lab) { return ("<a href=" + path + lab + "&debug=1>" + lab + "</a>"); })
             .join("<br/>"));
     }
     exports.run = run;
     ;
 });
-define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layerswitcher"], function (require, exports, ol, LayerSwitcher) {
+define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layerswitcher"], function (require, exports, ol, ol3_layerswitcher_1) {
     "use strict";
     function run() {
-        let map = new ol.Map({
+        var map = new ol.Map({
             target: 'map',
             layers: [
                 new ol.layer.Group({
@@ -1920,7 +1943,7 @@ define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layer
                 zoom: 6
             })
         });
-        let layerSwitcher = new LayerSwitcher({
+        var layerSwitcher = new ol3_layerswitcher_1.LayerSwitcher({
             tipLabel: 'Layers',
             openOnMouseOver: true,
             closeOnMouseOut: true,
@@ -1928,13 +1951,14 @@ define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layer
             closeOnClick: true,
             target: null
         });
-        layerSwitcher.on("show-layer", (args) => {
+        layerSwitcher.on("show-layer", function (args) {
             console.log("show layer:", args.layer.get("title"));
         });
-        layerSwitcher.on("hide-layer", (args) => {
+        layerSwitcher.on("hide-layer", function (args) {
             console.log("hide layer:", args.layer.get("title"));
         });
         map.addControl(layerSwitcher);
     }
     exports.run = run;
 });
+//# sourceMappingURL=index.js.map

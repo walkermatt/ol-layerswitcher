@@ -1,5 +1,6 @@
 {
   "globalDependencies": {
+    "jquery": "registry:dt/jquery#1.10.0+20170123093700",
     "openlayers": "registry:dt/openlayers#3.6.0+20160506083408",
     "proj4": "https://gist.githubusercontent.com/ca0v/2e3da4ce0c7178f102f1/raw/8f3fffe8678fbe7c91e365f957d1d75440a8e023/proj4.d.ts",
     "require": "registry:dt/require#2.1.20+20160316155526"

@@ -48,16 +48,27 @@ function uuid() {
     });
 }
 
-const DEFAULT_OPTIONS = {
+export interface ILayerSwitcherOptions {
+    tipLabel?: string;
+    openOnMouseOver?: boolean;
+    closeOnMouseOut?: boolean;
+    openOnClick?: boolean;
+    closeOnClick?: boolean;
+    className?: string;
+    target?: HTMLElement;
+}
+
+const DEFAULT_OPTIONS: ILayerSwitcherOptions = {
     tipLabel: 'Layers',
     openOnMouseOver: false,
     closeOnMouseOut: false,
     openOnClick: true,
     closeOnClick: true,
+    className: 'layer-switcher',
     target: <HTMLElement>null
 };
 
-class LayerSwitcher extends ol.control.Control {
+export class LayerSwitcher extends ol.control.Control {
 
     private state: Array<{ container: HTMLElement; input: HTMLInputElement; layer: ol.layer.Base }>;
     private unwatch: Array<() => void>;
@@ -74,7 +85,7 @@ class LayerSwitcher extends ol.control.Control {
      * @param opt_options Control options, extends olx.control.ControlOptions adding:
      *                              **`tipLabel`** `String` - the button tooltip.
      */
-    constructor(options?: typeof DEFAULT_OPTIONS) {
+    constructor(options?: ILayerSwitcherOptions) {
         options = defaults(options || {}, DEFAULT_OPTIONS);
         super(options);
         this.afterCreate(options);
@@ -82,7 +93,7 @@ class LayerSwitcher extends ol.control.Control {
 
     private afterCreate(options: typeof DEFAULT_OPTIONS) {
 
-        this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
+        this.hiddenClassName = `ol-unselectable ol-control ${options.className}`;
         this.shownClassName = this.hiddenClassName + ' shown';
 
         let element = document.createElement('div');
@@ -105,7 +116,7 @@ class LayerSwitcher extends ol.control.Control {
             element.addEventListener("mouseover", () => this.showPanel());
         }
         if (options.closeOnMouseOut) {
-            element.addEventListener("mouseout", () => this.hidePanel());            
+            element.addEventListener("mouseout", () => this.hidePanel());
         }
         if (options.openOnClick || options.closeOnClick) {
             button.addEventListener('click', e => {
@@ -172,7 +183,7 @@ class LayerSwitcher extends ol.control.Control {
                     let min = s.layer.getMinResolution();
                     let max = s.layer.getMaxResolution();
                     console.log(res, min, max, s.layer.get("title"));
-                    s.input.disabled = !(min <= res && (max === 0 || res <= max));
+                    s.input.disabled = !(min <= res && (max === 0 || res < max));
                 });
             };
             let h = view.on("change:resolution", doit);
@@ -300,5 +311,3 @@ class LayerSwitcher extends ol.control.Control {
     }
 
 }
-
-export = LayerSwitcher;

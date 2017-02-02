@@ -1,23 +1,23 @@
 import Ajax = require("./ajax");
 
-interface Service {
+export interface Service {
     name: string;
     type: string;
 }
 
-interface CatalogInfo {
+export interface CatalogInfo {
     currentVersion: number;
     folders: string[];
     services: Service[];
 }
 
-interface SpatialReference {
+export interface SpatialReference {
     wkid: number;
     latestWkid: number;
     wkt: string;
 }
 
-interface Extent {
+export interface Extent {
     xmin: number;
     ymin: number;
     xmax: number;
@@ -25,7 +25,7 @@ interface Extent {
     spatialReference: SpatialReference;
 }
 
-interface DocumentInfo {
+export interface DocumentInfo {
     Title: string;
     Author: string;
     Comments: string;
@@ -36,7 +36,7 @@ interface DocumentInfo {
     Keywords: string;
 }
 
-interface Layer {
+export interface Layer {
     id: number;
     name: string;
     parentLayerId: number;
@@ -46,7 +46,7 @@ interface Layer {
     maxScale: number;
 }
 
-interface FeatureServerInfo {
+export interface FeatureServerInfo {
     currentVersion: number;
     serviceDescription: string;
     hasVersionedData: boolean;
@@ -69,14 +69,14 @@ interface FeatureServerInfo {
     zDefault: number;
 }
 
-interface AdvancedQueryCapabilities {
+export interface AdvancedQueryCapabilities {
     supportsPagination: boolean;
     supportsStatistics: boolean;
     supportsOrderBy: boolean;
     supportsDistinct: boolean;
 }
 
-interface EsriTSSymbol {
+export interface EsriTSSymbol {
     type: string;
     color: number[];
     backgroundColor?: any;
@@ -94,7 +94,7 @@ interface EsriTSSymbol {
     font: Font;
 }
 
-interface DefaultSymbol {
+export interface DefaultSymbol {
     type: string;
     url: string;
     imageData: string;
@@ -106,14 +106,14 @@ interface DefaultSymbol {
     yoffset: number;
 }
 
-interface UniqueValueInfo {
+export interface UniqueValueInfo {
     symbol: DefaultSymbol;
     value: string;
     label: string;
     description: string;
 }
 
-interface Renderer {
+export interface Renderer {
     type: string;
     field1: string;
     field2?: any;
@@ -124,7 +124,7 @@ interface Renderer {
     uniqueValueInfos: UniqueValueInfo[];
 }
 
-interface Font {
+export interface Font {
     family: string;
     size: number;
     style: string;
@@ -132,7 +132,7 @@ interface Font {
     decoration: string;
 }
 
-interface LabelingInfo {
+export interface LabelingInfo {
     labelPlacement: string;
     where?: any;
     labelExpression: string;
@@ -142,25 +142,25 @@ interface LabelingInfo {
     maxScale: number;
 }
 
-interface DrawingInfo {
+export interface DrawingInfo {
     renderer: Renderer;
     transparency: number;
     labelingInfo: LabelingInfo[];
 }
 
-interface CodedValue {
+export interface CodedValue {
     name: string;
     code: any;
 }
 
-interface Domain {
+export interface Domain {
     type: string;
     name: string;
     codedValues: CodedValue[];
     range: number[];
 }
 
-interface Field {
+export interface Field {
     name: string;
     type: string;
     alias: string;
@@ -170,35 +170,35 @@ interface Field {
     length?: number;
 }
 
-interface Domains {
+export interface Domains {
     [n: string]: {
         type: string
     };
 }
 
-interface Attributes {
+export interface Attributes {
     [n: string]: string;
 }
 
-interface Prototype {
+export interface Prototype {
     attributes: Attributes;
 }
 
-interface Template {
+export interface Template {
     name: string;
     description: string;
     prototype: Prototype;
     drawingTool: string;
 }
 
-interface Type {
+export interface Type {
     id: string;
     name: string;
     domains: Domains;
     templates: Template[];
 }
 
-interface FeatureLayerInfo {
+export interface FeatureLayerInfo {
     currentVersion: number;
     id: number;
     name: string;

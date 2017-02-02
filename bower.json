@@ -7,8 +7,8 @@
   ],
   "description": "Layer switcher control for OpenLayers 3",
   "main": [
-    "src/ol3-layerswitcher.js",
-    "src/ol3-layerswitcher.css"
+    "built/index.js",
+    "built/css/ol3-layerswitcher.css"
   ],
   "keywords": [
     "openlayers",
@@ -27,5 +27,8 @@
     "requirejs": "^2.3.2",
     "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.20.1/v3.20.1-dist.zip",
     "proj4": "^2.3.17"
+  },
+  "dependencies": {
+    "jquery": "^3.1.1"
   }
 }
