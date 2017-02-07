@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (require, exports, ol) {
+define("ol3-layerswitcher/ol3-layerswitcher", ["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
     /**
      * assigns undefined values
@@ -268,7 +268,11 @@ define("ol3-layerswitcher", ["require", "exports", "openlayers"], function (requ
     }(ol.control.Control));
     exports.LayerSwitcher = LayerSwitcher;
 });
-define("extras/ajax", ["require", "exports", "jquery"], function (require, exports, $) {
+define("ol3-layerswitcher", ["require", "exports", "ol3-layerswitcher/ol3-layerswitcher"], function (require, exports, LayerSwitcher) {
+    "use strict";
+    return LayerSwitcher;
+});
+define("ol3-layerswitcher/extras/ajax", ["require", "exports", "jquery"], function (require, exports, $) {
     "use strict";
     var Ajax = (function () {
         function Ajax(url) {
@@ -349,7 +353,7 @@ define("extras/ajax", ["require", "exports", "jquery"], function (require, expor
     }());
     return Ajax;
 });
-define("extras/ags-catalog", ["require", "exports", "extras/ajax"], function (require, exports, Ajax) {
+define("ol3-layerswitcher/extras/ags-catalog", ["require", "exports", "ol3-layerswitcher/extras/ajax"], function (require, exports, Ajax) {
     "use strict";
     /**
      * assigns undefined values
@@ -406,7 +410,7 @@ define("extras/ags-catalog", ["require", "exports", "extras/ajax"], function (re
     }());
     exports.Catalog = Catalog;
 });
-define("extras/ags-webmap", ["require", "exports", "extras/ajax"], function (require, exports, Ajax) {
+define("ol3-layerswitcher/extras/ags-webmap", ["require", "exports", "ol3-layerswitcher/extras/ajax"], function (require, exports, Ajax) {
     "use strict";
     var DEFAULT_URLS = [
         "https://www.arcgis.com/sharing/rest/content/items/204d94c9b1374de9a21574c9efa31164/data?f=json",
@@ -424,7 +428,7 @@ define("extras/ags-webmap", ["require", "exports", "extras/ajax"], function (req
     }());
     exports.WebMap = WebMap;
 });
-define("extras/ags-layer-factory", ["require", "exports", "openlayers"], function (require, exports, ol) {
+define("ol3-layerswitcher/extras/ags-layer-factory", ["require", "exports", "openlayers"], function (require, exports, ol) {
     "use strict";
     /**
      * scale is units per pixel assuming a pixel is a certain size (0.028 cm or 1/90 inches)
@@ -565,7 +569,7 @@ define("extras/ags-layer-factory", ["require", "exports", "openlayers"], functio
     }());
     return AgsLayerFactory;
 });
-define("examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswitcher", "extras/ags-webmap", "extras/ags-layer-factory"], function (require, exports, ol, LayerSwitcher, WebMap, AgsLayerFactory) {
+define("ol3-layerswitcher/examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswitcher/ol3-layerswitcher", "ol3-layerswitcher/extras/ags-webmap", "ol3-layerswitcher/extras/ags-layer-factory"], function (require, exports, ol, LayerSwitcher, WebMap, AgsLayerFactory) {
     "use strict";
     function run() {
         /**
@@ -648,7 +652,7 @@ define("examples/ags-webmap", ["require", "exports", "openlayers", "ol3-layerswi
     }
     exports.run = run;
 });
-define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layerswitcher", "extras/ags-catalog", "proj4", "extras/ags-layer-factory"], function (require, exports, ol, LayerSwitcher, AgsDiscovery, proj4, AgsLayerFactory) {
+define("ol3-layerswitcher/examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layerswitcher/ol3-layerswitcher", "ol3-layerswitcher/extras/ags-catalog", "proj4", "ol3-layerswitcher/extras/ags-layer-factory"], function (require, exports, ol, ol3_layerswitcher_1, AgsDiscovery, proj4, AgsLayerFactory) {
     "use strict";
     function run() {
         ol.proj.setProj4(proj4);
@@ -673,7 +677,7 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
                 zoom: 6
             })
         });
-        var layerSwitcher = new LayerSwitcher({
+        var layerSwitcher = new ol3_layerswitcher_1.LayerSwitcher({
             openOnMouseOver: true
         });
         layerSwitcher.on("show-layer", function (args) {
@@ -805,7 +809,7 @@ define("examples/ags-discovery", ["require", "exports", "openlayers", "ol3-layer
     }
     exports.run = run;
 });
-define("examples/data/webmap1", ["require", "exports"], function (require, exports) {
+define("ol3-layerswitcher/examples/data/webmap1", ["require", "exports"], function (require, exports) {
     "use strict";
     return {
         "layers": [
@@ -1469,7 +1473,7 @@ define("examples/data/webmap1", ["require", "exports"], function (require, expor
         "maxScale": 72223
     };
 });
-define("examples/data/webmap2", ["require", "exports"], function (require, exports) {
+define("ol3-layerswitcher/examples/data/webmap2", ["require", "exports"], function (require, exports) {
     "use strict";
     return {
         "operationalLayers": [
@@ -1870,11 +1874,11 @@ define("examples/data/webmap2", ["require", "exports"], function (require, expor
         "Slides": null
     };
 });
-define("examples/index", ["require", "exports"], function (require, exports) {
+define("ol3-layerswitcher/examples/index", ["require", "exports"], function (require, exports) {
     "use strict";
     function run() {
         var l = window.location;
-        var path = "" + l.origin + l.pathname + "?run=examples/";
+        var path = "" + l.origin + l.pathname + "?run=ol3-layerswitcher/examples/";
         var labs = "\n    ags-discovery\n    ags-webmap\n    layerswitcher\n\n    index\n    ";
         document.writeln("\n    <p>\n    Watch the console output for failed assertions (blank is good).\n    </p>\n    ");
         document.writeln(labs
@@ -1888,7 +1892,7 @@ define("examples/index", ["require", "exports"], function (require, exports) {
     exports.run = run;
     ;
 });
-define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layerswitcher"], function (require, exports, ol, ol3_layerswitcher_1) {
+define("ol3-layerswitcher/examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layerswitcher/ol3-layerswitcher"], function (require, exports, ol, ol3_layerswitcher_2) {
     "use strict";
     function run() {
         var map = new ol.Map({
@@ -1943,7 +1947,7 @@ define("examples/layerswitcher", ["require", "exports", "openlayers", "ol3-layer
                 zoom: 6
             })
         });
-        var layerSwitcher = new ol3_layerswitcher_1.LayerSwitcher({
+        var layerSwitcher = new ol3_layerswitcher_2.LayerSwitcher({
             tipLabel: 'Layers',
             openOnMouseOver: true,
             closeOnMouseOut: true,

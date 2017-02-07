@@ -1,5 +1,5 @@
 import ol = require("openlayers");
-import LayerSwitcher = require("../ol3-layerswitcher");
+import { LayerSwitcher } from "../ol3-layerswitcher";
 import AgsDiscovery = require("../extras/ags-catalog");
 import WebMap = require("./ags-webmap");
 import proj4 = require("proj4");
