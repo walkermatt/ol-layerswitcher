@@ -73,6 +73,11 @@
     vertical-align: sub;
 }
 
+.layer-switcher li.disabled {
+    pointer-events:none;
+    opacity:0.4;
+}
+
 .layer-switcher input {
     margin: 4px;
 }
