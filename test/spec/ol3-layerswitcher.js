@@ -105,6 +105,8 @@ describe('ol.control.LayerSwitcher', function() {
                 }),
                 new ol.layer.Tile({
                     title: 'Bar',
+                    minResolution: 1000,
+                    maxResolution: 5000,
                     source: new ol.source.TileDebug({
                         projection: 'EPSG:3857',
                         tileGrid: ol.tilegrid.createXYZ({
@@ -184,6 +186,18 @@ describe('ol.control.LayerSwitcher', function() {
                 return jQuery(this).text();
             }).get();
             expect(titles).to.eql(['Bar', 'Combined-Overlay-Group']);
+        });
+        it('greys out normal layer title labels when outside of layer resolution', function() {
+            map.getView().setResolution(6000);
+            switcher.showPanel();
+            var layerResTooHigh = jQuery('.layer-switcher label.disabled').map(function() {
+                return jQuery(this).text();
+            }).get();
+            map.getView().setResolution(500);
+            var layerResTooLow = jQuery('.layer-switcher label.disabled').map(function() {
+                return jQuery(this).text();
+            }).get();
+            expect([layerResTooHigh, layerResTooLow]).to.eql([['Bar'], ['Bar']]);
         });
         it('displays base layers as radio buttons', function() {
             switcher.showPanel();

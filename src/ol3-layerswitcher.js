@@ -207,6 +207,12 @@
 
             label.htmlFor = lyrId;
             label.innerHTML = lyrTitle;
+
+            var rsl = this.getMap().getView().getResolution();
+            if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
+                label.className += ' disabled';
+            }
+
             li.appendChild(label);
 
         }

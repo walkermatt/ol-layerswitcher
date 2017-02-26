@@ -40,6 +40,8 @@
     overlayGroup.getLayers().push(
         new ol.layer.Image({
             title: 'Countries',
+            minResolution: 500,
+            maxResolution: 5000,
             source: new ol.source.ImageArcGISRest({
                 ratio: 1,
                 params: {'LAYERS': 'show:0'},
