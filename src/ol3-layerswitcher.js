@@ -8,7 +8,7 @@
   }
 }(this, function(ol) {
     /**
-     * OpenLayers 3 Layer Switcher Control.
+     * OpenLayers v3/v4 Layer Switcher Control.
      * See [the examples](./examples) for usage.
      * @constructor
      * @extends {ol.control.Control}
@@ -113,7 +113,7 @@
     ol.control.LayerSwitcher.prototype.setMap = function(map) {
         // Clean up listeners associated with the previous map
         for (var i = 0, key; i < this.mapListeners.length; i++) {
-            this.getMap().unByKey(this.mapListeners[i]);
+            ol.Observable.unByKey(this.mapListeners[i]);
         }
         this.mapListeners.length = 0;
         // Wire up listeners etc. and store reference to new map

@@ -11,7 +11,7 @@
   "license": "ISC",
   "devDependencies": {
     "browserify": "^13.3.0",
-    "openlayers": "^3.20.1",
+    "openlayers": "^4.0.1",
     "uglify-js": "^2.7.5",
     "watchify": "^3.8.0"
   }
