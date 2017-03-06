@@ -85,12 +85,12 @@
             new ol.layer.Group({
                 title: 'Overlays',
                 layers: [
-                    new ol.layer.Tile({
+                    new ol.layer.Image({
                         title: 'Countries',
-                        source: new ol.source.TileWMS({
-                            url: 'http://demo.opengeo.org/geoserver/wms',
-                            params: {'LAYERS': 'ne:ne_10m_admin_1_states_provinces_lines_shp'},
-                            serverType: 'geoserver'
+                        source: new ol.source.ImageArcGISRest({
+                            ratio: 1,
+                            params: {'LAYERS': 'show:0'},
+                            url: "https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Countries_December_2016_Boundaries/MapServer"
                         })
                     })
                 ]
