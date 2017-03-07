@@ -4,6 +4,13 @@
     <meta charset="utf-8" />
     <title>OpenLayers 3 - LayerSwitcher Add Layer</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <!-- Limit the dimensions of the map to avoid requesting images too large for the ESRI image service -->
+    <style type="text/css">
+        #map {
+            max-width: 800px;
+            max-height: 800px;
+        }
+    </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.17.1/ol.css" />
     <link rel="stylesheet" href="../src/ol3-layerswitcher.css" />
     <link rel="stylesheet" href="layerswitcher.css" />
