@@ -73,8 +73,7 @@
     vertical-align: sub;
 }
 
-.layer-switcher li.disabled {
-    pointer-events:none;
+.layer-switcher label.disabled {
     opacity:0.4;
 }
 
