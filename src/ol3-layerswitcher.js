@@ -28,7 +28,7 @@
         if (ol.control.LayerSwitcher.isTouchDevice_()) {
             this.hiddenClassName += ' touch';
         }
-        this.shownClassName = this.hiddenClassName + ' shown';
+        this.shownClassName = 'shown';
 
         var element = document.createElement('div');
         element.className = this.hiddenClassName;
@@ -74,8 +74,9 @@
      * Show the layer panel.
      */
     ol.control.LayerSwitcher.prototype.showPanel = function() {
-        if (this.element.className != this.shownClassName) {
-            this.element.className = this.shownClassName;
+        var classes = this.element.className.split(' ');
+        if (classes.indexOf(this.shownClassName)<0) {
+            this.element.className += ' '+this.shownClassName;
             this.renderPanel();
         }
     };
@@ -84,8 +85,11 @@
      * Hide the layer panel.
      */
     ol.control.LayerSwitcher.prototype.hidePanel = function() {
-        if (this.element.className != this.hiddenClassName) {
-            this.element.className = this.hiddenClassName;
+        var classes = this.element.className.split(' ');
+        var index = classes.indexOf(this.shownClassName);
+        if (index>=0) {
+            classes.splice(index, 1);
+            this.element.className = classes.join(' ');
         }
     };
 
