@@ -74,9 +74,8 @@
      * Show the layer panel.
      */
     ol.control.LayerSwitcher.prototype.showPanel = function() {
-        var classes = this.element.className.split(' ');
-        if (classes.indexOf(this.shownClassName)<0) {
-            this.element.className += ' '+this.shownClassName;
+        if (!this.element.classList.contains(this.shownClassName)) {
+            this.element.classList.add(this.shownClassName);
             this.renderPanel();
         }
     };
@@ -85,11 +84,8 @@
      * Hide the layer panel.
      */
     ol.control.LayerSwitcher.prototype.hidePanel = function() {
-        var classes = this.element.className.split(' ');
-        var index = classes.indexOf(this.shownClassName);
-        if (index>=0) {
-            classes.splice(index, 1);
-            this.element.className = classes.join(' ');
+        if (this.element.classList.contains(this.shownClassName)) {
+            this.element.classList.remove(this.shownClassName);
         }
     };
 
