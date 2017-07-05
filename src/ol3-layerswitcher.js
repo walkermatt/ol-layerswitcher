@@ -159,6 +159,15 @@
                 }
             });
         }
+        if (lyr.getLayers && !lyr.get('combine')){
+            var lyrs = lyr.getLayers().getArray().slice().reverse();
+            for (var i = 0; i < lyrs.length; i++) {
+                var lyr = lyrs[i];
+                var lyrId = lyr.get('id');
+                var subLyr = document.getElementById(lyrId);
+                subLyr.disabled = !visible;  
+            }
+        }
     };
 
     /**
@@ -175,13 +184,24 @@
 
         var lyrTitle = lyr.get('title');
         var lyrId = ol.control.LayerSwitcher.uuid();
+        lyr.S.id = lyrId;
 
         var label = document.createElement('label');
 
         if (lyr.getLayers && !lyr.get('combine')) {
 
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = lyrId;
+            input.checked = lyr.get('visible');
+            input.onchange = function(e) {
+                this_.setVisible_(lyr, e.target.checked);
+            };
+            li.appendChild(input);
+
             li.className = 'group';
             label.innerHTML = lyrTitle;
+            label.htmlFor = lyrId;
             li.appendChild(label);
             var ul = document.createElement('ul');
             li.appendChild(ul);
