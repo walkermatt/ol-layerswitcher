@@ -160,12 +160,26 @@
             });
         }
         if (lyr.getLayers && !lyr.get('combine')){
+            getNestedLayers (lyr, visible);
+        }
+
+        function getNestedLayers (lyr, visible) {
             var lyrs = lyr.getLayers().getArray().slice().reverse();
             for (var i = 0; i < lyrs.length; i++) {
-                var lyr = lyrs[i];
-                var lyrId = lyr.get('id');
+                var l = lyrs[i];
+                var lyrId = l.get('id');
                 var subLyr = document.getElementById(lyrId);
-                subLyr.disabled = !visible;  
+                var disable = true;
+                if (visible) {
+                    disable = false;
+                }
+                subLyr.disabled = disable;
+                if (l.getLayers && !lyr.get('combine')){
+                    if (!subLyr.checked) {
+                        visible = false;
+                    }
+                    getNestedLayers (l, visible);
+                }
             }
         }
     };
@@ -184,7 +198,7 @@
 
         var lyrTitle = lyr.get('title');
         var lyrId = ol.control.LayerSwitcher.uuid();
-        lyr.S.id = lyrId;
+        lyr.set('id', lyrId);
 
         var label = document.createElement('label');
 
