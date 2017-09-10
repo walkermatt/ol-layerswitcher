@@ -19,7 +19,7 @@
 
         var options = opt_options || {};
 
-        this.ol2style = opt_options.ol2style || false;        
+        this.ol2style = options.ol2style || true;        
 
         var tipLabel = options.tipLabel ?
           options.tipLabel : 'Legend';
@@ -46,6 +46,19 @@
 
         var this_ = this;
 
+    if(this.ol2style){
+            button.innerHTML = "+";
+            button.onclick = function(e) {
+                if(button.innerHTML=="+"){
+                this_.showPanel();
+                button.innerHTML="-";
+                }else{
+                this_.hidePanel();
+                button.innerHTML="+";
+                }
+            };
+        }else{
+    
         button.onmouseover = function(e) {
             this_.showPanel();
         };
@@ -62,27 +75,14 @@
                 this_.hidePanel();
             }
         };
+    }//end if not ol2style
+
 
         ol.control.Control.call(this, {
             element: element,
             target: options.target
         });
 
-    if(this.ol2style){
-        button.innerHTML = "+";
-        button.onclick = function(e) {
-            if(button.innerHTML=="+"){
-            this_.showPanel();
-            button.innerHTML="-";
-            }else{
-            this_.hidePanel();
-            button.innerHTML="+";
-            }
-        };
-    }else{
-
-    button.onmouseover = function(e) {
-        this_.showPanel();
     };
 
     ol.inherits(ol.control.LayerSwitcher, ol.control.Control);
@@ -105,7 +105,6 @@
             this.element.classList.remove(this.shownClassName);
         }
     };
-    }//end if not ol2style
 
     /**
      * Re-draw the layer panel to represent the current state of the layers.
@@ -139,7 +138,7 @@
         if (map) {
             var this_ = this;
             this.mapListeners.push(map.on('pointerdown', function() {
-                (!this.ol2style) && this_.hidePanel();
+                (!this_.ol2style) && this_.hidePanel();
             }));
             this.renderPanel();
         }
