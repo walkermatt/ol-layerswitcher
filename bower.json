@@ -5,14 +5,14 @@
   "authors": [
     "Matt Walker (http://longwayaround.org.uk)"
   ],
-  "description": "Layer switcher control for OpenLayers 3",
+  "description": "Layer switcher control for OpenLayers v3/v4",
   "main": [
     "src/ol3-layerswitcher.js",
     "src/ol3-layerswitcher.css"
   ],
   "keywords": [
     "openlayers",
-    "ol3",
+    "ol",
     "layerswitcher"
   ],
   "license": "MIT",

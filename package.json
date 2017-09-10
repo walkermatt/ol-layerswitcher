@@ -1,7 +1,7 @@
 {
   "name": "ol3-layerswitcher",
-  "version": "1.1.0",
-  "description": "Layer switcher control for OpenLayers 3",
+  "version": "1.1.2",
+  "description": "Layer switcher control for OpenLayers v3/v4",
   "repository": {
     "type": "git",
     "url": "https://github.com/walkermatt/ol3-layerswitcher.git"
@@ -16,7 +16,7 @@
   "keywords": [
     "openlayers",
     "layerswitcher",
-    "ol3"
+    "ol"
   ],
   "license": "MIT",
   "bugs": {
@@ -26,7 +26,7 @@
     "doc": "node_modules/.bin/jsdoc --explain src/ol3-layerswitcher.js | node_modules/.bin/dirtydocs util/README.md > README.md"
   },
   "dependencies": {
-    "openlayers": "~3.17.1"
+    "openlayers": "~4.0.1"
   },
   "devDependencies": {
     "expect.js": "~0.3.1",

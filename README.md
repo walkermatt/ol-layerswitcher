@@ -1,12 +1,6 @@
-# OpenLayers 3 LayerSwitcher
+# OpenLayers LayerSwitcher
 
-This fork tries to mimic the old OL2's [OpenLayers.Control.LayerSwitcher](http://dev.openlayers.org/docs/files/OpenLayers/Control/LayerSwitcher-js.html).
-In particular
- * the design: sans-serif white font, blue transparent background, - and + button label
- * the behaviour: click (not hover) of button opens layer list, anoter click closes it
- * the layer order is not reversed, as it was in OL2.
-
-Grouped layer list control for an OL3 map.
+Grouped layer list control for an OpenLayer v3/v4 map.
 
 All layers should have a `title` property and base layers should have a `type` property set to `base`. Group layers (`ol.layer.Group`) can be used to visually group layers together. See [examples/layerswitcher.js](examples/layerswitcher.js) for usage.
 
@@ -14,12 +8,14 @@ All layers should have a `title` property and base layers should have a `type` p
 
 The examples demonstrate usage and can be viewed online thanks to [RawGit](http://rawgit.com/):
 
-* [Basic usage](http://rawgit.com/adrelino/ol3-layerswitcher/master/examples/layerswitcher.html)
+* [Basic usage](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/layerswitcher.html)
     * Create a layer switcher control. Each layer to be displayed in the layer switcher has a `title` property as does each Group; each base map layer has a `type: 'base'` property.
-* [Add layer](http://rawgit.com/adrelino/ol3-layerswitcher/master/examples/addlayer.html)
+* [Add layer](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/addlayer.html)
     * Add a layer to an existing layer group after the layer switcher has been added to the map.
-* [Scrolling](http://rawgit.com/adrelino/ol3-layerswitcher/master/examples/scroll.html)
+* [Scrolling](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/scroll.html)
     * Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol3-layerswitcher.css](src/ol3-layerswitcher.css)).
+* [Browserify](examples/browserify/)
+    * Example of using ol3-layerswitcher with Browserify (see [examples/browserify/README.md](examples/browserify/README.md) for details of building.
 
 The source for all examples can be found in [examples](examples).
 
@@ -35,7 +31,7 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 ### `new ol.control.LayerSwitcher(opt_options)`
 
-OpenLayers 3 Layer Switcher Control.
+OpenLayers v3/v4 Layer Switcher Control.
 See [the examples](./examples) for usage.
 
 #### Parameters:
