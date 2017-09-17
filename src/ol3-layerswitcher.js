@@ -160,12 +160,14 @@
             });
         }
         if (lyr.getLayers && !lyr.get('combine')){
-            getNestedLayers (lyr, visible);
+            getNestedLayers (lyr);
         }
 
-        function getNestedLayers (lyr, visible) {
+        function getNestedLayers (lyr) {
             var lyrs = lyr.getLayers().getArray().slice().reverse();
+            var lyrN = lyrs.length;
             for (var i = 0; i < lyrs.length; i++) {
+                var lyrvisible = lyr.getVisible();
                 var l = lyrs[i];
                 var lyrId = l.get('id');
                 var subLyr = document.getElementById(lyrId);
@@ -174,11 +176,12 @@
                     disable = false;
                 }
                 subLyr.disabled = disable;
+                if (lyrN == 1){
+                    subLyr.checked = lyrvisible;
+                    l.setVisible(lyrvisible);
+                }
                 if (l.getLayers && !lyr.get('combine')){
-                    if (!subLyr.checked) {
-                        visible = false;
-                    }
-                    getNestedLayers (l, visible);
+                    getNestedLayers (l);
                 }
             }
         }
