@@ -59,7 +59,7 @@
         })
     });
 
-    var layerSwitcher = new ol.control.LayerSwitcher({
+    var layerSwitcher = new LayerSwitcher({
         tipLabel: 'Légende' // Optional label for button
     });
     map.addControl(layerSwitcher);

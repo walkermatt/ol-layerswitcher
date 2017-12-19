@@ -1,0 +1,28 @@
+import babel from 'rollup-plugin-babel';
+
+module.exports = {
+    entry: 'src/ol3-layerswitcher.js',
+    targets: [
+        {
+            dest: 'dist/ol-layerswitcher.umd.js',
+            format: 'umd',
+            moduleName: 'LayerSwitcher'
+        }
+    ],
+    plugins: [
+        require('rollup-plugin-node-resolve')(),
+        require('rollup-plugin-commonjs')(),
+        babel({
+            exclude: 'node_modules/**' // only transpile our source code
+        })
+    ],
+    external: function(id) {
+        console.log('id', id);
+        return /ol\//.test(id);
+    },
+    globals: {
+        'ol/map': 'ol.Map',
+        'ol/observable': 'ol.Observable',
+        'ol/control/control': 'ol.control.Control'
+    }
+};
