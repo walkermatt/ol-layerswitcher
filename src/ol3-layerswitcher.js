@@ -1,4 +1,3 @@
-import Map from 'ol/map';
 import Control from 'ol/control/control';
 import Observable from 'ol/observable';
 
@@ -70,7 +69,7 @@ export default class LayerSwitcher extends Control {
     setMap(map) {
         // Clean up listeners associated with the previous map
         for (var i = 0, key; i < this.mapListeners.length; i++) {
-            ol.Observable.unByKey(this.mapListeners[i]);
+            Observable.unByKey(this.mapListeners[i]);
         }
         this.mapListeners.length = 0;
         // Wire up listeners etc. and store reference to new map
