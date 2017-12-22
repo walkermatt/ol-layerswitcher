@@ -1,5 +1,8 @@
-var LayerSwitcher = (function (Control,Observable) {
-'use strict';
+(function (global, factory) {
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ol/control/control'), require('ol/observable')) :
+	typeof define === 'function' && define.amd ? define(['ol/control/control', 'ol/observable'], factory) :
+	(global.LayerSwitcher = factory(global.ol.control.Control,global.ol.Observable));
+}(this, (function (Control,Observable) { 'use strict';
 
 Control = 'default' in Control ? Control['default'] : Control;
 Observable = 'default' in Observable ? Observable['default'] : Observable;
@@ -424,4 +427,4 @@ var LayerSwitcher = function (_Control) {
 
 return LayerSwitcher;
 
-}(ol.control.Control,ol.Observable));
+})));

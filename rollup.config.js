@@ -5,7 +5,8 @@ module.exports = {
     targets: [
         {
             dest: 'dist/ol-layerswitcher.js',
-            format: 'iife',
+            // format: 'iife',
+            format: 'umd',
             moduleName: 'LayerSwitcher'
         }
     ],
