@@ -1,12 +1,8 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ol/map'), require('ol/control/control'), require('ol/observable')) :
-	typeof define === 'function' && define.amd ? define(['ol/map', 'ol/control/control', 'ol/observable'], factory) :
-	(global.LayerSwitcher = factory(global.ol.Map,global.ol.control.Control,global.ol.Observable));
-}(this, (function (ol_map,Control,ol_observable) { 'use strict';
+var LayerSwitcher = (function (Control,Observable) {
+'use strict';
 
-ol_map = 'default' in ol_map ? ol_map['default'] : ol_map;
 Control = 'default' in Control ? Control['default'] : Control;
-ol_observable = 'default' in ol_observable ? ol_observable['default'] : ol_observable;
+Observable = 'default' in Observable ? Observable['default'] : Observable;
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -173,7 +169,7 @@ var LayerSwitcher = function (_Control) {
         value: function setMap(map) {
             // Clean up listeners associated with the previous map
             for (var i = 0, key; i < this.mapListeners.length; i++) {
-                ol.Observable.unByKey(this.mapListeners[i]);
+                Observable.unByKey(this.mapListeners[i]);
             }
             this.mapListeners.length = 0;
             // Wire up listeners etc. and store reference to new map
@@ -428,4 +424,4 @@ var LayerSwitcher = function (_Control) {
 
 return LayerSwitcher;
 
-})));
+}(ol.control.Control,ol.Observable));

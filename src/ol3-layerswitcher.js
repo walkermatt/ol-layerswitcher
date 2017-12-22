@@ -20,7 +20,7 @@ export default class LayerSwitcher extends Control {
 
         var element = document.createElement('div');
 
-        super({ element: element, target: options.target});
+        super({element: element, target: options.target});
 
         this.mapListeners = [];
 
