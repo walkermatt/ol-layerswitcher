@@ -425,6 +425,10 @@ var LayerSwitcher = function (_Control) {
     return LayerSwitcher;
 }(Control);
 
+if (window.ol && window.ol.control) {
+    window.ol.control.LayerSwitcher = LayerSwitcher;
+}
+
 return LayerSwitcher;
 
 })));

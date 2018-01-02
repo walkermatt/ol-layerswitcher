@@ -290,3 +290,9 @@ export default class LayerSwitcher extends Control {
     }
 
 }
+
+// Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
+// OpenLayers
+if (window.ol && window.ol.control) {
+    window.ol.control.LayerSwitcher = LayerSwitcher;
+}
