@@ -97,12 +97,12 @@ var possibleConstructorReturn = function (self, call) {
 };
 
 /**
- * OpenLayers v3/v4 Layer Switcher Control.
+ * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
- *                              **`tipLabel`** `String` - the button tooltip.
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:  
+ * **`tipLabel`** `String` - the button tooltip.
  */
 
 var LayerSwitcher = function (_Control) {
@@ -369,10 +369,9 @@ var LayerSwitcher = function (_Control) {
         }
 
         /**
-        * Generate a UUID
-        * @returns {String} UUID
-        *
+        * **Static** Generate a UUID  
         * Adapted from http://stackoverflow.com/a/2117523/526860
+        * @returns {String} UUID
         */
 
     }, {
