@@ -8,12 +8,12 @@ All layers should have a `title` property and base layers should have a `type` p
 
 The examples demonstrate usage and can be viewed online thanks to [RawGit](http://rawgit.com/):
 
--   [Basic usage](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/layerswitcher.html)
+-   [Basic usage](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/layerswitcher.html)
     -   Create a layer switcher control. Each layer to be displayed in the layer switcher has a `title` property as does each Group; each base map layer has a `type: 'base'` property.
--   [Add layer](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/addlayer.html)
+-   [Add layer](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/addlayer.html)
     -   Add a layer to an existing layer group after the layer switcher has been added to the map.
--   [Scrolling](http://rawgit.com/walkermatt/ol3-layerswitcher/master/examples/scroll.html)
-    -   Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol3-layerswitcher.css](src/ol3-layerswitcher.css)).
+-   [Scrolling](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/scroll.html)
+    -   Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol-layerswitcher.css](src/ol-layerswitcher.css)).
 -   [Bundling with `ol` package (Browserify, Parcel, Webpack...)](https://github.com/walkermatt/ol-layerswitcher-examples)
     -   To use the layer switcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Browserify, Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
 
@@ -98,4 +98,4 @@ MIT (c) Matt Walker.
 ## Also see
 
 If you find the layer switcher useful you might also like the
-[ol3-popup](https://github.com/walkermatt/ol3-popup).
+[ol-popup](https://github.com/walkermatt/ol-popup).
