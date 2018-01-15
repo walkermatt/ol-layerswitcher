@@ -2,12 +2,12 @@ import Control from 'ol/control/control';
 import Observable from 'ol/observable';
 
 /**
- * OpenLayers v3/v4 Layer Switcher Control.
+ * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
- *                              **`tipLabel`** `String` - the button tooltip.
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:  
+ * **`tipLabel`** `String` - the button tooltip.
  */
 export default class LayerSwitcher extends Control {
 
@@ -246,10 +246,9 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * Generate a UUID
-    * @returns {String} UUID
-    *
+    * **Static** Generate a UUID  
     * Adapted from http://stackoverflow.com/a/2117523/526860
+    * @returns {String} UUID
     */
     static uuid() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
