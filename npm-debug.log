@@ -1,0 +1,44 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/nodejs', '/usr/bin/npm', 'run', 'build' ]
+2 info using npm@3.5.2
+3 info using node@v4.2.6
+4 verbose run-script [ 'prebuild', 'build', 'postbuild' ]
+5 info lifecycle ol-layerswitcher@2.0.0~prebuild: ol-layerswitcher@2.0.0
+6 silly lifecycle ol-layerswitcher@2.0.0~prebuild: no script for prebuild, continuing
+7 info lifecycle ol-layerswitcher@2.0.0~build: ol-layerswitcher@2.0.0
+8 verbose lifecycle ol-layerswitcher@2.0.0~build: unsafe-perm in lifecycle true
+9 verbose lifecycle ol-layerswitcher@2.0.0~build: PATH: /usr/share/npm/bin/node-gyp-bin:/home/umberto/Documents/apps/projects/forks/ol-layerswitcher/node_modules/.bin:/home/umberto/Documents/android/root/platform-tools:/home/umberto/miniconda3/bin:/home/umberto/miniconda3/bin:/home/umberto/bin:/home/umberto/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+10 verbose lifecycle ol-layerswitcher@2.0.0~build: CWD: /home/umberto/Documents/apps/projects/forks/ol-layerswitcher
+11 silly lifecycle ol-layerswitcher@2.0.0~build: Args: [ '-c', 'rollup --config rollup.config.js' ]
+12 info lifecycle ol-layerswitcher@2.0.0~build: Failed to exec build script
+13 verbose stack Error: ol-layerswitcher@2.0.0 build: `rollup --config rollup.config.js`
+13 verbose stack spawn ENOENT
+13 verbose stack     at ChildProcess.<anonymous> (/usr/share/npm/lib/utils/spawn.js:17:16)
+13 verbose stack     at emitTwo (events.js:87:13)
+13 verbose stack     at ChildProcess.emit (events.js:172:7)
+13 verbose stack     at maybeClose (internal/child_process.js:821:16)
+13 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:211:5)
+14 verbose pkgid ol-layerswitcher@2.0.0
+15 verbose cwd /home/umberto/Documents/apps/projects/forks/ol-layerswitcher
+16 error Linux 4.13.0-45-generic
+17 error argv "/usr/bin/nodejs" "/usr/bin/npm" "run" "build"
+18 error node v4.2.6
+19 error npm  v3.5.2
+20 error file sh
+21 error code ELIFECYCLE
+22 error errno ENOENT
+23 error syscall spawn
+24 error ol-layerswitcher@2.0.0 build: `rollup --config rollup.config.js`
+24 error spawn ENOENT
+25 error Failed at the ol-layerswitcher@2.0.0 build script 'rollup --config rollup.config.js'.
+25 error Make sure you have the latest version of node.js and npm installed.
+25 error If you do, this is most likely a problem with the ol-layerswitcher package,
+25 error not with npm itself.
+25 error Tell the author that this fails on your system:
+25 error     rollup --config rollup.config.js
+25 error You can get information on how to open an issue for this project with:
+25 error     npm bugs ol-layerswitcher
+25 error Or if that isn't available, you can get their info via:
+25 error     npm owner ls ol-layerswitcher
+25 error There is likely additional logging output above.
+26 verbose exit [ 1, true ]
