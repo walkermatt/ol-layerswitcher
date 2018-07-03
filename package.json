@@ -39,7 +39,11 @@
     "lodash": "~2.4.1",
     "mocha": "~1.20.1",
     "rollup": "^0.41.6",
+<<<<<<< HEAD
     "rollup-plugin-babel": "^3.0.7",
+=======
+    "rollup-plugin-babel": "^3.0.5",
+>>>>>>> 7fa74220b53d067809afa2f710fe9e75665f85cf
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0"
   }
