@@ -59,9 +59,7 @@
         })
     });
 
-    var layerSwitcher = new ol.control.LayerSwitcher({
-        tipLabel: 'Légende' // Optional label for button
-    });
-    map.addControl(layerSwitcher);
+    var toc = document.getElementById("layers");
+    ol.control.LayerSwitcher.renderPanel(toc, map);
 
 })();
