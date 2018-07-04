@@ -182,7 +182,7 @@ var LayerSwitcher = function (_Control) {
                 this.mapListeners.push(map.on('pointerdown', function () {
                     this_.hidePanel();
                 }));
-                LayerSwitcher.renderPanel();
+                LayerSwitcher.renderPanel(this.panel, this.getMap());
             }
         }
 
