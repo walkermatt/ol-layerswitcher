@@ -115,7 +115,7 @@ export default class LayerSwitcher extends Control {
 
         var ul = document.createElement('ul');
         panel.appendChild(ul);
-        LayerSwitcher.renderLayers_(map, map, ul); // UMBE: need to do something with 'this.getMap()'...
+        LayerSwitcher.renderLayers_(map, map, ul);
 
     }
 
@@ -125,7 +125,7 @@ export default class LayerSwitcher extends Control {
     */
     static ensureTopVisibleBaseLayerShown_(map) {
         var lastVisibleBaseLyr;
-        LayerSwitcher.forEachRecursive(map, function(l, idx, a) { // UMBE: need to do something with 'this.getMap()'...
+        LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
             if (l.get('type') === 'base' && l.getVisible()) {
                 lastVisibleBaseLyr = l;
             }
@@ -141,7 +141,7 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Base} The layer whos visibility will be toggled.
     */
     static setVisible_(map, lyr, visible) {
-        var map = map; // UMBE: need to do something with 'this.getMap()'...
+        var map = map;
         lyr.setVisible(visible);
         if (visible && lyr.get('type') === 'base') {
             // Hide all other base layers regardless of grouping
@@ -200,7 +200,7 @@ export default class LayerSwitcher extends Control {
             label.htmlFor = lyrId;
             label.innerHTML = lyrTitle;
 
-            var rsl = map.getView().getResolution(); // UMBE: need to do something with 'this.getMap()'...
+            var rsl = map.getView().getResolution();
             if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
                 label.className += ' disabled';
             }

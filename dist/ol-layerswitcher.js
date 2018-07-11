@@ -227,7 +227,7 @@ var LayerSwitcher = function (_Control) {
 
             var ul = document.createElement('ul');
             panel.appendChild(ul);
-            LayerSwitcher.renderLayers_(map, map, ul); // UMBE: need to do something with 'this.getMap()'...
+            LayerSwitcher.renderLayers_(map, map, ul);
         }
 
         /**
@@ -240,7 +240,6 @@ var LayerSwitcher = function (_Control) {
         value: function ensureTopVisibleBaseLayerShown_(map) {
             var lastVisibleBaseLyr;
             LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-                // UMBE: need to do something with 'this.getMap()'...
                 if (l.get('type') === 'base' && l.getVisible()) {
                     lastVisibleBaseLyr = l;
                 }
@@ -259,7 +258,7 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'setVisible_',
         value: function setVisible_(map, lyr, visible) {
-            var map = map; // UMBE: need to do something with 'this.getMap()'...
+            var map = map;
             lyr.setVisible(visible);
             if (visible && lyr.get('type') === 'base') {
                 // Hide all other base layers regardless of grouping
@@ -320,7 +319,7 @@ var LayerSwitcher = function (_Control) {
                 label.htmlFor = lyrId;
                 label.innerHTML = lyrTitle;
 
-                var rsl = map.getView().getResolution(); // UMBE: need to do something with 'this.getMap()'...
+                var rsl = map.getView().getResolution();
                 if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
                     label.className += ' disabled';
                 }
