@@ -1,5 +1,5 @@
-import Control from 'ol/control/control';
-import Observable from 'ol/observable';
+import Control from 'ol/control/Control';
+import Observable from 'ol/Observable';
 
 /**
  * OpenLayers Layer Switcher Control.
