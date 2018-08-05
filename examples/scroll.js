@@ -1,9 +1,7 @@
 (function() {
 
     var thunderforestAttributions = [
-        new ol.Attribution({
-            html: 'Tiles &copy; <a href="http://www.thunderforest.com/">Thunderforest</a>'
-        }),
+        'Tiles &copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
         ol.source.OSM.ATTRIBUTION
     ];
 
