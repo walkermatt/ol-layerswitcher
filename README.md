@@ -4,6 +4,10 @@ Grouped layer list control for an OpenLayer map.
 
 All layers should have a `title` property and base layers should have a `type` property set to `base`. Group layers (`ol.layer.Group`) can be used to visually group layers together. See [examples/layerswitcher.js](examples/layerswitcher.js) for usage.
 
+Compatible with OpenLayers version 3, 4 and 5 (see note in [Install - Parcel,
+Webpack etc.](#parcel-webpack-etc) regarding installing the appropriate version
+of `ol-layerswitcher` for OpenLayers).
+
 ## Examples
 
 The examples demonstrate usage and can be viewed online thanks to [RawGit](http://rawgit.com/):
@@ -19,6 +23,41 @@ The examples demonstrate usage and can be viewed online thanks to [RawGit](http:
 
 The source for all examples can be found in [examples](examples).
 
+## Install
+
+### Browser
+
+#### JS
+
+Load `ol-layerswitcher.js` after OpenLayers. The layerswitcher control is available as `LayerSwitcher` or `ol.control.LayerSwitcher`.
+
+```HTML
+<script src="https://unpkg.com/ol-layerswitcher@3.0.0"></script>
+```
+
+#### CSS
+
+```HTML
+<link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.0.0/src/ol-layerswitcher.css" />
+```
+
+### Parcel, Webpack etc.
+
+NPM package: [ol-layerswitcher](https://www.npmjs.com/package/ol-layerswitcher).
+
+#### JS
+
+Install the package via `npm`
+
+    npm install ol-layerswitcher --save
+
+:warning: If you're using the [`ol` package](https://www.npmjs.com/package/ol) prior to v5 you'll need to install `ol-layerswitcher@v2.0.0`.
+
+#### CSS
+
+The CSS file `ol-layerswitcher.css` can be found in `./node_modules/ol-layerswitcher/src`
+
+To use the layerswitcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
 ## Tests
 
 To run the tests you'll need to install the dependencies via `npm`. In the root of the repository run:
