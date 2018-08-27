@@ -161,8 +161,6 @@ export default class LayerSwitcher extends Control {
     */
     static renderLayer_(map, lyr, idx) {
 
-        var this_ = LayerSwitcher;
-
         var li = document.createElement('li');
 
         var lyrTitle = lyr.get('title');
@@ -193,7 +191,7 @@ export default class LayerSwitcher extends Control {
             input.id = lyrId;
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
-                this_.setVisible_(map, lyr, e.target.checked);
+                LayerSwitcher.setVisible_(map, lyr, e.target.checked);
             };
             li.appendChild(input);
 
