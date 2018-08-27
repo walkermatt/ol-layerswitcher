@@ -227,6 +227,7 @@ var LayerSwitcher = function (_Control) {
 
             var ul = document.createElement('ul');
             panel.appendChild(ul);
+            // passing two map arguments insteaad of lyr as we we're passing the map as the root of the layers tree
             LayerSwitcher.renderLayers_(map, map, ul);
         }
 
@@ -258,7 +259,6 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'setVisible_',
         value: function setVisible_(map, lyr, visible) {
-            var map = map;
             lyr.setVisible(visible);
             if (visible && lyr.get('type') === 'base') {
                 // Hide all other base layers regardless of grouping
@@ -280,8 +280,6 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'renderLayer_',
         value: function renderLayer_(map, lyr, idx) {
-
-            var this_ = LayerSwitcher;
 
             var li = document.createElement('li');
 
@@ -312,7 +310,7 @@ var LayerSwitcher = function (_Control) {
                 input.id = lyrId;
                 input.checked = lyr.get('visible');
                 input.onchange = function (e) {
-                    this_.setVisible_(map, lyr, e.target.checked);
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked);
                 };
                 li.appendChild(input);
 
