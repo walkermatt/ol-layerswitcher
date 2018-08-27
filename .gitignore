@@ -2,4 +2,3 @@ node_modules
 .idea/
 package-lock.json
 npm-debug.log
-src/ol-layerswitcher_ORIGINAL.js
