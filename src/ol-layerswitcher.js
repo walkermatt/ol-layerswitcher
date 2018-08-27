@@ -142,7 +142,6 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Base} The layer whos visibility will be toggled.
     */
     static setVisible_(map, lyr, visible) {
-        var map = map;
         lyr.setVisible(visible);
         if (visible && lyr.get('type') === 'base') {
             // Hide all other base layers regardless of grouping
