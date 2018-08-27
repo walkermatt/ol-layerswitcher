@@ -59,6 +59,7 @@
         })
     });
 
+    // get out-of-the-map div element called "layers" and renders layers to it
     var toc = document.getElementById("layers");
     ol.control.LayerSwitcher.renderPanel(toc, map);
 
