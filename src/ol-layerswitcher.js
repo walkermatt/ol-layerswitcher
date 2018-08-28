@@ -79,7 +79,7 @@ export default class LayerSwitcher extends Control {
             this.mapListeners.push(map.on('pointerdown', function() {
                 this_.hidePanel();
             }));
-            this.renderPanel();
+            LayerSwitcher.renderPanel(this.panel, this.getMap());
         }
     }
 
@@ -89,7 +89,7 @@ export default class LayerSwitcher extends Control {
     showPanel() {
         if (!this.element.classList.contains(this.shownClassName)) {
             this.element.classList.add(this.shownClassName);
-            this.renderPanel();
+            LayerSwitcher.renderPanel(this.panel, this.getMap());
         }
     }
 
@@ -103,45 +103,45 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * Re-draw the layer panel to represent the current state of the layers.
+    * **Static** Re-draw the layer panel to represent the current state of the layers.
     */
-    renderPanel() {
+    static renderPanel(panel, map) {
 
-        this.ensureTopVisibleBaseLayerShown_();
+        LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
-        while(this.panel.firstChild) {
-            this.panel.removeChild(this.panel.firstChild);
+        while(panel.firstChild) {
+            panel.removeChild(panel.firstChild);
         }
 
         var ul = document.createElement('ul');
-        this.panel.appendChild(ul);
-        this.renderLayers_(this.getMap(), ul);
+        panel.appendChild(ul);
+        // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
+        LayerSwitcher.renderLayers_(map, map, ul);
 
     }
 
     /**
-    * Ensure only the top-most base layer is visible if more than one is visible.
+    * **Static** Ensure only the top-most base layer is visible if more than one is visible.
     * @private
     */
-    ensureTopVisibleBaseLayerShown_() {
+    static ensureTopVisibleBaseLayerShown_(map) {
         var lastVisibleBaseLyr;
-        LayerSwitcher.forEachRecursive(this.getMap(), function(l, idx, a) {
+        LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
             if (l.get('type') === 'base' && l.getVisible()) {
                 lastVisibleBaseLyr = l;
             }
         });
-        if (lastVisibleBaseLyr) this.setVisible_(lastVisibleBaseLyr, true);
+        if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true);
     }
 
     /**
-    * Toggle the visible state of a layer.
+    * **Static** Toggle the visible state of a layer.
     * Takes care of hiding other layers in the same exclusive group if the layer
     * is toggle to visible.
     * @private
     * @param {ol.layer.Base} The layer whos visibility will be toggled.
     */
-    setVisible_(lyr, visible) {
-        var map = this.getMap();
+    static setVisible_(map, lyr, visible) {
         lyr.setVisible(visible);
         if (visible && lyr.get('type') === 'base') {
             // Hide all other base layers regardless of grouping
@@ -154,14 +154,12 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * Render all layers that are children of a group.
+    * **Static** Render all layers that are children of a group.
     * @private
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
     */
-    renderLayer_(lyr, idx) {
-
-        var this_ = this;
+    static renderLayer_(map, lyr, idx) {
 
         var li = document.createElement('li');
 
@@ -178,7 +176,7 @@ export default class LayerSwitcher extends Control {
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
-            this.renderLayers_(lyr, ul);
+            LayerSwitcher.renderLayers_(map, lyr, ul);
 
         } else {
 
@@ -193,14 +191,14 @@ export default class LayerSwitcher extends Control {
             input.id = lyrId;
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
-                this_.setVisible_(lyr, e.target.checked);
+                LayerSwitcher.setVisible_(map, lyr, e.target.checked);
             };
             li.appendChild(input);
 
             label.htmlFor = lyrId;
             label.innerHTML = lyrTitle;
 
-            var rsl = this.getMap().getView().getResolution();
+            var rsl = map.getView().getResolution();
             if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()){
                 label.className += ' disabled';
             }
@@ -214,17 +212,17 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * Render all layers that are children of a group.
+    * **Static** Render all layers that are children of a group.
     * @private
     * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
     * @param {Element} elm DOM element that children will be appended to.
     */
-    renderLayers_(lyr, elm) {
+    static renderLayers_(map, lyr, elm) {
         var lyrs = lyr.getLayers().getArray().slice().reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(this.renderLayer_(l, i));
+                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
             }
         }
     }
