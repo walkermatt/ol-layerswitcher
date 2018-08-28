@@ -115,7 +115,7 @@ export default class LayerSwitcher extends Control {
 
         var ul = document.createElement('ul');
         panel.appendChild(ul);
-        // passing two map arguments insteaad of lyr as we we're passing the map as the root of the layers tree
+        // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
         LayerSwitcher.renderLayers_(map, map, ul);
 
     }
