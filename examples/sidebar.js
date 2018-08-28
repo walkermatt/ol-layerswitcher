@@ -60,7 +60,9 @@
     });
 
     // get out-of-the-map div element called "layers" and renders layers to it
+    var sidebar = new ol.control.Sidebar({ element: 'sidebar', position: 'left' });
     var toc = document.getElementById("layers");
     ol.control.LayerSwitcher.renderPanel(toc, map);
+    map.addControl(sidebar);
 
 })();
