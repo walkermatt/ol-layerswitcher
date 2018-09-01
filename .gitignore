@@ -1,2 +1,4 @@
 node_modules
 .idea/
+package-lock.json
+npm-debug.log

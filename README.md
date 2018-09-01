@@ -18,6 +18,8 @@ The examples demonstrate usage and can be viewed online thanks to [RawGit](http:
     -   Add a layer to an existing layer group after the layer switcher has been added to the map.
 -   [Scrolling](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/scroll.html)
     -   Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol-layerswitcher.css](src/ol-layerswitcher.css)).
+-   [Side bar](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/sidebar.html)
+    -   Demonstrates rendering the layer tree into a [Turbo87/sidebar-v2](https://github.com/Turbo87/sidebar-v2) pane. This uses the static method [`LayerSwitcher.renderPanel`](#renderpanel) which can be used to render the layer tree to any arbitrary HTML element.
 -   [Bundling with `ol` package (Browserify, Parcel, Webpack...)](https://github.com/walkermatt/ol-layerswitcher-examples)
     -   To use the layer switcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Browserify, Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
 
@@ -58,6 +60,7 @@ Install the package via `npm`
 The CSS file `ol-layerswitcher.css` can be found in `./node_modules/ol-layerswitcher/src`
 
 To use the layerswitcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
+
 ## Tests
 
 To run the tests you'll need to install the dependencies via `npm`. In the root of the repository run:
@@ -110,7 +113,12 @@ Hide the layer panel.
 
 #### renderPanel
 
-Re-draw the layer panel to represent the current state of the layers.
+**Static** Re-draw the layer panel to represent the current state of the layers.
+
+**Parameters**
+
+-   `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
+-   `map` **ol.Map** The OpenLayers Map instance to render layers for
 
 #### forEachRecursive
 
