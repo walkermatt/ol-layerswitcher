@@ -104,10 +104,10 @@ export default class LayerSwitcher extends Control {
 
     /**
     * **Static** Re-draw the layer panel to represent the current state of the layers.
-    * @param {Element} panel The DOM Element into which the layer tree will be rendered
     * @param {ol.Map} map The OpenLayers Map instance to render layers for
+    * @param {Element} panel The DOM Element into which the layer tree will be rendered
     */
-    static renderPanel(panel, map) {
+    static renderPanel(map, panel) {
 
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -124,6 +124,7 @@ export default class LayerSwitcher extends Control {
 
     /**
     * **Static** Ensure only the top-most base layer is visible if more than one is visible.
+    * @param {ol.Map} map The map instance.
     * @private
     */
     static ensureTopVisibleBaseLayerShown_(map) {
@@ -141,6 +142,7 @@ export default class LayerSwitcher extends Control {
     * Takes care of hiding other layers in the same exclusive group if the layer
     * is toggle to visible.
     * @private
+    * @param {ol.Map} map The map instance.
     * @param {ol.layer.Base} The layer whos visibility will be toggled.
     */
     static setVisible_(map, lyr, visible) {
@@ -158,6 +160,7 @@ export default class LayerSwitcher extends Control {
     /**
     * **Static** Render all layers that are children of a group.
     * @private
+    * @param {ol.Map} map The map instance.
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
     */
@@ -216,6 +219,7 @@ export default class LayerSwitcher extends Control {
     /**
     * **Static** Render all layers that are children of a group.
     * @private
+    * @param {ol.Map} map The map instance.
     * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
     * @param {Element} elm DOM element that children will be appended to.
     */

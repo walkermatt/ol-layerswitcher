@@ -113,12 +113,16 @@ Hide the layer panel.
 
 #### renderPanel
 
+Re-draw the layer panel to represent the current state of the layers.
+
+#### renderPanel
+
 **Static** Re-draw the layer panel to represent the current state of the layers.
 
 **Parameters**
 
--   `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
 -   `map` **ol.Map** The OpenLayers Map instance to render layers for
+-   `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
 
 #### forEachRecursive
 

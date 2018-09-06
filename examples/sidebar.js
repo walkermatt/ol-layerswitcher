@@ -65,7 +65,7 @@
     // the layer tree. Style the tree via CSS.
     var sidebar = new ol.control.Sidebar({ element: 'sidebar', position: 'left' });
     var toc = document.getElementById("layers");
-    ol.control.LayerSwitcher.renderPanel(toc, map);
+    ol.control.LayerSwitcher.renderPanel(map, toc);
     map.addControl(sidebar);
 
 })();
