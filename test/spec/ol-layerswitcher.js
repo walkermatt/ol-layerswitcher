@@ -256,7 +256,7 @@ describe('ol.control.LayerSwitcher', function() {
                 l.setVisible(true);
             });
 
-            ol.control.LayerSwitcher.renderPanel(switcher.getMap(), switcher.panel);
+            switcher.renderPanel();
             var visibleBaseLayerCount = _.countBy(baseLayers, function (l){
                 return l.getVisible();
             });
@@ -271,13 +271,13 @@ describe('ol.control.LayerSwitcher', function() {
             _.forEach(baseLayers, function (l) {
                 l.setVisible(true);
             });
-            ol.control.LayerSwitcher.renderPanel(switcher.getMap(), switcher.panel);
+            switcher.renderPanel();
             expect(cbg.getVisible()).to.be(true);
         });
         it('Clicking on unchecked base layer shows it', function() {
             var too = getLayerByTitle('Too');
             too.setVisible(false);
-            ol.control.LayerSwitcher.renderPanel(switcher.getMap(), switcher.panel);
+            switcher.renderPanel();
             jQuery('.layer-switcher label:contains("Too")').siblings('input').click();
             expect(too.getVisible()).to.be(true);
             expect(jQuery('.layer-switcher label:contains("Too")').siblings('input').get(0).checked).to.be(true);
@@ -285,7 +285,7 @@ describe('ol.control.LayerSwitcher', function() {
         it('Clicking on checked base layer does not change base layer', function() {
             var foo = getLayerByTitle('Foo');
             foo.setVisible(true);
-            ol.control.LayerSwitcher.renderPanel(switcher.getMap(), switcher.panel);
+            switcher.renderPanel();
             jQuery('.layer-switcher label:contains("Foo")').siblings('input').click();
             expect(foo.getVisible()).to.be(true);
             expect(jQuery('.layer-switcher label:contains("Foo")').siblings('input').get(0).checked).to.be(true);

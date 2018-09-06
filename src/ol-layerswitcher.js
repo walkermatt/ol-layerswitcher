@@ -79,7 +79,7 @@ export default class LayerSwitcher extends Control {
             this.mapListeners.push(map.on('pointerdown', function() {
                 this_.hidePanel();
             }));
-            LayerSwitcher.renderPanel(this.panel, this.getMap());
+            this.renderPanel();
         }
     }
 
@@ -89,7 +89,7 @@ export default class LayerSwitcher extends Control {
     showPanel() {
         if (!this.element.classList.contains(this.shownClassName)) {
             this.element.classList.add(this.shownClassName);
-            LayerSwitcher.renderPanel(this.panel, this.getMap());
+            this.renderPanel();
         }
     }
 
@@ -100,6 +100,13 @@ export default class LayerSwitcher extends Control {
         if (this.element.classList.contains(this.shownClassName)) {
             this.element.classList.remove(this.shownClassName);
         }
+    }
+
+    /**
+    * Re-draw the layer panel to represent the current state of the layers.
+    */
+    renderPanel() {
+        LayerSwitcher.renderPanel(this.getMap(), this.panel);
     }
 
     /**

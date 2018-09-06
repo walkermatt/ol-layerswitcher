@@ -80,6 +80,7 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
     -   [showPanel](#showpanel)
     -   [hidePanel](#hidepanel)
     -   [renderPanel](#renderpanel)
+    -   [renderPanel](#renderpanel-1)
     -   [forEachRecursive](#foreachrecursive)
     -   [uuid](#uuid)
 
