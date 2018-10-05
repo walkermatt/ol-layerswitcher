@@ -306,9 +306,32 @@ var LayerSwitcher = function (_Control) {
             if (lyr.getLayers && !lyr.get('combine')) {
 
                 li.className = 'group';
+
+                //Group folding
+                var ulStyle;
+                if (lyr.get('unfolded')) {
+                    lyr.id = lyrId;
+                    var fold = document.createElement('i');
+                    fold.className = 'fold fa';
+                    if (lyr.get('unfolded') === 'yes') {
+                        ulStyle = 'block';
+                        fold.classList.add('fa-caret-down');
+                    } else {
+                        ulStyle = 'none';
+                        fold.classList.add('fa-caret-right');
+                    }
+                    lyr.set('fold', fold);
+                    fold.onclick = function (e) {
+                        LayerSwitcher.toggleFold_(lyr);
+                    };
+                    li.appendChild(fold);
+                }
+
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
                 var ul = document.createElement('ul');
+                ul.id = 'ul-' + lyrId;
+                ul.style.display = ulStyle;
                 li.appendChild(ul);
 
                 LayerSwitcher.renderLayers_(map, lyr, ul);
@@ -432,6 +455,28 @@ var LayerSwitcher = function (_Control) {
                 return true;
             } catch (e) {
                 return false;
+            }
+        }
+
+        /**
+        * Fold/unfold layer group
+        */
+
+    }, {
+        key: 'toggleFold_',
+        value: function toggleFold_(lyr) {
+            var lyrUl = document.getElementById('ul-' + lyr.id);
+            var fold = lyr.get('fold');
+            if (lyr.get('unfolded') === 'yes') {
+                lyrUl.style.display = 'none';
+                fold.classList.toggle('fa-caret-down', false);
+                fold.classList.toggle('fa-caret-right', true);
+                lyr.set('unfolded', 'no');
+            } else {
+                lyrUl.style.display = 'block';
+                fold.classList.toggle('fa-caret-right', false);
+                fold.classList.toggle('fa-caret-down', true);
+                lyr.set('unfolded', 'yes');
             }
         }
     }]);
