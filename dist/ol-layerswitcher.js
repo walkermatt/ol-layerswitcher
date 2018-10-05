@@ -96,6 +96,8 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+var CSS_PREFIX = 'layer-switcher-';
+
 /**
  * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
@@ -306,6 +308,16 @@ var LayerSwitcher = function (_Control) {
             if (lyr.getLayers && !lyr.get('combine')) {
 
                 li.className = 'group';
+
+                // Group folding
+                if (lyr.get('fold')) {
+                    li.classList.add(CSS_PREFIX + 'fold');
+                    li.classList.add(CSS_PREFIX + lyr.get('fold'));
+                    label.onclick = function (e) {
+                        LayerSwitcher.toggleFold_(lyr, li);
+                    };
+                }
+
                 label.innerHTML = lyrTitle;
                 li.appendChild(label);
                 var ul = document.createElement('ul');
@@ -433,6 +445,18 @@ var LayerSwitcher = function (_Control) {
             } catch (e) {
                 return false;
             }
+        }
+
+        /**
+        * Fold/unfold layer group
+        */
+
+    }, {
+        key: 'toggleFold_',
+        value: function toggleFold_(lyr, li) {
+            li.classList.remove(CSS_PREFIX + lyr.get('fold'));
+            lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
+            li.classList.add(CSS_PREFIX + lyr.get('fold'));
         }
     }]);
     return LayerSwitcher;

@@ -1,6 +1,8 @@
 import Control from 'ol/control/Control';
 import Observable from 'ol/Observable';
 
+var CSS_PREFIX = 'layer-switcher-';
+
 /**
  * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
@@ -183,6 +185,16 @@ export default class LayerSwitcher extends Control {
         if (lyr.getLayers && !lyr.get('combine')) {
 
             li.className = 'group';
+
+            // Group folding
+            if (lyr.get('fold')) {
+              li.classList.add(CSS_PREFIX + 'fold');
+              li.classList.add(CSS_PREFIX + lyr.get('fold'));
+              label.onclick = function (e) {
+                LayerSwitcher.toggleFold_(lyr, li);
+              };
+            }
+
             label.innerHTML = lyrTitle;
             li.appendChild(label);
             var ul = document.createElement('ul');
@@ -299,7 +311,17 @@ export default class LayerSwitcher extends Control {
         }
     }
 
+    /**
+    * Fold/unfold layer group
+    */
+    static toggleFold_(lyr, li) {
+        li.classList.remove(CSS_PREFIX + lyr.get('fold'));
+        lyr.set('fold', (lyr.get('fold')==='open') ? 'close' : 'open');
+        li.classList.add(CSS_PREFIX + lyr.get('fold'));
+    }
+
 }
+
 
 // Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
 // OpenLayers
