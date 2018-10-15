@@ -185,16 +185,16 @@ export default class LayerSwitcher extends Control {
             li.className = 'group';
             
             //Group folding
-            var ulStyle;
+            var ulStyle, ulHeight;
             if (lyr.get('unfolded')) {
               lyr.id = lyrId;
               var fold = document.createElement('i');
               fold.className = 'fold fa';
               if (lyr.get('unfolded')==='yes') {
-                  ulStyle = 'block';
                   fold.classList.add('fa-caret-down');
               } else {
-                  ulStyle = 'none';
+                  ulStyle = 'hidden';
+                  ulHeight = '0px';
                   fold.classList.add('fa-caret-right');
               }
               lyr.set('fold',fold);
@@ -208,7 +208,8 @@ export default class LayerSwitcher extends Control {
             li.appendChild(label);
             var ul = document.createElement('ul');
             ul.id = 'ul-' + lyrId;
-            ul.style.display = ulStyle;
+            ul.style.overflow = ulStyle;
+            ul.style.height = ulHeight;
             li.appendChild(ul);
 
             LayerSwitcher.renderLayers_(map, lyr, ul);
@@ -329,18 +330,19 @@ export default class LayerSwitcher extends Control {
         var lyrUl = document.getElementById('ul-' + lyr.id);
         var fold=(lyr.get('fold'));
         if (lyr.get('unfolded')==='yes') {
-            lyrUl.style.display = 'none';
+            lyrUl.style.height = '0px';
+            lyrUl.style.overflow = 'hidden';
             fold.classList.toggle('fa-caret-down', false);
             fold.classList.toggle('fa-caret-right', true);
             lyr.set('unfolded', 'no');
         } else {
-            lyrUl.style.display = 'block';
+            lyrUl.style.removeProperty('overflow');
+            lyrUl.style.removeProperty('height');
             fold.classList.toggle('fa-caret-right', false);
             fold.classList.toggle('fa-caret-down', true);
             lyr.set('unfolded', 'yes');
         }
     }
-
 }
 
 
