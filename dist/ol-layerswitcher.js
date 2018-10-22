@@ -154,7 +154,7 @@ var LayerSwitcher = function (_Control) {
         this_.panel.onmouseout = function (e) {
             e = e || window.event;
             if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-                // this_.hidePanel();
+                this_.hidePanel();
             }
         };
 
