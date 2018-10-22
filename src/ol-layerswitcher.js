@@ -186,18 +186,18 @@ export default class LayerSwitcher extends Control {
             
             //Group folding
             var ulStyle, ulHeight;
-            if (lyr.get('unfolded')) {
+            if (lyr.get('fold')==='open' || lyr.get('fold')==='close') {
               lyr.id = lyrId;
               var fold = document.createElement('i');
               fold.className = 'fold fa';
-              if (lyr.get('unfolded')==='yes') {
+              if (lyr.get('fold')==='open') {
                   fold.classList.add('fa-caret-down');
               } else {
                   ulStyle = 'hidden';
                   ulHeight = '0px';
                   fold.classList.add('fa-caret-right');
               }
-              lyr.set('fold',fold);
+              lyr.set('foldobj',fold);
               fold.onclick = function (e) {
                 LayerSwitcher.toggleFold_(lyr);
               };
@@ -328,19 +328,19 @@ export default class LayerSwitcher extends Control {
     */
     static toggleFold_(lyr) {
         var lyrUl = document.getElementById('ul-' + lyr.id);
-        var fold=(lyr.get('fold'));
-        if (lyr.get('unfolded')==='yes') {
+        var fold=(lyr.get('foldobj'));
+        if (lyr.get('fold')==='open') {
             lyrUl.style.height = '0px';
             lyrUl.style.overflow = 'hidden';
             fold.classList.toggle('fa-caret-down', false);
             fold.classList.toggle('fa-caret-right', true);
-            lyr.set('unfolded', 'no');
+            lyr.set('fold', 'close');
         } else {
             lyrUl.style.removeProperty('overflow');
             lyrUl.style.removeProperty('height');
             fold.classList.toggle('fa-caret-right', false);
             fold.classList.toggle('fa-caret-down', true);
-            lyr.set('unfolded', 'yes');
+            lyr.set('fold', 'open');
         }
     }
 }
