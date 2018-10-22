@@ -189,13 +189,13 @@ export default class LayerSwitcher extends Control {
             if (lyr.get('fold')==='open' || lyr.get('fold')==='close') {
               lyr.id = lyrId;
               var fold = document.createElement('i');
-              fold.className = 'fold fa';
+              fold.className = 'fold';
               if (lyr.get('fold')==='open') {
-                  fold.classList.add('fa-caret-down');
+                  fold.classList.add('open');
               } else {
                   ulStyle = 'hidden';
                   ulHeight = '0px';
-                  fold.classList.add('fa-caret-right');
+                  fold.classList.add('close');
               }
               lyr.set('foldobj',fold);
               fold.onclick = function (e) {
@@ -332,14 +332,14 @@ export default class LayerSwitcher extends Control {
         if (lyr.get('fold')==='open') {
             lyrUl.style.height = '0px';
             lyrUl.style.overflow = 'hidden';
-            fold.classList.toggle('fa-caret-down', false);
-            fold.classList.toggle('fa-caret-right', true);
+            fold.classList.toggle('open', false);
+            fold.classList.toggle('close', true);
             lyr.set('fold', 'close');
         } else {
             lyrUl.style.removeProperty('overflow');
             lyrUl.style.removeProperty('height');
-            fold.classList.toggle('fa-caret-right', false);
-            fold.classList.toggle('fa-caret-down', true);
+            fold.classList.toggle('close', false);
+            fold.classList.toggle('open', true);
             lyr.set('fold', 'open');
         }
     }
