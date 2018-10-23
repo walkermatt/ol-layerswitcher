@@ -104,12 +104,12 @@
     margin-bottom: 1px;
 }
 
-.layer-switcher .right {
+.layer-switcher i.arrow.right {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
 }
 
-.layer-switcher .down {
+.layer-switcher i.arrow.down {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
