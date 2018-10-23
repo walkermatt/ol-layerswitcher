@@ -154,7 +154,7 @@ var LayerSwitcher = function (_Control) {
         this_.panel.onmouseout = function (e) {
             e = e || window.event;
             if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-                this_.hidePanel();
+                //this_.hidePanel();
             }
         };
 
@@ -312,19 +312,22 @@ var LayerSwitcher = function (_Control) {
                 if (lyr.get('fold') === 'open' || lyr.get('fold') === 'close') {
                     lyr.id = lyrId;
                     var fold = document.createElement('i');
-                    fold.className = 'fold';
+                    fold.className = 'arrow';
                     if (lyr.get('fold') === 'open') {
-                        fold.classList.add('open');
+                        fold.classList.add('down');
                     } else {
                         ulStyle = 'hidden';
                         ulHeight = '0px';
-                        fold.classList.add('close');
+                        fold.classList.add('right');
                     }
                     lyr.set('foldobj', fold);
                     fold.onclick = function (e) {
                         LayerSwitcher.toggleFold_(lyr);
                     };
                     li.appendChild(fold);
+                    label.onclick = function (e) {
+                        LayerSwitcher.toggleFold_(lyr);
+                    };
                 }
 
                 label.innerHTML = lyrTitle;
@@ -471,14 +474,14 @@ var LayerSwitcher = function (_Control) {
             if (lyr.get('fold') === 'open') {
                 lyrUl.style.height = '0px';
                 lyrUl.style.overflow = 'hidden';
-                fold.classList.toggle('open', false);
-                fold.classList.toggle('close', true);
+                fold.classList.toggle('down', false);
+                fold.classList.toggle('right', true);
                 lyr.set('fold', 'close');
             } else {
                 lyrUl.style.removeProperty('overflow');
                 lyrUl.style.removeProperty('height');
-                fold.classList.toggle('close', false);
-                fold.classList.toggle('open', true);
+                fold.classList.toggle('right', false);
+                fold.classList.toggle('down', true);
                 lyr.set('fold', 'open');
             }
         }
