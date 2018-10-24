@@ -4,6 +4,7 @@
         layers: [
             new ol.layer.Group({
                 'title': 'Base maps',
+                'fold': 'open',
                 layers: [
                     new ol.layer.Group({
                         title: 'Water color with labels',

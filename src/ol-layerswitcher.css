@@ -95,24 +95,27 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
-.layer-switcher i.arrow  {
+.layer-switcher .group.fold > label:before  {
+    content: '';
     border: solid black;
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 2px;
     margin-right: 2px;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
 }
 
-.layer-switcher i.arrow.right {
+.layer-switcher .group.fold.close > label:before {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
 }
 
-.layer-switcher i.arrow.down {
+.layer-switcher .group.fold.open > label:before {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
 
-
-
+.layer-switcher .group.fold.close > ul {
+    overflow: hidden;
+    height: 0;
+}

@@ -2,7 +2,11 @@
 
 Grouped layer list control for an OpenLayer map.
 
-All layers should have a `title` property and base layers should have a `type` property set to `base`. Group layers (`ol.layer.Group`) can be used to visually group layers together. See [examples/layerswitcher.js](examples/layerswitcher.js) for usage.
+To be shown in the layer switcher layers should have a `title` property; base
+layers should have a `type` property set to `base`. Group layers
+(`ol.layer.Group`) can be used to visually group layers together; a group with
+a `fold` property set to either `open` or `close` will be displayed with a
+toggle. See [Examples](#examples) for usage.
 
 Compatible with OpenLayers version 3, 4 and 5 (see note in [Install - Parcel,
 Webpack etc.](#parcel-webpack-etc) regarding installing the appropriate version
@@ -20,6 +24,8 @@ The examples demonstrate usage and can be viewed online thanks to [RawGit](http:
     -   Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol-layerswitcher.css](src/ol-layerswitcher.css)).
 -   [Side bar](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/sidebar.html)
     -   Demonstrates rendering the layer tree into a [Turbo87/sidebar-v2](https://github.com/Turbo87/sidebar-v2) pane. This uses the static method [`LayerSwitcher.renderPanel`](#renderpanel) which can be used to render the layer tree to any arbitrary HTML element.
+-   [Collapse groups](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/collapse-groups.html)
+    -   Demonstrates using the `fold` property with a Group to allow the group to be collapsed
 -   [Bundling with `ol` package (Browserify, Parcel, Webpack...)](https://github.com/walkermatt/ol-layerswitcher-examples)
     -   To use the layer switcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Browserify, Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
 

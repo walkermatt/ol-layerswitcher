@@ -183,36 +183,19 @@ export default class LayerSwitcher extends Control {
         if (lyr.getLayers && !lyr.get('combine')) {
 
             li.className = 'group';
-            
-            //Group folding
-            var ulStyle, ulHeight;
-            if (lyr.get('fold')==='open' || lyr.get('fold')==='close') {
-              lyr.id = lyrId;
-              var fold = document.createElement('i');
-              fold.className = 'arrow';
-              if (lyr.get('fold')==='open') {
-                  fold.classList.add('down');
-              } else {
-                  ulStyle = 'hidden';
-                  ulHeight = '0px';
-                  fold.classList.add('right');
-              }
-              lyr.set('foldobj',fold);
-              fold.onclick = function (e) {
-                LayerSwitcher.toggleFold_(lyr);
-              };
-              li.appendChild(fold);
+
+            // Group folding
+            if (lyr.get('fold')) {
+              li.classList.add('fold');
+              li.classList.add(lyr.get('fold'));
               label.onclick = function (e) {
-                LayerSwitcher.toggleFold_(lyr);
+                LayerSwitcher.toggleFold_(lyr, li);
               };
             }
-            
+
             label.innerHTML = lyrTitle;
             li.appendChild(label);
             var ul = document.createElement('ul');
-            ul.id = 'ul-' + lyrId;
-            ul.style.overflow = ulStyle;
-            ul.style.height = ulHeight;
             li.appendChild(ul);
 
             LayerSwitcher.renderLayers_(map, lyr, ul);
@@ -329,23 +312,12 @@ export default class LayerSwitcher extends Control {
     /**
     * Fold/unfold layer group
     */
-    static toggleFold_(lyr) {
-        var lyrUl = document.getElementById('ul-' + lyr.id);
-        var fold=(lyr.get('foldobj'));
-        if (lyr.get('fold')==='open') {
-            lyrUl.style.height = '0px';
-            lyrUl.style.overflow = 'hidden';
-            fold.classList.toggle('down', false);
-            fold.classList.toggle('right', true);
-            lyr.set('fold', 'close');
-        } else {
-            lyrUl.style.removeProperty('overflow');
-            lyrUl.style.removeProperty('height');
-            fold.classList.toggle('right', false);
-            fold.classList.toggle('down', true);
-            lyr.set('fold', 'open');
-        }
+    static toggleFold_(lyr, li) {
+        li.classList.remove(lyr.get('fold'));
+        lyr.set('fold', (lyr.get('fold')==='open') ? 'close' : 'open');
+        li.classList.add(lyr.get('fold'));
     }
+
 }
 
 
