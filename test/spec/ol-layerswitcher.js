@@ -82,7 +82,7 @@ describe('ol.control.LayerSwitcher', function() {
                         })
                     ]
                 }),
-                // Group with no title (group and it's children should be ignored)
+                // Group with no title (group and its children should be ignored)
                 new ol.layer.Group({
                     layers: [
                         new ol.layer.Tile({
