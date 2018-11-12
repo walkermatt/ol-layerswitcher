@@ -96,6 +96,8 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+var CSS_PREFIX = 'layer-switcher-';
+
 /**
  * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
@@ -309,8 +311,8 @@ var LayerSwitcher = function (_Control) {
 
                 // Group folding
                 if (lyr.get('fold')) {
-                    li.classList.add('fold');
-                    li.classList.add(lyr.get('fold'));
+                    li.classList.add(CSS_PREFIX + 'fold');
+                    li.classList.add(CSS_PREFIX + lyr.get('fold'));
                     label.onclick = function (e) {
                         LayerSwitcher.toggleFold_(lyr, li);
                     };
@@ -452,9 +454,9 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'toggleFold_',
         value: function toggleFold_(lyr, li) {
-            li.classList.remove(lyr.get('fold'));
+            li.classList.remove(CSS_PREFIX + lyr.get('fold'));
             lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
-            li.classList.add(lyr.get('fold'));
+            li.classList.add(CSS_PREFIX + lyr.get('fold'));
         }
     }]);
     return LayerSwitcher;

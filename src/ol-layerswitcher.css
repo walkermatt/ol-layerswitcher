@@ -95,7 +95,7 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
-.layer-switcher .group.fold > label:before  {
+.layer-switcher .group.layer-switcher-fold > label:before  {
     content: '';
     border: solid black;
     border-width: 0 3px 3px 0;
@@ -105,17 +105,17 @@
     margin-bottom: 2px;
 }
 
-.layer-switcher .group.fold.close > label:before {
+.layer-switcher .group.layer-switcher-fold.layer-switcher-close > label:before {
     transform: rotate(-45deg);
     -webkit-transform: rotate(-45deg);
 }
 
-.layer-switcher .group.fold.open > label:before {
+.layer-switcher .group.layer-switcher-fold.layer-switcher-open > label:before {
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
 
-.layer-switcher .group.fold.close > ul {
+.layer-switcher .group.layer-switcher-fold.layer-switcher-close > ul {
     overflow: hidden;
     height: 0;
 }
