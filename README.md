@@ -14,17 +14,17 @@ of `ol-layerswitcher` for OpenLayers).
 
 ## Examples
 
-The examples demonstrate usage and can be viewed online thanks to [RawGit](http://rawgit.com/):
+The examples demonstrate usage and can be viewed online thanks to [raw.githack.com](http://raw.githack.com/):
 
--   [Basic usage](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/layerswitcher.html)
+-   [Basic usage](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/layerswitcher.html)
     -   Create a layer switcher control. Each layer to be displayed in the layer switcher has a `title` property as does each Group; each base map layer has a `type: 'base'` property.
--   [Add layer](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/addlayer.html)
+-   [Add layer](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/addlayer.html)
     -   Add a layer to an existing layer group after the layer switcher has been added to the map.
--   [Scrolling](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/scroll.html)
+-   [Scrolling](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/scroll.html)
     -   Demonstrate the panel scrolling vertically, control the height of the layer switcher by setting the `max-height` (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol-layerswitcher.css](src/ol-layerswitcher.css)).
--   [Side bar](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/sidebar.html)
+-   [Side bar](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/sidebar.html)
     -   Demonstrates rendering the layer tree into a [Turbo87/sidebar-v2](https://github.com/Turbo87/sidebar-v2) pane. This uses the static method [`LayerSwitcher.renderPanel`](#renderpanel) which can be used to render the layer tree to any arbitrary HTML element.
--   [Collapse groups](http://rawgit.com/walkermatt/ol-layerswitcher/master/examples/collapse-groups.html)
+-   [Collapse groups](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/collapse-groups.html)
     -   Demonstrates using the `fold` property with a Group to allow the group to be collapsed
 -   [Bundling with `ol` package (Browserify, Parcel, Webpack...)](https://github.com/walkermatt/ol-layerswitcher-examples)
     -   To use the layer switcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Browserify, Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
