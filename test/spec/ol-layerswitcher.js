@@ -301,9 +301,9 @@ describe('ol.control.LayerSwitcher', function() {
             jQuery('.layer-switcher button').click();
             expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
             var baseGroupLi = jQuery(".layer-switcher label:contains('Base-Group')").parent();
-            expect(baseGroupLi.hasClass('fold')).to.be(true);
-            expect(baseGroupLi.hasClass('open')).to.be(true);
-            expect(baseGroupLi.hasClass('close')).to.be(false);
+            expect(baseGroupLi.hasClass('layer-switcher-fold')).to.be(true);
+            expect(baseGroupLi.hasClass('layer-switcher-open')).to.be(true);
+            expect(baseGroupLi.hasClass('layer-switcher-close')).to.be(false);
             // Determining if the content is visible or not is difficult as we simply set the
             // height of the ul containing the child layers to 0 so jQuery's :hidden
             // selector doesn't consider the element or it's children hidden even though
@@ -318,9 +318,9 @@ describe('ol.control.LayerSwitcher', function() {
             jQuery('.layer-switcher button').click();
             expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
             var baseGroupLi = jQuery(".layer-switcher label:contains('Base-Group')").parent();
-            expect(baseGroupLi.hasClass('fold')).to.be(true);
-            expect(baseGroupLi.hasClass('open')).to.be(false);
-            expect(baseGroupLi.hasClass('close')).to.be(true);
+            expect(baseGroupLi.hasClass('layer-switcher-fold')).to.be(true);
+            expect(baseGroupLi.hasClass('layer-switcher-open')).to.be(false);
+            expect(baseGroupLi.hasClass('layer-switcher-close')).to.be(true);
             // See above comment on use of offsetHeight
             expect(baseGroupLi.find('ul').get(0).offsetHeight).to.be(0);
         });
