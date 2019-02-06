@@ -8,7 +8,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:  
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
  * **`tipLabel`** `String` - the button tooltip.
  */
 export default class LayerSwitcher extends Control {
@@ -152,7 +152,7 @@ export default class LayerSwitcher extends Control {
     * is toggle to visible.
     * @private
     * @param {ol.Map} map The map instance.
-    * @param {ol.layer.Base} The layer whos visibility will be toggled.
+    * @param {ol.layer.Base} The layer whose visibility will be toggled.
     */
     static setVisible_(map, lyr, visible) {
         lyr.setVisible(visible);
@@ -163,6 +163,33 @@ export default class LayerSwitcher extends Control {
                     l.setVisible(false);
                 }
             });
+        }
+        if (lyr.getLayers && !lyr.get('combine')) {
+            LayerSwitcher.setNestedLayersVisible_(map, lyr, visible);
+        }
+    }
+
+    /**
+    * **Static** Toggle the visible state of a layer's sub-layers.
+    * @private
+    * @param {ol.Map} map The map instance.
+    * @param {ol.layer.Base} The layer whose visibility will be toggled.
+    */
+    static setNestedLayersVisible_(map, lyr, visible) {
+        const lyrvisible = lyr.getVisible();
+        const lyrs = lyr.getLayers().getArray().slice().reverse();
+        for (let l of lyrs) {
+            const lyrId = l.get('id');
+            const subLyr = document.getElementById(lyrId);
+            let disable = true;
+            subLyr.disabled = visible ? false : true;
+            if (lyrN === lyrs.length) {
+                subLyr.checked = lyrvisible;
+                LayerSwitcher.setVisible(map, l, lyrvisible);
+            }
+            if (l.getLayers && !lyr.get('combine')) {
+                LayerSwitcher.setNestedLayersVisible_(map, l, visible);
+            }
         }
     }
 
@@ -179,10 +206,20 @@ export default class LayerSwitcher extends Control {
 
         var lyrTitle = lyr.get('title');
         var lyrId = LayerSwitcher.uuid();
+        lyr.set('id', lyrId);
 
         var label = document.createElement('label');
 
         if (lyr.getLayers && !lyr.get('combine')) {
+
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = lyrId;
+            input.checked = lyr.get('visible');
+            input.onchange = function(e) {
+                this_.setVisible_(lyr, e.target.checked);
+            };
+            li.appendChild(input);
 
             li.className = 'group';
 
@@ -196,6 +233,7 @@ export default class LayerSwitcher extends Control {
             }
 
             label.innerHTML = lyrTitle;
+            label.htmlFor = lyrId;
             li.appendChild(label);
             var ul = document.createElement('ul');
             li.appendChild(ul);
@@ -269,7 +307,7 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * **Static** Generate a UUID  
+    * **Static** Generate a UUID
     * Adapted from http://stackoverflow.com/a/2117523/526860
     * @returns {String} UUID
     */
