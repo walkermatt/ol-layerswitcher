@@ -173,23 +173,53 @@ export default class LayerSwitcher extends Control {
     * **Static** Toggle the visible state of a layer's sub-layers.
     * @private
     * @param {ol.Map} map The map instance.
-    * @param {ol.layer.Base} The layer whose visibility will be toggled.
+    * @param {ol.layer.Base} The layer whose visibility has been toggled.
     */
     static setNestedLayersVisible_(map, lyr, visible) {
-        const lyrvisible = lyr.getVisible();
+        const lyrVisible = lyr.getVisible();
         const lyrs = lyr.getLayers().getArray().slice().reverse();
         for (let l of lyrs) {
             const lyrId = l.get('id');
             const subLyr = document.getElementById(lyrId);
-            let disable = true;
-            subLyr.disabled = visible ? false : true;
-            if (lyrN === lyrs.length) {
-                subLyr.checked = lyrvisible;
-                LayerSwitcher.setVisible(map, l, lyrvisible);
-            }
+            subLyr.checked = lyrVisible;
+            LayerSwitcher.setVisible_(map, l, lyrVisible);
             if (l.getLayers && !lyr.get('combine')) {
                 LayerSwitcher.setNestedLayersVisible_(map, l, visible);
             }
+        }
+    }
+
+    /**
+    * **Static** Check the visibility of siblings and set their parent state to indeterminate
+    *            if they differ.
+    * @private
+    * @param {ol.layer.Base} The layer to check
+    */
+    static checkParentIndeterminate_(lyr)
+    {
+        const parent = lyr.get('parent');
+        if (parent) {
+            const lyrs = parent.getLayers().getArray().slice().reverse();
+            const visible = lyr.getVisible();
+            let sameState = true;
+            for (let l of lyrs) {
+                if (lyr !== l && visible !== l.getVisible()) {
+                    sameState = false;
+                    break;
+                }
+            }
+            const id = parent.get('id');
+            const parentCheckbox = document.getElementById(id);
+            if (sameState) {
+                parentCheckbox.indeterminate = false;
+                parentCheckbox.checked = visible;
+                parent.setVisible(visible);
+            } else {
+                parentCheckbox.indeterminate = true;
+                parentCheckbox.checked = !visible;
+                parent.setVisible(true);
+            }
+            LayerSwitcher.checkParentIndeterminate_(parent);
         }
     }
 
@@ -200,7 +230,7 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
     */
-    static renderLayer_(map, lyr, idx) {
+    static renderLayer_(map, lyr, idx, parent) {
 
         var li = document.createElement('li');
 
@@ -217,7 +247,8 @@ export default class LayerSwitcher extends Control {
             input.id = lyrId;
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
-                this_.setVisible_(lyr, e.target.checked);
+                LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                LayerSwitcher.checkParentIndeterminate_(lyr);
             };
             li.appendChild(input);
 
@@ -230,10 +261,11 @@ export default class LayerSwitcher extends Control {
               label.onclick = function (e) {
                 LayerSwitcher.toggleFold_(lyr, li);
               };
+            } else {
+                label.htmlFor = lyrId;
             }
 
             label.innerHTML = lyrTitle;
-            label.htmlFor = lyrId;
             li.appendChild(label);
             var ul = document.createElement('ul');
             li.appendChild(ul);
@@ -254,6 +286,7 @@ export default class LayerSwitcher extends Control {
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
                 LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                LayerSwitcher.checkParentIndeterminate_(lyr);
             };
             li.appendChild(input);
 
@@ -285,8 +318,9 @@ export default class LayerSwitcher extends Control {
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
+                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, lyr));
             }
+            l.set('parent', (lyr !== map) ? lyr : null)
         }
     }
 
