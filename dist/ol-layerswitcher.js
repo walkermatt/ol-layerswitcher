@@ -239,10 +239,38 @@ var LayerSwitcher = function (_Control) {
                 panel.removeChild(panel.firstChild);
             }
 
+            map.getLayers().forEach(function (lyr) {
+                LayerSwitcher.setParentAndType_(lyr, null);
+            });
+
             var ul = document.createElement('ul');
             panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
             LayerSwitcher.renderLayers_(map, map, ul);
+        }
+
+        /**
+         * Sets the layer's parent attribute and set the layer's type
+         * to 'basegroup' if any children are a base layer or group.
+         *
+         * @param      {ol.layer.Base}  lyr     The layer
+         * @param      {ol.layer.Base}  parent  The layer's parent
+         */
+
+    }, {
+        key: 'setParentAndType_',
+        value: function setParentAndType_(lyr, parent) {
+            lyr.set('parent', parent);
+            lyr.getLayers().forEach(function (l) {
+                if (l.getLayers) {
+                    LayerSwitcher.setParentAndType_(l, lyr);
+                } else if (l.get('title')) {
+                    l.set('parent', lyr);
+                }
+                if (l.get('type') && l.get('type').startsWith('base')) {
+                    lyr.set('type', 'basegroup');
+                }
+            });
         }
 
         /**
@@ -309,9 +337,9 @@ var LayerSwitcher = function (_Control) {
                 for (var _iterator = lyrs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var l = _step.value;
 
-                    var lyrId = l.get('id');
-                    var subLyr = document.getElementById(lyrId);
-                    subLyr.checked = lyrVisible;
+                    var checkboxId = l.get('checkbox');
+                    var subCheckbox = document.getElementById(checkboxId);
+                    subCheckbox.checked = lyrVisible;
                     LayerSwitcher.setVisible_(map, l, lyrVisible);
                     if (l.getLayers && !lyr.get('combine')) {
                         LayerSwitcher.setNestedLayersVisible_(map, l, visible);
@@ -334,8 +362,22 @@ var LayerSwitcher = function (_Control) {
         }
 
         /**
-        * **Static** Check the visibility of siblings and set their parent state to indeterminate
-        *            if they differ.
+         * Get a layer's indeterminate state.
+         * @private
+         * @param      {ol.layer.Base}  layer   The layer to check
+         * @return     {boolean}  The layer's indeterminate state
+         */
+
+    }, {
+        key: 'indeterminate_',
+        value: function indeterminate_(layer) {
+            var checkboxId = layer.get('checkbox');
+            return document.getElementById(checkboxId).indeterminate;
+        }
+
+        /**
+        * **Static** Check the visibility of siblings and set their parent
+        *            state to indeterminate if they differ.
         * @private
         * @param {ol.layer.Base} The layer to check
         */
@@ -356,7 +398,7 @@ var LayerSwitcher = function (_Control) {
                     for (var _iterator2 = lyrs[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
                         var l = _step2.value;
 
-                        if (lyr !== l && visible !== l.getVisible()) {
+                        if (LayerSwitcher.indeterminate_(l) || lyr !== l && visible !== l.getVisible()) {
                             sameState = false;
                             break;
                         }
@@ -376,8 +418,8 @@ var LayerSwitcher = function (_Control) {
                     }
                 }
 
-                var id = parent.get('id');
-                var parentCheckbox = document.getElementById(id);
+                var checkboxId = parent.get('checkbox');
+                var parentCheckbox = document.getElementById(checkboxId);
                 if (sameState) {
                     parentCheckbox.indeterminate = false;
                     parentCheckbox.checked = visible;
@@ -401,27 +443,30 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'renderLayer_',
-        value: function renderLayer_(map, lyr, idx, parent) {
+        value: function renderLayer_(map, lyr, idx) {
 
             var li = document.createElement('li');
 
             var lyrTitle = lyr.get('title');
-            var lyrId = LayerSwitcher.uuid();
-            lyr.set('id', lyrId);
+
+            var checkboxId = LayerSwitcher.uuid();
+            lyr.set('checkbox', checkboxId);
 
             var label = document.createElement('label');
 
             if (lyr.getLayers && !lyr.get('combine')) {
 
-                var input = document.createElement('input');
-                input.type = 'checkbox';
-                input.id = lyrId;
-                input.checked = lyr.get('visible');
-                input.onchange = function (e) {
-                    LayerSwitcher.setVisible_(map, lyr, e.target.checked);
-                    LayerSwitcher.checkParentIndeterminate_(lyr);
-                };
-                li.appendChild(input);
+                if (!lyr.get('type') || !lyr.get('type').startsWith('base')) {
+                    var _input = document.createElement('input');
+                    _input.type = 'checkbox';
+                    _input.id = checkboxId;
+                    _input.checked = lyr.get('visible');
+                    _input.onchange = function (e) {
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                        LayerSwitcher.checkParentIndeterminate_(lyr);
+                    };
+                    li.appendChild(_input);
+                }
 
                 li.className = 'group';
 
@@ -433,7 +478,7 @@ var LayerSwitcher = function (_Control) {
                         LayerSwitcher.toggleFold_(lyr, li);
                     };
                 } else {
-                    label.htmlFor = lyrId;
+                    label.htmlFor = checkboxId;
                 }
 
                 label.innerHTML = lyrTitle;
@@ -452,15 +497,17 @@ var LayerSwitcher = function (_Control) {
                 } else {
                     input.type = 'checkbox';
                 }
-                input.id = lyrId;
+                input.id = checkboxId;
                 input.checked = lyr.get('visible');
                 input.onchange = function (e) {
                     LayerSwitcher.setVisible_(map, lyr, e.target.checked);
-                    LayerSwitcher.checkParentIndeterminate_(lyr);
+                    if (lyr.get('type') !== 'base') {
+                        LayerSwitcher.checkParentIndeterminate_(lyr);
+                    }
                 };
                 li.appendChild(input);
 
-                label.htmlFor = lyrId;
+                label.htmlFor = checkboxId;
                 label.innerHTML = lyrTitle;
 
                 var rsl = map.getView().getResolution();
@@ -478,7 +525,7 @@ var LayerSwitcher = function (_Control) {
         * **Static** Render all layers that are children of a group.
         * @private
         * @param {ol.Map} map The map instance.
-        * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
+        * @param {ol.layer.Group} lyr Group layer whose children will be rendered.
         * @param {Element} elm DOM element that children will be appended to.
         */
 
@@ -489,9 +536,8 @@ var LayerSwitcher = function (_Control) {
             for (var i = 0, l; i < lyrs.length; i++) {
                 l = lyrs[i];
                 if (l.get('title')) {
-                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, lyr));
+                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
                 }
-                l.set('parent', lyr !== map ? lyr : null);
             }
         }
 
