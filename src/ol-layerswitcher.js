@@ -124,11 +124,36 @@ export default class LayerSwitcher extends Control {
             panel.removeChild(panel.firstChild);
         }
 
+        map.getLayers().forEach(lyr => {
+            LayerSwitcher.setParentAndType_(lyr, null);
+        });
+
         var ul = document.createElement('ul');
         panel.appendChild(ul);
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
         LayerSwitcher.renderLayers_(map, map, ul);
 
+    }
+
+    /**
+     * Sets the layer's parent attribute and set the layer's type
+     * to 'basegroup' if any children are a base layer or group.
+     *
+     * @param      {ol.layer.Base}  lyr     The layer
+     * @param      {ol.layer.Base}  parent  The layer's parent
+     */
+    static setParentAndType_(lyr, parent) {
+        lyr.set('parent', parent);
+        lyr.getLayers().forEach(l => {
+            if (l.getLayers) {
+                LayerSwitcher.setParentAndType_(l, lyr);
+            } else if (l.get('title')) {
+                l.set('parent', lyr);
+            }
+            if (l.get('type') && l.get('type').startsWith('base')) {
+                lyr.set('type', 'basegroup');
+            }
+        });
     }
 
     /**
@@ -320,7 +345,6 @@ export default class LayerSwitcher extends Control {
             if (l.get('title')) {
                 elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, lyr));
             }
-            l.set('parent', (lyr !== map) ? lyr : null)
         }
     }
 
