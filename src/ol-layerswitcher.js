@@ -297,6 +297,9 @@ export default class LayerSwitcher extends Control {
 
             // Group folding
             if (lyr.get('fold')) {
+              if (lyr.get('type') === 'basegroup') {
+                li.classList.add(CSS_PREFIX + 'base-group');
+              }
               li.classList.add(CSS_PREFIX + 'fold');
               li.classList.add(CSS_PREFIX + lyr.get('fold'));
               label.onclick = function (e) {
