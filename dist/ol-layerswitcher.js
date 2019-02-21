@@ -261,16 +261,18 @@ var LayerSwitcher = function (_Control) {
         key: 'setParentAndType_',
         value: function setParentAndType_(lyr, parent) {
             lyr.set('parent', parent);
-            lyr.getLayers().forEach(function (l) {
-                if (l.getLayers) {
-                    LayerSwitcher.setParentAndType_(l, lyr);
-                } else if (l.get('title')) {
-                    l.set('parent', lyr);
-                }
-                if (l.get('type') && l.get('type').startsWith('base')) {
-                    lyr.set('type', 'basegroup');
-                }
-            });
+            if (lyr.getLayers) {
+                lyr.getLayers().forEach(function (l) {
+                    if (l.getLayers) {
+                        LayerSwitcher.setParentAndType_(l, lyr);
+                    } else if (l.get('title')) {
+                        l.set('parent', lyr);
+                    }
+                    if (l.get('type') && l.get('type').startsWith('base')) {
+                        lyr.set('type', 'basegroup');
+                    }
+                });
+            }
         }
 
         /**
