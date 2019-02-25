@@ -101,9 +101,9 @@
     border-width: 0 3px 3px 0;
     display: inline-block;
     padding: 2px;
-    margin-right: 22px;
-    margin-left: -29px;
-    margin-bottom: 1px;
+    margin-right: 24px;
+    margin-left: -31px;
+    margin-bottom: 3px;
 }
 
 .layer-switcher .group.layer-switcher-fold.layer-switcher-close > label:before {
@@ -112,8 +112,6 @@
 }
 
 .layer-switcher .group.layer-switcher-fold.layer-switcher-open > label:before {
-    margin-right: 21px;
-    margin-left: -28px;
     transform: rotate(45deg);
     -webkit-transform: rotate(45deg);
 }
