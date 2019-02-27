@@ -133,6 +133,10 @@ export default class LayerSwitcher extends Control {
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
         LayerSwitcher.renderLayers_(map, map, ul);
 
+        // We now set the indeterminate state of each layer
+        map.getLayers().forEach(lyr => {
+            LayerSwitcher.setIndeterminateState_(lyr);
+        });
     }
 
     /**
@@ -227,6 +231,35 @@ export default class LayerSwitcher extends Control {
     {
         const checkboxId = layer.get('checkbox');
         return document.getElementById(checkboxId).indeterminate;
+    }
+
+    /**
+     * Sets the indeterminate state of a layer by checking its children.
+     *
+     * @param      {ol.layer.Base}  lyr The layer
+     */
+    static setIndeterminateState_(lyr)
+    {
+        if (lyr.getLayers
+         && (!lyr.get('type') || !lyr.get('type').startsWith('base'))) {
+            // First set the indeterminate state of our children
+            const children = lyr.getLayers().getArray();
+            for (let l of children) {
+                LayerSwitcher.setIndeterminateState_(l);
+            }
+            // We are indeterminate if any of our children differ in
+            // visibility or are indeterminate
+            const visible = children[0].getVisible();
+            for (let l of children.slice(1)) {
+                if (LayerSwitcher.indeterminate_(l) || visible !== l.getVisible()) {
+                    const checkbox = document.getElementById(lyr.get('id'));
+                    if (checkbox) {
+                        checkbox.indeterminate = true;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
