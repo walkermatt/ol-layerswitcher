@@ -209,6 +209,7 @@ export default class LayerSwitcher extends Control {
             const checkboxId = l.get('checkbox');
             const subCheckbox = document.getElementById(checkboxId);
             subCheckbox.checked = lyrVisible;
+            subCheckbox.indeterminate = false;
             LayerSwitcher.setVisible_(map, l, lyrVisible);
             if (l.getLayers && !lyr.get('combine')) {
                 LayerSwitcher.setNestedLayersVisible_(map, l, visible);
