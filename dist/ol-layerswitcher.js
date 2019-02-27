@@ -246,7 +246,7 @@ var LayerSwitcher = function (_Control) {
             var ul = document.createElement('ul');
             panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-            LayerSwitcher.renderLayers_(map, map, ul);
+            LayerSwitcher.renderLayers_(map, map, ul, 'layer-switcher');
 
             // We now set the indeterminate state of each layer
             map.getLayers().forEach(function (lyr) {
@@ -344,7 +344,7 @@ var LayerSwitcher = function (_Control) {
                 for (var _iterator = lyrs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var l = _step.value;
 
-                    var checkboxId = l.get('checkbox');
+                    var checkboxId = l.get('id');
                     var subCheckbox = document.getElementById(checkboxId);
                     subCheckbox.checked = lyrVisible;
                     subCheckbox.indeterminate = false;
@@ -379,7 +379,7 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'indeterminate_',
         value: function indeterminate_(layer) {
-            var checkboxId = layer.get('checkbox');
+            var checkboxId = layer.get('id');
             return document.getElementById(checkboxId).indeterminate;
         }
 
@@ -499,7 +499,7 @@ var LayerSwitcher = function (_Control) {
                     }
                 }
 
-                var checkboxId = parent.get('checkbox');
+                var checkboxId = parent.get('id');
                 var parentCheckbox = document.getElementById(checkboxId);
                 if (sameState) {
                     parentCheckbox.indeterminate = false;
@@ -520,27 +520,28 @@ var LayerSwitcher = function (_Control) {
         * @param {ol.Map} map The map instance.
         * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
         * @param {Number} idx Position in parent group list.
+        * @param {String} lyrId Unique identifier of the layer.
         */
 
     }, {
         key: 'renderLayer_',
-        value: function renderLayer_(map, lyr, idx) {
+        value: function renderLayer_(map, lyr, idx, lyrId) {
 
             var li = document.createElement('li');
 
             var lyrTitle = lyr.get('title');
 
-            var checkboxId = LayerSwitcher.uuid();
-            lyr.set('checkbox', checkboxId);
+            lyr.set('id', lyrId);
 
             var label = document.createElement('label');
+            label.id = lyrId + '-label';
 
             if (lyr.getLayers && !lyr.get('combine')) {
 
                 if (!lyr.get('type') || !lyr.get('type').startsWith('base')) {
                     var _input = document.createElement('input');
                     _input.type = 'checkbox';
-                    _input.id = checkboxId;
+                    _input.id = lyrId;
                     _input.checked = lyr.get('visible');
                     _input.onchange = function (e) {
                         LayerSwitcher.setVisible_(map, lyr, e.target.checked);
@@ -562,7 +563,7 @@ var LayerSwitcher = function (_Control) {
                         LayerSwitcher.toggleFold_(lyr, li);
                     };
                 } else {
-                    label.htmlFor = checkboxId;
+                    label.htmlFor = lyrId;
                 }
 
                 label.innerHTML = lyrTitle;
@@ -570,7 +571,7 @@ var LayerSwitcher = function (_Control) {
                 var ul = document.createElement('ul');
                 li.appendChild(ul);
 
-                LayerSwitcher.renderLayers_(map, lyr, ul);
+                LayerSwitcher.renderLayers_(map, lyr, ul, lyrId);
             } else {
 
                 li.className = 'layer';
@@ -581,7 +582,7 @@ var LayerSwitcher = function (_Control) {
                 } else {
                     input.type = 'checkbox';
                 }
-                input.id = checkboxId;
+                input.id = lyrId;
                 input.checked = lyr.get('visible');
                 input.onchange = function (e) {
                     LayerSwitcher.setVisible_(map, lyr, e.target.checked);
@@ -591,7 +592,7 @@ var LayerSwitcher = function (_Control) {
                 };
                 li.appendChild(input);
 
-                label.htmlFor = checkboxId;
+                label.htmlFor = lyrId;
                 label.innerHTML = lyrTitle;
 
                 var rsl = map.getView().getResolution();
@@ -615,12 +616,12 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'renderLayers_',
-        value: function renderLayers_(map, lyr, elm) {
+        value: function renderLayers_(map, lyr, elm, lyrId) {
             var lyrs = lyr.getLayers().getArray().slice().reverse();
             for (var i = 0, l; i < lyrs.length; i++) {
                 l = lyrs[i];
                 if (l.get('title')) {
-                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
+                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, lyrId + '-' + i));
                 }
             }
         }
@@ -641,22 +642,6 @@ var LayerSwitcher = function (_Control) {
                 if (lyr.getLayers) {
                     LayerSwitcher.forEachRecursive(lyr, fn);
                 }
-            });
-        }
-
-        /**
-        * **Static** Generate a UUID
-        * Adapted from http://stackoverflow.com/a/2117523/526860
-        * @returns {String} UUID
-        */
-
-    }, {
-        key: 'uuid',
-        value: function uuid() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                var r = Math.random() * 16 | 0,
-                    v = c == 'x' ? r : r & 0x3 | 0x8;
-                return v.toString(16);
             });
         }
 

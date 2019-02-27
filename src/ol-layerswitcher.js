@@ -131,7 +131,7 @@ export default class LayerSwitcher extends Control {
         var ul = document.createElement('ul');
         panel.appendChild(ul);
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-        LayerSwitcher.renderLayers_(map, map, ul);
+        LayerSwitcher.renderLayers_(map, map, ul, 'layer-switcher');
 
         // We now set the indeterminate state of each layer
         map.getLayers().forEach(lyr => {
@@ -210,7 +210,7 @@ export default class LayerSwitcher extends Control {
         const lyrVisible = lyr.getVisible();
         const lyrs = lyr.getLayers().getArray().slice().reverse();
         for (let l of lyrs) {
-            const checkboxId = l.get('checkbox');
+            const checkboxId = l.get('id');
             const subCheckbox = document.getElementById(checkboxId);
             subCheckbox.checked = lyrVisible;
             subCheckbox.indeterminate = false;
@@ -229,7 +229,7 @@ export default class LayerSwitcher extends Control {
      */
     static indeterminate_(layer)
     {
-        const checkboxId = layer.get('checkbox');
+        const checkboxId = layer.get('id');
         return document.getElementById(checkboxId).indeterminate;
     }
 
@@ -282,7 +282,7 @@ export default class LayerSwitcher extends Control {
                     break;
                 }
             }
-            const checkboxId = parent.get('checkbox');
+            const checkboxId = parent.get('id');
             const parentCheckbox = document.getElementById(checkboxId);
             if (sameState) {
                 parentCheckbox.indeterminate = false;
@@ -303,24 +303,25 @@ export default class LayerSwitcher extends Control {
     * @param {ol.Map} map The map instance.
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
+    * @param {String} lyrId Unique identifier of the layer.
     */
-    static renderLayer_(map, lyr, idx) {
+    static renderLayer_(map, lyr, idx, lyrId) {
 
         var li = document.createElement('li');
 
         var lyrTitle = lyr.get('title');
 
-        var checkboxId = LayerSwitcher.uuid();
-        lyr.set('checkbox', checkboxId);
+        lyr.set('id', lyrId);
 
         var label = document.createElement('label');
+        label.id = `${lyrId}-label`;
 
         if (lyr.getLayers && !lyr.get('combine')) {
 
             if (!lyr.get('type') || !lyr.get('type').startsWith('base')) {
                 const input = document.createElement('input');
                 input.type = 'checkbox';
-                input.id = checkboxId;
+                input.id = lyrId;
                 input.checked = lyr.get('visible');
                 input.onchange = function(e) {
                     LayerSwitcher.setVisible_(map, lyr, e.target.checked);
@@ -342,7 +343,7 @@ export default class LayerSwitcher extends Control {
                 LayerSwitcher.toggleFold_(lyr, li);
               };
             } else {
-                label.htmlFor = checkboxId;
+                label.htmlFor = lyrId;
             }
 
             label.innerHTML = lyrTitle;
@@ -350,7 +351,7 @@ export default class LayerSwitcher extends Control {
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
-            LayerSwitcher.renderLayers_(map, lyr, ul);
+            LayerSwitcher.renderLayers_(map, lyr, ul, lyrId);
 
         } else {
 
@@ -362,7 +363,7 @@ export default class LayerSwitcher extends Control {
             } else {
                 input.type = 'checkbox';
             }
-            input.id = checkboxId;
+            input.id = lyrId;
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
                 LayerSwitcher.setVisible_(map, lyr, e.target.checked);
@@ -372,7 +373,7 @@ export default class LayerSwitcher extends Control {
             };
             li.appendChild(input);
 
-            label.htmlFor = checkboxId;
+            label.htmlFor = lyrId;
             label.innerHTML = lyrTitle;
 
             var rsl = map.getView().getResolution();
@@ -395,12 +396,12 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Group} lyr Group layer whose children will be rendered.
     * @param {Element} elm DOM element that children will be appended to.
     */
-    static renderLayers_(map, lyr, elm) {
+    static renderLayers_(map, lyr, elm, lyrId) {
         var lyrs = lyr.getLayers().getArray().slice().reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
+                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, `${lyrId}-${i}`));
             }
         }
     }
@@ -418,18 +419,6 @@ export default class LayerSwitcher extends Control {
             if (lyr.getLayers) {
                 LayerSwitcher.forEachRecursive(lyr, fn);
             }
-        });
-    }
-
-    /**
-    * **Static** Generate a UUID
-    * Adapted from http://stackoverflow.com/a/2117523/526860
-    * @returns {String} UUID
-    */
-    static uuid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-            return v.toString(16);
         });
     }
 
