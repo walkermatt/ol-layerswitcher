@@ -272,7 +272,7 @@ export default class LayerSwitcher extends Control {
     {
         const parent = lyr.get('parent');
         if (parent) {
-            const lyrs = parent.getLayers().getArray().slice().reverse();
+            const lyrs = parent.getLayers().getArray();
             const visible = lyr.getVisible();
             let sameState = true;
             for (let l of lyrs) {
