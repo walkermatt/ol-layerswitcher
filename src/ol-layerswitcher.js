@@ -210,10 +210,11 @@ export default class LayerSwitcher extends Control {
         const lyrVisible = lyr.getVisible();
         const lyrs = lyr.getLayers().getArray().slice().reverse();
         for (let l of lyrs) {
-            const checkboxId = l.get('id');
-            const subCheckbox = document.getElementById(checkboxId);
-            subCheckbox.checked = lyrVisible;
-            subCheckbox.indeterminate = false;
+            const subCheckbox = document.getElementById(l.get('id'));
+            if (subCheckbox) {
+                subCheckbox.checked = lyrVisible;
+                subCheckbox.indeterminate = false;
+            }
             LayerSwitcher.setVisible_(map, l, lyrVisible);
             if (l.getLayers && !lyr.get('combine')) {
                 LayerSwitcher.setNestedLayersVisible_(map, l, visible);
@@ -229,8 +230,8 @@ export default class LayerSwitcher extends Control {
      */
     static indeterminate_(layer)
     {
-        const checkboxId = layer.get('id');
-        return document.getElementById(checkboxId).indeterminate;
+        const checkbox = document.getElementById(layer.get('id'));
+        return checkbox && checkbox.indeterminate;
     }
 
     /**

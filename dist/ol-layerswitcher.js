@@ -344,10 +344,11 @@ var LayerSwitcher = function (_Control) {
                 for (var _iterator = lyrs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                     var l = _step.value;
 
-                    var checkboxId = l.get('id');
-                    var subCheckbox = document.getElementById(checkboxId);
-                    subCheckbox.checked = lyrVisible;
-                    subCheckbox.indeterminate = false;
+                    var subCheckbox = document.getElementById(l.get('id'));
+                    if (subCheckbox) {
+                        subCheckbox.checked = lyrVisible;
+                        subCheckbox.indeterminate = false;
+                    }
                     LayerSwitcher.setVisible_(map, l, lyrVisible);
                     if (l.getLayers && !lyr.get('combine')) {
                         LayerSwitcher.setNestedLayersVisible_(map, l, visible);
@@ -379,8 +380,8 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'indeterminate_',
         value: function indeterminate_(layer) {
-            var checkboxId = layer.get('id');
-            return document.getElementById(checkboxId).indeterminate;
+            var checkbox = document.getElementById(layer.get('id'));
+            return checkbox && checkbox.indeterminate;
         }
 
         /**
