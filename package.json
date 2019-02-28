@@ -33,7 +33,7 @@
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
-    "documentation": "^5.3.5",
+    "documentation": "^9.3.0",
     "expect.js": "~0.3.1",
     "jquery": ">=3.0.0",
     "mocha": "~1.20.1",
