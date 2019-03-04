@@ -250,13 +250,15 @@ export default class LayerSwitcher extends Control {
             }
             // We are indeterminate if any of our children differ in
             // visibility or are indeterminate
-            const visible = children[0].getVisible();
-            for (let l of children.slice(1)) {
-                if (LayerSwitcher.indeterminate_(l) || visible !== l.getVisible()) {
-                    const checkbox = document.getElementById(lyr.get('id'));
-                    if (checkbox) {
-                        checkbox.indeterminate = true;
-                        break;
+            if (children.length) {
+                const visible = children[0].getVisible();
+                for (let l of children.slice(1)) {
+                    if (LayerSwitcher.indeterminate_(l) || visible !== l.getVisible()) {
+                        const checkbox = document.getElementById(lyr.get('id'));
+                        if (checkbox) {
+                            checkbox.indeterminate = true;
+                            break;
+                        }
                     }
                 }
             }

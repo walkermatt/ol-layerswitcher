@@ -423,34 +423,36 @@ var LayerSwitcher = function (_Control) {
                     }
                 }
 
-                var visible = children[0].getVisible();
-                var _iteratorNormalCompletion3 = true;
-                var _didIteratorError3 = false;
-                var _iteratorError3 = undefined;
+                if (children.length) {
+                    var visible = children[0].getVisible();
+                    var _iteratorNormalCompletion3 = true;
+                    var _didIteratorError3 = false;
+                    var _iteratorError3 = undefined;
 
-                try {
-                    for (var _iterator3 = children.slice(1)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                        var _l = _step3.value;
+                    try {
+                        for (var _iterator3 = children.slice(1)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+                            var _l = _step3.value;
 
-                        if (LayerSwitcher.indeterminate_(_l) || visible !== _l.getVisible()) {
-                            var checkbox = document.getElementById(lyr.get('id'));
-                            if (checkbox) {
-                                checkbox.indeterminate = true;
-                                break;
+                            if (LayerSwitcher.indeterminate_(_l) || visible !== _l.getVisible()) {
+                                var checkbox = document.getElementById(lyr.get('id'));
+                                if (checkbox) {
+                                    checkbox.indeterminate = true;
+                                    break;
+                                }
                             }
                         }
-                    }
-                } catch (err) {
-                    _didIteratorError3 = true;
-                    _iteratorError3 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                            _iterator3.return();
-                        }
+                    } catch (err) {
+                        _didIteratorError3 = true;
+                        _iteratorError3 = err;
                     } finally {
-                        if (_didIteratorError3) {
-                            throw _iteratorError3;
+                        try {
+                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                                _iterator3.return();
+                            }
+                        } finally {
+                            if (_didIteratorError3) {
+                                throw _iteratorError3;
+                            }
                         }
                     }
                 }
