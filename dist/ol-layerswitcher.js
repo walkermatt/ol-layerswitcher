@@ -437,6 +437,7 @@ var LayerSwitcher = function (_Control) {
                                 var checkbox = document.getElementById(lyr.get('id'));
                                 if (checkbox) {
                                     checkbox.indeterminate = true;
+                                    checkbox.checked = false;
                                     break;
                                 }
                             }
@@ -510,7 +511,7 @@ var LayerSwitcher = function (_Control) {
                     parent.setVisible(visible);
                 } else {
                     parentCheckbox.indeterminate = true;
-                    parentCheckbox.checked = !visible;
+                    parentCheckbox.checked = false;
                     parent.setVisible(true);
                 }
                 LayerSwitcher.checkParentIndeterminate_(parent);

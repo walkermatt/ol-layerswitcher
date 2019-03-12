@@ -257,6 +257,7 @@ export default class LayerSwitcher extends Control {
                         const checkbox = document.getElementById(lyr.get('id'));
                         if (checkbox) {
                             checkbox.indeterminate = true;
+                            checkbox.checked = false;
                             break;
                         }
                     }
@@ -293,7 +294,7 @@ export default class LayerSwitcher extends Control {
                 parent.setVisible(visible);
             } else {
                 parentCheckbox.indeterminate = true;
-                parentCheckbox.checked = !visible;
+                parentCheckbox.checked = false;
                 parent.setVisible(true);
             }
             LayerSwitcher.checkParentIndeterminate_(parent);
