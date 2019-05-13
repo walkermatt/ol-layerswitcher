@@ -1,5 +1,5 @@
 import Control from 'ol/control/Control';
-import Observable from 'ol/Observable';
+import { unByKey } from 'ol/Observable';
 
 var CSS_PREFIX = 'layer-switcher-';
 
@@ -71,7 +71,7 @@ export default class LayerSwitcher extends Control {
     setMap(map) {
         // Clean up listeners associated with the previous map
         for (var i = 0, key; i < this.mapListeners.length; i++) {
-            Observable.unByKey(this.mapListeners[i]);
+            unByKey(this.mapListeners[i]);
         }
         this.mapListeners.length = 0;
         // Wire up listeners etc. and store reference to new map
