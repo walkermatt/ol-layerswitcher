@@ -40,6 +40,6 @@
     "rollup": "^0.41.4",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^7.0.0",
-    "rollup-plugin-node-resolve": "^2.0.0"
+    "rollup-plugin-node-resolve": "^4.2.4"
   }
 }
