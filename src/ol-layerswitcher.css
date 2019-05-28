@@ -99,6 +99,7 @@
 
 .layer-switcher .group button {
     display: inline-block;
+    vertical-align: top;
     float: none;
     width: 16px;
     height: 16px;
