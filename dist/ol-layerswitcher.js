@@ -238,45 +238,58 @@ var LayerSwitcher = function (_Control) {
                 panel.removeChild(panel.firstChild);
             }
 
-            map.getLayers().forEach(function (lyr) {
-                LayerSwitcher.setParentAndType_(lyr, null);
-            });
+            // Sort out visibile and indeterminate state of groups based on
+            // their children's visibility
+            LayerSwitcher.setGroupVisibility(map);
 
             var ul = document.createElement('ul');
             panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-            LayerSwitcher.renderLayers_(map, map, ul, 'layer-switcher');
-
-            // We now set the indeterminate state of each layer
-            map.getLayers().forEach(function (lyr) {
-                LayerSwitcher.setIndeterminateState_(lyr);
+            LayerSwitcher.renderLayers_(map, map, ul, function render(changedLyr) {
+                // console.log('render');
+                LayerSwitcher.renderPanel(map, panel);
             });
         }
-
-        /**
-         * Sets the layer's parent attribute and set the layer's type
-         * to 'basegroup' if any children are a base layer or group.
-         *
-         * @param      {ol.layer.Base}  lyr     The layer
-         * @param      {ol.layer.Base}  parent  The layer's parent
-         */
-
     }, {
-        key: 'setParentAndType_',
-        value: function setParentAndType_(lyr, parent) {
-            lyr.set('parent', parent);
-            if (lyr.getLayers) {
-                lyr.getLayers().forEach(function (l) {
-                    if (l.getLayers) {
-                        LayerSwitcher.setParentAndType_(l, lyr);
-                    } else if (l.get('title')) {
-                        l.set('parent', lyr);
-                    }
-                    if (l.get('type') && l.get('type').startsWith('base')) {
-                        lyr.set('type', 'basegroup');
-                    }
+        key: 'isBaseGroup',
+        value: function isBaseGroup(lyr) {
+            var lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
+            var baseLyr = lyrs.find(function (l) {
+                return l.get('type') === 'base';
+            });
+            return Boolean(baseLyr);
+        }
+    }, {
+        key: 'setGroupVisibility',
+        value: function setGroupVisibility(map) {
+            // Get a list of groups, with the deepest first
+            var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
+                return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+            }).reverse();
+            // console.log(groups.map(g => g.get('title')));
+            groups.forEach(function (group) {
+                // TODO Can we use getLayersArray, is it public in the esm build?
+                var descendantVisibility = group.getLayersArray().map(function (l) {
+                    var state = l.getVisible();
+                    // console.log('>', l.get('title'), state);
+                    return state;
                 });
-            }
+                // console.log(descendantVisibility);
+                if (descendantVisibility.every(function (v) {
+                    return v === true;
+                })) {
+                    group.setVisible(true);
+                    group.set('indeterminate', false);
+                } else if (descendantVisibility.every(function (v) {
+                    return v === false;
+                })) {
+                    group.setVisible(false);
+                    group.set('indeterminate', false);
+                } else {
+                    group.setVisible(true);
+                    group.set('indeterminate', true);
+                }
+            });
         }
 
         /**
@@ -295,6 +308,22 @@ var LayerSwitcher = function (_Control) {
                 }
             });
             if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true);
+        }
+    }, {
+        key: 'getGroupsAndLayers',
+        value: function getGroupsAndLayers(lyr, filterFn) {
+            var layers = [];
+            filterFn = filterFn || function (l, idx, a) {
+                return true;
+            };
+            LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
+                if (l.get('title')) {
+                    if (filterFn(l, idx, a)) {
+                        layers.push(l);
+                    }
+                }
+            });
+            return layers;
         }
 
         /**
@@ -319,201 +348,9 @@ var LayerSwitcher = function (_Control) {
                 });
             }
             if (lyr.getLayers && !lyr.get('combine')) {
-                LayerSwitcher.setNestedLayersVisible_(map, lyr, visible);
-            }
-        }
-
-        /**
-        * **Static** Toggle the visible state of a layer's sub-layers.
-        * @private
-        * @param {ol.Map} map The map instance.
-        * @param {ol.layer.Base} The layer whose visibility has been toggled.
-        */
-
-    }, {
-        key: 'setNestedLayersVisible_',
-        value: function setNestedLayersVisible_(map, lyr, visible) {
-            var lyrVisible = lyr.getVisible();
-            var lyrs = lyr.getLayers().getArray().slice().reverse();
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = lyrs[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var l = _step.value;
-
-                    var subCheckbox = document.getElementById(l.get('id'));
-                    if (subCheckbox) {
-                        subCheckbox.checked = lyrVisible;
-                        subCheckbox.indeterminate = false;
-                    }
-                    LayerSwitcher.setVisible_(map, l, lyrVisible);
-                    if (l.getLayers && !lyr.get('combine')) {
-                        LayerSwitcher.setNestedLayersVisible_(map, l, visible);
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-        }
-
-        /**
-         * Get a layer's indeterminate state.
-         * @private
-         * @param      {ol.layer.Base}  layer   The layer to check
-         * @return     {boolean}  The layer's indeterminate state
-         */
-
-    }, {
-        key: 'indeterminate_',
-        value: function indeterminate_(layer) {
-            var checkbox = document.getElementById(layer.get('id'));
-            return checkbox && checkbox.indeterminate;
-        }
-
-        /**
-         * Sets the indeterminate state of a layer by checking its children.
-         *
-         * @param      {ol.layer.Base}  lyr The layer
-         */
-
-    }, {
-        key: 'setIndeterminateState_',
-        value: function setIndeterminateState_(lyr) {
-            if (lyr.getLayers && (!lyr.get('type') || !lyr.get('type').startsWith('base'))) {
-                // First set the indeterminate state of our children
-                var children = lyr.getLayers().getArray();
-                var _iteratorNormalCompletion2 = true;
-                var _didIteratorError2 = false;
-                var _iteratorError2 = undefined;
-
-                try {
-                    for (var _iterator2 = children[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                        var l = _step2.value;
-
-                        LayerSwitcher.setIndeterminateState_(l);
-                    }
-                    // We are indeterminate if any of our children differ in
-                    // visibility or are indeterminate
-                } catch (err) {
-                    _didIteratorError2 = true;
-                    _iteratorError2 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                            _iterator2.return();
-                        }
-                    } finally {
-                        if (_didIteratorError2) {
-                            throw _iteratorError2;
-                        }
-                    }
-                }
-
-                if (children.length) {
-                    var visible = children[0].getVisible();
-                    var _iteratorNormalCompletion3 = true;
-                    var _didIteratorError3 = false;
-                    var _iteratorError3 = undefined;
-
-                    try {
-                        for (var _iterator3 = children.slice(1)[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                            var _l = _step3.value;
-
-                            if (LayerSwitcher.indeterminate_(_l) || visible !== _l.getVisible()) {
-                                var checkbox = document.getElementById(lyr.get('id'));
-                                if (checkbox) {
-                                    checkbox.indeterminate = true;
-                                    checkbox.checked = false;
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (err) {
-                        _didIteratorError3 = true;
-                        _iteratorError3 = err;
-                    } finally {
-                        try {
-                            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                                _iterator3.return();
-                            }
-                        } finally {
-                            if (_didIteratorError3) {
-                                throw _iteratorError3;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        /**
-        * **Static** Check the visibility of siblings and set their parent
-        *            state to indeterminate if they differ.
-        * @private
-        * @param {ol.layer.Base} The layer to check
-        */
-
-    }, {
-        key: 'checkParentIndeterminate_',
-        value: function checkParentIndeterminate_(lyr) {
-            var parent = lyr.get('parent');
-            if (parent) {
-                var lyrs = parent.getLayers().getArray();
-                var visible = lyr.getVisible();
-                var sameState = true;
-                var _iteratorNormalCompletion4 = true;
-                var _didIteratorError4 = false;
-                var _iteratorError4 = undefined;
-
-                try {
-                    for (var _iterator4 = lyrs[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                        var l = _step4.value;
-
-                        if (LayerSwitcher.indeterminate_(l) || lyr !== l && visible !== l.getVisible()) {
-                            sameState = false;
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError4 = true;
-                    _iteratorError4 = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                            _iterator4.return();
-                        }
-                    } finally {
-                        if (_didIteratorError4) {
-                            throw _iteratorError4;
-                        }
-                    }
-                }
-
-                var checkboxId = parent.get('id');
-                var parentCheckbox = document.getElementById(checkboxId);
-                if (sameState) {
-                    parentCheckbox.indeterminate = false;
-                    parentCheckbox.checked = visible;
-                    parent.setVisible(visible);
-                } else {
-                    parentCheckbox.indeterminate = true;
-                    parentCheckbox.checked = false;
-                    parent.setVisible(true);
-                }
-                LayerSwitcher.checkParentIndeterminate_(parent);
+                lyr.getLayers().forEach(function (l) {
+                    LayerSwitcher.setVisible_(map, l, lyr.getVisible());
+                });
             }
         }
 
@@ -523,50 +360,47 @@ var LayerSwitcher = function (_Control) {
         * @param {ol.Map} map The map instance.
         * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
         * @param {Number} idx Position in parent group list.
-        * @param {String} lyrId Unique identifier of the layer.
         */
 
     }, {
         key: 'renderLayer_',
-        value: function renderLayer_(map, lyr, idx, lyrId) {
+        value: function renderLayer_(map, lyr, idx, render) {
 
             var li = document.createElement('li');
 
             var lyrTitle = lyr.get('title');
 
-            lyr.set('id', lyrId);
+            var checkboxId = LayerSwitcher.uuid();
 
             var label = document.createElement('label');
-            label.id = lyrId + '-label';
 
             if (lyr.getLayers && !lyr.get('combine')) {
 
-                if (!lyr.get('type') || !lyr.get('type').startsWith('base')) {
-                    var _input = document.createElement('input');
-                    _input.type = 'checkbox';
-                    _input.id = lyrId;
-                    _input.checked = lyr.get('visible');
-                    _input.onchange = function (e) {
-                        LayerSwitcher.setVisible_(map, lyr, e.target.checked);
-                        LayerSwitcher.checkParentIndeterminate_(lyr);
-                    };
-                    li.appendChild(_input);
-                }
-
-                li.className = 'group';
+                li.classList.add('group');
 
                 // Group folding
                 if (lyr.get('fold')) {
-                    if (lyr.get('type') === 'basegroup') {
-                        li.classList.add(CSS_PREFIX + 'base-group');
-                    }
                     li.classList.add(CSS_PREFIX + 'fold');
                     li.classList.add(CSS_PREFIX + lyr.get('fold'));
-                    label.onclick = function (e) {
+                    var btn = document.createElement('button');
+                    btn.onclick = function (e) {
                         LayerSwitcher.toggleFold_(lyr, li);
                     };
-                } else {
-                    label.htmlFor = lyrId;
+                    li.appendChild(btn);
+                }
+
+                if (!LayerSwitcher.isBaseGroup(lyr)) {
+                    var _input = document.createElement('input');
+                    _input.type = 'checkbox';
+                    _input.id = checkboxId;
+                    _input.checked = lyr.get('visible');
+                    _input.indeterminate = lyr.get('indeterminate');
+                    _input.onchange = function (e) {
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                        render(lyr);
+                    };
+                    li.appendChild(_input);
+                    label.htmlFor = checkboxId;
                 }
 
                 label.innerHTML = lyrTitle;
@@ -574,7 +408,7 @@ var LayerSwitcher = function (_Control) {
                 var ul = document.createElement('ul');
                 li.appendChild(ul);
 
-                LayerSwitcher.renderLayers_(map, lyr, ul, lyrId);
+                LayerSwitcher.renderLayers_(map, lyr, ul, render);
             } else {
 
                 li.className = 'layer';
@@ -585,17 +419,15 @@ var LayerSwitcher = function (_Control) {
                 } else {
                     input.type = 'checkbox';
                 }
-                input.id = lyrId;
+                input.id = checkboxId;
                 input.checked = lyr.get('visible');
                 input.onchange = function (e) {
                     LayerSwitcher.setVisible_(map, lyr, e.target.checked);
-                    if (lyr.get('type') !== 'base') {
-                        LayerSwitcher.checkParentIndeterminate_(lyr);
-                    }
+                    render(lyr);
                 };
                 li.appendChild(input);
 
-                label.htmlFor = lyrId;
+                label.htmlFor = checkboxId;
                 label.innerHTML = lyrTitle;
 
                 var rsl = map.getView().getResolution();
@@ -619,12 +451,12 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'renderLayers_',
-        value: function renderLayers_(map, lyr, elm, lyrId) {
+        value: function renderLayers_(map, lyr, elm, render) {
             var lyrs = lyr.getLayers().getArray().slice().reverse();
             for (var i = 0, l; i < lyrs.length; i++) {
                 l = lyrs[i];
                 if (l.get('title')) {
-                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, lyrId + '-' + i));
+                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, render));
                 }
             }
         }
@@ -645,6 +477,22 @@ var LayerSwitcher = function (_Control) {
                 if (lyr.getLayers) {
                     LayerSwitcher.forEachRecursive(lyr, fn);
                 }
+            });
+        }
+
+        /**
+        * **Static** Generate a UUID
+        * Adapted from http://stackoverflow.com/a/2117523/526860
+        * @returns {String} UUID
+        */
+
+    }, {
+        key: 'uuid',
+        value: function uuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : r & 0x3 | 0x8;
+                return v.toString(16);
             });
         }
 

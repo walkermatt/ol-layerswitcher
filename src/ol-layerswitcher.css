@@ -8,7 +8,7 @@
 
 .layer-switcher {
     position: absolute;
-    top: 0.5em;
+    top: 3.5em;
     right: 0.5em;
     text-align: left;
 }
@@ -52,13 +52,15 @@
 }
 
 .layer-switcher ul {
-    padding-left: 1em;
+    padding-left: 2em;
     list-style: none;
 }
 
-.layer-switcher li.group {
-    padding-top: 5px;
+.layer-switcher ul {
+    padding-left: 2em;
+    list-style: none;
 }
+
 
 .layer-switcher li.group > label {
     font-weight: bold;
@@ -95,38 +97,32 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
-.layer-switcher .group.layer-switcher-fold > label:before  {
-    content: '';
-    border: solid black;
-    border-width: 0 3px 3px 0;
+.layer-switcher .group button {
     display: inline-block;
-    padding: 2px;
-    margin-right: 24px;
-    margin-left: -31px;
-    margin-bottom: 3px;
+    float: none;
+    width: 16px;
+    height: 16px;
+    background-position: center 2px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAW0lEQVR4nGNgGAWMyBwXFxcGBgaGeii3EU0tXHzPnj1wQRYsihqQ+I0ExDEMQAYNONgoAN0AmMkNaDSyQSheY8JiaCMOGzE04zIAmyFYNTMw4A+DRhzsUUBtAADw4BCeIZkGdwAAAABJRU5ErkJggg==');
+    -webkit-transition: -webkit-transform .2s ease-in-out;
+    -ms-transition: -ms-transform .2s ease-in-out;
+    transition: transform .2s ease-in-out;
 }
 
-.layer-switcher .group.layer-switcher-fold.layer-switcher-close > label:before {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
+.layer-switcher .group.layer-switcher-close button {
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
 }
 
-.layer-switcher .group.layer-switcher-fold.layer-switcher-open > label:before {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+li.group.layer-switcher-fold {
+    margin-left: -18px;
+}
+
+.layer-switcher .group.layer-switcher-fold > ul {
+    padding-left: 3em;
 }
 
 .layer-switcher .group.layer-switcher-fold.layer-switcher-close > ul {
     overflow: hidden;
     height: 0;
-}
-
-.layer-switcher .group.layer-switcher-fold.layer-switcher-base-group > label:before {
-    margin-right: 5px;
-    margin-left: -8px;
-}
-
-.layer-switcher .group.layer-switcher-fold.layer-switcher-open.layer-switcher-base-group > label:before {
-    margin-right: 4px;
-    margin-left: -7px;
 }

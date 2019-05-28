@@ -104,6 +104,7 @@ describe('ol.control.LayerSwitcher', function() {
                         })
                     ]
                 }),
+                // Top-level layer not in a group
                 new ol.layer.Tile({
                     title: 'Bar',
                     minResolution: 1000,

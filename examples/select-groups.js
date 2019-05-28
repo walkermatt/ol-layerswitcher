@@ -41,6 +41,7 @@
             }),
             new ol.layer.Group({
                 title: 'Overlays',
+                fold: 'open',
                 layers: [
                     new ol.layer.Image({
                         title: 'Countries',
@@ -52,7 +53,7 @@
                     }),
                     new ol.layer.Group({
                         title: 'Census',
-                        fold: 'close',
+                        fold: 'open',
                         layers: [
                             new ol.layer.Image({
                                 title: 'Districts',

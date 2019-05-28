@@ -4,7 +4,6 @@
         layers: [
             new ol.layer.Group({
                 'title': 'Base maps',
-                'fold': 'open',
                 layers: [
                     new ol.layer.Group({
                         title: 'Water color with labels',
@@ -50,28 +49,6 @@
                             params: {'LAYERS': 'show:0'},
                             url: "https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Countries_December_2016_Boundaries/MapServer"
                         })
-                    }),
-                    new ol.layer.Group({
-                        title: 'Census',
-                        fold: 'close',
-                        layers: [
-                            new ol.layer.Image({
-                                title: 'Districts',
-                                source: new ol.source.ImageArcGISRest({
-                                    ratio: 1,
-                                    params: {'LAYERS': 'show:0'},
-                                    url: "https://ons-inspire.esriuk.com/arcgis/rest/services/Census_Boundaries/Census_Merged_Local_Authority_Districts_December_2011_Boundaries/MapServer"
-                                })
-                            }),
-                            new ol.layer.Image({
-                                title: 'Wards',
-                                source: new ol.source.ImageArcGISRest({
-                                    ratio: 1,
-                                    params: {'LAYERS': 'show:0'},
-                                    url: "https://ons-inspire.esriuk.com/arcgis/rest/services/Census_Boundaries/Census_Merged_Wards_December_2011_Boundaries/MapServer"
-                                })
-                            })
-                        ]
                     })
                 ]
             })
