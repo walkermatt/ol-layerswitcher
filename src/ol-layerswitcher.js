@@ -8,7 +8,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * See [the examples](./examples) for usage.
  * @constructor
  * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:  
+ * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
  * **`tipLabel`** `String` - the button tooltip.
  */
 export default class LayerSwitcher extends Control {
@@ -124,11 +124,42 @@ export default class LayerSwitcher extends Control {
             panel.removeChild(panel.firstChild);
         }
 
+        map.getLayers().forEach(lyr => {
+            LayerSwitcher.setParentAndType_(lyr, null);
+        });
+
         var ul = document.createElement('ul');
         panel.appendChild(ul);
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-        LayerSwitcher.renderLayers_(map, map, ul);
+        LayerSwitcher.renderLayers_(map, map, ul, 'layer-switcher');
 
+        // We now set the indeterminate state of each layer
+        map.getLayers().forEach(lyr => {
+            LayerSwitcher.setIndeterminateState_(lyr);
+        });
+    }
+
+    /**
+     * Sets the layer's parent attribute and set the layer's type
+     * to 'basegroup' if any children are a base layer or group.
+     *
+     * @param      {ol.layer.Base}  lyr     The layer
+     * @param      {ol.layer.Base}  parent  The layer's parent
+     */
+    static setParentAndType_(lyr, parent) {
+        lyr.set('parent', parent);
+        if (lyr.getLayers) {
+            lyr.getLayers().forEach(l => {
+                if (l.getLayers) {
+                    LayerSwitcher.setParentAndType_(l, lyr);
+                } else if (l.get('title')) {
+                    l.set('parent', lyr);
+                }
+                if (l.get('type') && l.get('type').startsWith('base')) {
+                    lyr.set('type', 'basegroup');
+                }
+            });
+        }
     }
 
     /**
@@ -152,7 +183,7 @@ export default class LayerSwitcher extends Control {
     * is toggle to visible.
     * @private
     * @param {ol.Map} map The map instance.
-    * @param {ol.layer.Base} The layer whos visibility will be toggled.
+    * @param {ol.layer.Base} The layer whose visibility will be toggled.
     */
     static setVisible_(map, lyr, visible) {
         lyr.setVisible(visible);
@@ -164,6 +195,110 @@ export default class LayerSwitcher extends Control {
                 }
             });
         }
+        if (lyr.getLayers && !lyr.get('combine')) {
+            LayerSwitcher.setNestedLayersVisible_(map, lyr, visible);
+        }
+    }
+
+    /**
+    * **Static** Toggle the visible state of a layer's sub-layers.
+    * @private
+    * @param {ol.Map} map The map instance.
+    * @param {ol.layer.Base} The layer whose visibility has been toggled.
+    */
+    static setNestedLayersVisible_(map, lyr, visible) {
+        const lyrVisible = lyr.getVisible();
+        const lyrs = lyr.getLayers().getArray().slice().reverse();
+        for (let l of lyrs) {
+            const subCheckbox = document.getElementById(l.get('id'));
+            if (subCheckbox) {
+                subCheckbox.checked = lyrVisible;
+                subCheckbox.indeterminate = false;
+            }
+            LayerSwitcher.setVisible_(map, l, lyrVisible);
+            if (l.getLayers && !lyr.get('combine')) {
+                LayerSwitcher.setNestedLayersVisible_(map, l, visible);
+            }
+        }
+    }
+
+    /**
+     * Get a layer's indeterminate state.
+     * @private
+     * @param      {ol.layer.Base}  layer   The layer to check
+     * @return     {boolean}  The layer's indeterminate state
+     */
+    static indeterminate_(layer)
+    {
+        const checkbox = document.getElementById(layer.get('id'));
+        return checkbox && checkbox.indeterminate;
+    }
+
+    /**
+     * Sets the indeterminate state of a layer by checking its children.
+     *
+     * @param      {ol.layer.Base}  lyr The layer
+     */
+    static setIndeterminateState_(lyr)
+    {
+        if (lyr.getLayers
+         && (!lyr.get('type') || !lyr.get('type').startsWith('base'))) {
+            // First set the indeterminate state of our children
+            const children = lyr.getLayers().getArray();
+            for (let l of children) {
+                LayerSwitcher.setIndeterminateState_(l);
+            }
+            // We are indeterminate if any of our children differ in
+            // visibility or are indeterminate
+            if (children.length) {
+                const visible = children[0].getVisible();
+                for (let l of children.slice(1)) {
+                    if (LayerSwitcher.indeterminate_(l) || visible !== l.getVisible()) {
+                        const checkbox = document.getElementById(lyr.get('id'));
+                        if (checkbox) {
+                            checkbox.indeterminate = true;
+                            checkbox.checked = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+    * **Static** Check the visibility of siblings and set their parent
+    *            state to indeterminate if they differ.
+    * @private
+    * @param {ol.layer.Base} The layer to check
+    */
+    static checkParentIndeterminate_(lyr)
+    {
+        const parent = lyr.get('parent');
+        if (parent) {
+            const lyrs = parent.getLayers().getArray();
+            const visible = lyr.getVisible();
+            let sameState = true;
+            for (let l of lyrs) {
+                if (LayerSwitcher.indeterminate_(l)
+                  || (lyr !== l && visible !== l.getVisible())) {
+                    sameState = false;
+                    break;
+                }
+            }
+            const checkboxId = parent.get('id');
+            const parentCheckbox = document.getElementById(checkboxId);
+            if (sameState) {
+                parentCheckbox.indeterminate = false;
+                parentCheckbox.checked = visible;
+                parent.setVisible(visible);
+            } else {
+                parentCheckbox.indeterminate = true;
+                parentCheckbox.checked = false;
+                parent.setVisible(true);
+            }
+            LayerSwitcher.checkParentIndeterminate_(parent);
+        }
     }
 
     /**
@@ -172,27 +307,47 @@ export default class LayerSwitcher extends Control {
     * @param {ol.Map} map The map instance.
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
+    * @param {String} lyrId Unique identifier of the layer.
     */
-    static renderLayer_(map, lyr, idx) {
+    static renderLayer_(map, lyr, idx, lyrId) {
 
         var li = document.createElement('li');
 
         var lyrTitle = lyr.get('title');
-        var lyrId = LayerSwitcher.uuid();
+
+        lyr.set('id', lyrId);
 
         var label = document.createElement('label');
+        label.id = `${lyrId}-label`;
 
         if (lyr.getLayers && !lyr.get('combine')) {
+
+            if (!lyr.get('type') || !lyr.get('type').startsWith('base')) {
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = lyrId;
+                input.checked = lyr.get('visible');
+                input.onchange = function(e) {
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                    LayerSwitcher.checkParentIndeterminate_(lyr);
+                };
+                li.appendChild(input);
+            }
 
             li.className = 'group';
 
             // Group folding
             if (lyr.get('fold')) {
+              if (lyr.get('type') === 'basegroup') {
+                li.classList.add(CSS_PREFIX + 'base-group');
+              }
               li.classList.add(CSS_PREFIX + 'fold');
               li.classList.add(CSS_PREFIX + lyr.get('fold'));
               label.onclick = function (e) {
                 LayerSwitcher.toggleFold_(lyr, li);
               };
+            } else {
+                label.htmlFor = lyrId;
             }
 
             label.innerHTML = lyrTitle;
@@ -200,7 +355,7 @@ export default class LayerSwitcher extends Control {
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
-            LayerSwitcher.renderLayers_(map, lyr, ul);
+            LayerSwitcher.renderLayers_(map, lyr, ul, lyrId);
 
         } else {
 
@@ -216,6 +371,9 @@ export default class LayerSwitcher extends Control {
             input.checked = lyr.get('visible');
             input.onchange = function(e) {
                 LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                if (lyr.get('type') !== 'base') {
+                    LayerSwitcher.checkParentIndeterminate_(lyr);
+                }
             };
             li.appendChild(input);
 
@@ -239,15 +397,15 @@ export default class LayerSwitcher extends Control {
     * **Static** Render all layers that are children of a group.
     * @private
     * @param {ol.Map} map The map instance.
-    * @param {ol.layer.Group} lyr Group layer whos children will be rendered.
+    * @param {ol.layer.Group} lyr Group layer whose children will be rendered.
     * @param {Element} elm DOM element that children will be appended to.
     */
-    static renderLayers_(map, lyr, elm) {
+    static renderLayers_(map, lyr, elm, lyrId) {
         var lyrs = lyr.getLayers().getArray().slice().reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i));
+                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, `${lyrId}-${i}`));
             }
         }
     }
@@ -265,18 +423,6 @@ export default class LayerSwitcher extends Control {
             if (lyr.getLayers) {
                 LayerSwitcher.forEachRecursive(lyr, fn);
             }
-        });
-    }
-
-    /**
-    * **Static** Generate a UUID  
-    * Adapted from http://stackoverflow.com/a/2117523/526860
-    * @returns {String} UUID
-    */
-    static uuid() {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
-            return v.toString(16);
         });
     }
 
