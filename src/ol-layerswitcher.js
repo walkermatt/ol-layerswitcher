@@ -24,6 +24,10 @@ export default class LayerSwitcher extends Control {
 
         super({element: element, target: options.target});
 
+        // groupSelectStyle: none, group, children
+        this.groupSelectStyle = options.groupSelectStyle ?
+            options.groupSelectStyle : 'simple';
+
         this.mapListeners = [];
 
         this.hiddenClassName = 'ol-unselectable ol-control layer-switcher';
@@ -140,10 +144,7 @@ export default class LayerSwitcher extends Control {
 
     static isBaseGroup(lyr) {
         let lyrs = (lyr.getLayers) ? lyr.getLayers().getArray() : [];
-        let baseLyr = lyrs.find(function (l) {
-            return l.get('type') === 'base';
-        });
-        return Boolean(baseLyr);
+        return lyrs.length && lyrs[0].get('type') === 'base';
     }
 
     static setGroupVisibility(map) {

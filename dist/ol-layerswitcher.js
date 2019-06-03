@@ -119,7 +119,10 @@ var LayerSwitcher = function (_Control) {
 
         var element = document.createElement('div');
 
+        // groupSelectStyle: none, group, children
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
+
+        _this.groupSelectStyle = options.groupSelectStyle ? options.groupSelectStyle : 'simple';
 
         _this.mapListeners = [];
 
@@ -254,10 +257,7 @@ var LayerSwitcher = function (_Control) {
         key: 'isBaseGroup',
         value: function isBaseGroup(lyr) {
             var lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
-            var baseLyr = lyrs.find(function (l) {
-                return l.get('type') === 'base';
-            });
-            return Boolean(baseLyr);
+            return lyrs.length && lyrs[0].get('type') === 'base';
         }
     }, {
         key: 'setGroupVisibility',
