@@ -24,9 +24,10 @@ export default class LayerSwitcher extends Control {
 
         super({element: element, target: options.target});
 
-        // groupSelectStyle: none, group, children
-        this.groupSelectStyle = options.groupSelectStyle ?
-            options.groupSelectStyle : 'simple';
+        this.groupSelectStyle =
+            ['none', 'children', 'group'].indexOf(options.groupSelectStyle) >= 0
+                ? options.groupSelectStyle
+                : 'children';
 
         this.mapListeners = [];
 
@@ -112,7 +113,9 @@ export default class LayerSwitcher extends Control {
     * Re-draw the layer panel to represent the current state of the layers.
     */
     renderPanel() {
-        LayerSwitcher.renderPanel(this.getMap(), this.panel);
+        LayerSwitcher.renderPanel(this.getMap(), this.panel, {
+            groupSelectStyle: this.groupSelectStyle
+        });
     }
 
     /**
@@ -120,7 +123,7 @@ export default class LayerSwitcher extends Control {
     * @param {ol.Map} map The OpenLayers Map instance to render layers for
     * @param {Element} panel The DOM Element into which the layer tree will be rendered
     */
-    static renderPanel(map, panel) {
+    static renderPanel(map, panel, options) {
 
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -128,16 +131,27 @@ export default class LayerSwitcher extends Control {
             panel.removeChild(panel.firstChild);
         }
 
-        // Sort out visibile and indeterminate state of groups based on
-        // their children's visibility
-        LayerSwitcher.setGroupVisibility(map);
+        // Reset indeterminate state for all layers and groups before
+        // applying based on groupSelectStyle
+        LayerSwitcher.forEachRecursive(map, function(l, idx, a) {
+            l.set('indeterminate', false);
+        });
+
+        if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
+            // Set visibile and indeterminate state of groups based on
+            // their children's visibility
+            LayerSwitcher.setGroupVisibility(map);
+        } else if (options.groupSelectStyle === 'group') {
+            // Set child indetermiate state based on their parent's visibility
+            LayerSwitcher.setChildVisibility(map);
+        }
 
         var ul = document.createElement('ul');
         panel.appendChild(ul);
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-        LayerSwitcher.renderLayers_(map, map, ul, function render(changedLyr) {
+        LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
             // console.log('render');
-            LayerSwitcher.renderPanel(map, panel);
+            LayerSwitcher.renderPanel(map, panel, options);
         });
 
     }
@@ -173,6 +187,25 @@ export default class LayerSwitcher extends Control {
                 }
             }
         );
+    }
+
+    static setChildVisibility(map) {
+        // console.log('setChildVisibility');
+        const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
+            return (l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l));
+        });
+        groups.forEach(function (group) {
+            // console.log(group.get('title'));
+            var groupVisible = group.getVisible();
+            var groupIndeterminate = group.get('indeterminate');
+            group.getLayers().getArray().forEach(function (l) {
+                // console.log('>', l.get('title'));
+                l.set('indeterminate', false);
+                if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
+                    l.set('indeterminate', true);
+                }
+            });
+        });
     }
 
     /**
@@ -211,7 +244,8 @@ export default class LayerSwitcher extends Control {
     * @param {ol.Map} map The map instance.
     * @param {ol.layer.Base} The layer whose visibility will be toggled.
     */
-    static setVisible_(map, lyr, visible) {
+    static setVisible_(map, lyr, visible, groupSelectStyle) {
+        // console.log(lyr.get('title'), visible, groupSelectStyle);
         lyr.setVisible(visible);
         if (visible && lyr.get('type') === 'base') {
             // Hide all other base layers regardless of grouping
@@ -221,9 +255,9 @@ export default class LayerSwitcher extends Control {
                 }
             });
         }
-        if (lyr.getLayers && !lyr.get('combine')) {
+        if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
             lyr.getLayers().forEach(l => {
-                LayerSwitcher.setVisible_(map, l, lyr.getVisible());
+                LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
             });
         }
     }
@@ -235,7 +269,7 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
     * @param {Number} idx Position in parent group list.
     */
-    static renderLayer_(map, lyr, idx, render) {
+    static renderLayer_(map, lyr, idx, options, render) {
 
         var li = document.createElement('li');
 
@@ -260,14 +294,15 @@ export default class LayerSwitcher extends Control {
               li.appendChild(btn);
             }
 
-            if (!LayerSwitcher.isBaseGroup(lyr)) {
+            // console.log(options.groupSelectStyle);
+            if (!LayerSwitcher.isBaseGroup(lyr) && options.groupSelectStyle != 'none') {
                 const input = document.createElement('input');
                 input.type = 'checkbox';
                 input.id = checkboxId;
-                input.checked = lyr.get('visible');
+                input.checked = lyr.getVisible();
                 input.indeterminate = lyr.get('indeterminate');
                 input.onchange = function(e) {
-                    LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
                     render(lyr);
                 };
                 li.appendChild(input);
@@ -279,7 +314,7 @@ export default class LayerSwitcher extends Control {
             var ul = document.createElement('ul');
             li.appendChild(ul);
 
-            LayerSwitcher.renderLayers_(map, lyr, ul, render);
+            LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
 
         } else {
 
@@ -293,8 +328,9 @@ export default class LayerSwitcher extends Control {
             }
             input.id = checkboxId;
             input.checked = lyr.get('visible');
+            input.indeterminate = lyr.get('indeterminate');
             input.onchange = function(e) {
-                LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
                 render(lyr);
             };
             li.appendChild(input);
@@ -322,12 +358,12 @@ export default class LayerSwitcher extends Control {
     * @param {ol.layer.Group} lyr Group layer whose children will be rendered.
     * @param {Element} elm DOM element that children will be appended to.
     */
-    static renderLayers_(map, lyr, elm, render) {
+    static renderLayers_(map, lyr, elm, options, render) {
         var lyrs = lyr.getLayers().getArray().slice().reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
-                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, render));
+                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, options, render));
             }
         }
     }

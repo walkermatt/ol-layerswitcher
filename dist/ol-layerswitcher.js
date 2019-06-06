@@ -119,10 +119,9 @@ var LayerSwitcher = function (_Control) {
 
         var element = document.createElement('div');
 
-        // groupSelectStyle: none, group, children
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
 
-        _this.groupSelectStyle = options.groupSelectStyle ? options.groupSelectStyle : 'simple';
+        _this.groupSelectStyle = ['none', 'children', 'group'].indexOf(options.groupSelectStyle) >= 0 ? options.groupSelectStyle : 'children';
 
         _this.mapListeners = [];
 
@@ -222,7 +221,9 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'renderPanel',
         value: function renderPanel() {
-            LayerSwitcher.renderPanel(this.getMap(), this.panel);
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, {
+                groupSelectStyle: this.groupSelectStyle
+            });
         }
 
         /**
@@ -233,7 +234,7 @@ var LayerSwitcher = function (_Control) {
 
     }], [{
         key: 'renderPanel',
-        value: function renderPanel(map, panel) {
+        value: function renderPanel(map, panel, options) {
 
             LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -241,16 +242,27 @@ var LayerSwitcher = function (_Control) {
                 panel.removeChild(panel.firstChild);
             }
 
-            // Sort out visibile and indeterminate state of groups based on
-            // their children's visibility
-            LayerSwitcher.setGroupVisibility(map);
+            // Reset indeterminate state for all layers and groups before
+            // applying based on groupSelectStyle
+            LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+                l.set('indeterminate', false);
+            });
+
+            if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
+                // Set visibile and indeterminate state of groups based on
+                // their children's visibility
+                LayerSwitcher.setGroupVisibility(map);
+            } else if (options.groupSelectStyle === 'group') {
+                // Set child indetermiate state based on their parent's visibility
+                LayerSwitcher.setChildVisibility(map);
+            }
 
             var ul = document.createElement('ul');
             panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-            LayerSwitcher.renderLayers_(map, map, ul, function render(changedLyr) {
+            LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
                 // console.log('render');
-                LayerSwitcher.renderPanel(map, panel);
+                LayerSwitcher.renderPanel(map, panel, options);
             });
         }
     }, {
@@ -289,6 +301,26 @@ var LayerSwitcher = function (_Control) {
                     group.setVisible(true);
                     group.set('indeterminate', true);
                 }
+            });
+        }
+    }, {
+        key: 'setChildVisibility',
+        value: function setChildVisibility(map) {
+            // console.log('setChildVisibility');
+            var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
+                return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+            });
+            groups.forEach(function (group) {
+                // console.log(group.get('title'));
+                var groupVisible = group.getVisible();
+                var groupIndeterminate = group.get('indeterminate');
+                group.getLayers().getArray().forEach(function (l) {
+                    // console.log('>', l.get('title'));
+                    l.set('indeterminate', false);
+                    if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
+                        l.set('indeterminate', true);
+                    }
+                });
             });
         }
 
@@ -337,7 +369,8 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'setVisible_',
-        value: function setVisible_(map, lyr, visible) {
+        value: function setVisible_(map, lyr, visible, groupSelectStyle) {
+            // console.log(lyr.get('title'), visible, groupSelectStyle);
             lyr.setVisible(visible);
             if (visible && lyr.get('type') === 'base') {
                 // Hide all other base layers regardless of grouping
@@ -347,9 +380,9 @@ var LayerSwitcher = function (_Control) {
                     }
                 });
             }
-            if (lyr.getLayers && !lyr.get('combine')) {
+            if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
                 lyr.getLayers().forEach(function (l) {
-                    LayerSwitcher.setVisible_(map, l, lyr.getVisible());
+                    LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
                 });
             }
         }
@@ -364,7 +397,7 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'renderLayer_',
-        value: function renderLayer_(map, lyr, idx, render) {
+        value: function renderLayer_(map, lyr, idx, options, render) {
 
             var li = document.createElement('li');
 
@@ -389,14 +422,15 @@ var LayerSwitcher = function (_Control) {
                     li.appendChild(btn);
                 }
 
-                if (!LayerSwitcher.isBaseGroup(lyr)) {
+                // console.log(options.groupSelectStyle);
+                if (!LayerSwitcher.isBaseGroup(lyr) && options.groupSelectStyle != 'none') {
                     var _input = document.createElement('input');
                     _input.type = 'checkbox';
                     _input.id = checkboxId;
-                    _input.checked = lyr.get('visible');
+                    _input.checked = lyr.getVisible();
                     _input.indeterminate = lyr.get('indeterminate');
                     _input.onchange = function (e) {
-                        LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                        LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
                         render(lyr);
                     };
                     li.appendChild(_input);
@@ -408,7 +442,7 @@ var LayerSwitcher = function (_Control) {
                 var ul = document.createElement('ul');
                 li.appendChild(ul);
 
-                LayerSwitcher.renderLayers_(map, lyr, ul, render);
+                LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
             } else {
 
                 li.className = 'layer';
@@ -421,8 +455,9 @@ var LayerSwitcher = function (_Control) {
                 }
                 input.id = checkboxId;
                 input.checked = lyr.get('visible');
+                input.indeterminate = lyr.get('indeterminate');
                 input.onchange = function (e) {
-                    LayerSwitcher.setVisible_(map, lyr, e.target.checked);
+                    LayerSwitcher.setVisible_(map, lyr, e.target.checked, options.groupSelectStyle);
                     render(lyr);
                 };
                 li.appendChild(input);
@@ -451,12 +486,12 @@ var LayerSwitcher = function (_Control) {
 
     }, {
         key: 'renderLayers_',
-        value: function renderLayers_(map, lyr, elm, render) {
+        value: function renderLayers_(map, lyr, elm, options, render) {
             var lyrs = lyr.getLayers().getArray().slice().reverse();
             for (var i = 0, l; i < lyrs.length; i++) {
                 l = lyrs[i];
                 if (l.get('title')) {
-                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, render));
+                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, options, render));
                 }
             }
         }

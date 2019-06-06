@@ -77,14 +77,47 @@
             })
         ],
         view: new ol.View({
-            center: ol.proj.transform([-0.92, 52.96], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 6
+            center: ol.proj.transform([-2.284, 55.692], 'EPSG:4326', 'EPSG:3857'),
+            zoom: 9
         })
     });
 
     var layerSwitcher = new ol.control.LayerSwitcher({
-        tipLabel: 'Légende' // Optional label for button
+        groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
     });
     map.addControl(layerSwitcher);
+
+    function createOption(name) {
+        var option = document.createElement("option");
+        option.value = name;
+        option.text = name;
+        return option;
+    }
+
+    var container = document.createElement('div');
+    container.id = 'group-select-style';
+
+    var label = document.createElement('label');
+    label.innerText = 'groupSelectStyle: ';
+    label.htmlFor = 'group-select-style-input';
+
+    var select = document.createElement('select');
+    select.id = 'group-select-style-input';
+    select.add(createOption('children'));
+    select.add(createOption('group'));
+    select.add(createOption('none'));
+
+    select.onchange = function(e) {
+        map.removeControl(layerSwitcher);
+        layerSwitcher = new ol.control.LayerSwitcher({
+            groupSelectStyle: select.value
+        });
+        map.addControl(layerSwitcher);
+    };
+
+    container.appendChild(label);
+    container.appendChild(select);
+
+    document.body.appendChild(container);
 
 })();
