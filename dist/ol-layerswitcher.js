@@ -236,6 +236,8 @@ var LayerSwitcher = function (_Control) {
         key: 'renderPanel',
         value: function renderPanel(map, panel, options) {
 
+            options = options || {};
+
             LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
             while (panel.firstChild) {

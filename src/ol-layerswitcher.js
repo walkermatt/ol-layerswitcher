@@ -125,6 +125,8 @@ export default class LayerSwitcher extends Control {
     */
     static renderPanel(map, panel, options) {
 
+        options = options || {};
+
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
         while(panel.firstChild) {
