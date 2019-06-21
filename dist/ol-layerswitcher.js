@@ -104,6 +104,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * @extends {ol.control.Control}
  * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
  * **`tipLabel`** `String` - the button tooltip.
+ * **`groupSelectStyle`** `String` - either 'none' - groups don't get a checkbox, 'children' (default) groups have a checkbox and affect child visibility or 'group' groups have a checkbox but do not alter child visibility (like QGIS)
  */
 
 var LayerSwitcher = function (_Control) {
@@ -411,7 +412,12 @@ var LayerSwitcher = function (_Control) {
 
             if (lyr.getLayers && !lyr.get('combine')) {
 
+                var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
+
                 li.classList.add('group');
+                if (isBaseGroup) {
+                    li.classList.add(CSS_PREFIX + 'base-group');
+                }
 
                 // Group folding
                 if (lyr.get('fold')) {
@@ -424,8 +430,7 @@ var LayerSwitcher = function (_Control) {
                     li.appendChild(btn);
                 }
 
-                // console.log(options.groupSelectStyle);
-                if (!LayerSwitcher.isBaseGroup(lyr) && options.groupSelectStyle != 'none') {
+                if (!isBaseGroup && options.groupSelectStyle != 'none') {
                     var _input = document.createElement('input');
                     _input.type = 'checkbox';
                     _input.id = checkboxId;
