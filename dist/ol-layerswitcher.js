@@ -101,10 +101,12 @@ var CSS_PREFIX = 'layer-switcher-';
  * OpenLayers Layer Switcher Control.
  * See [the examples](./examples) for usage.
  * @constructor
- * @extends {ol.control.Control}
- * @param {Object} opt_options Control options, extends olx.control.ControlOptions adding:
- * **`tipLabel`** `String` - the button tooltip.
- * **`groupSelectStyle`** `String` - either 'none' - groups don't get a checkbox, 'children' (default) groups have a checkbox and affect child visibility or 'group' groups have a checkbox but do not alter child visibility (like QGIS)
+ * @extends {ol/control/Control~Control}
+ * @param {Object} opt_options Control options, extends ol/control/Control~Control#options adding:
+ * @param {String} opt_options.tipLabel the button tooltip.
+ * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+ *   `'children'` (default) groups have a checkbox and affect child visibility or
+ *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
  */
 
 var LayerSwitcher = function (_Control) {
@@ -167,7 +169,7 @@ var LayerSwitcher = function (_Control) {
 
     /**
     * Set the map instance the control is associated with.
-    * @param {ol.Map} map The map instance.
+    * @param {ol/Map~Map} map The map instance.
     */
 
 
@@ -229,7 +231,7 @@ var LayerSwitcher = function (_Control) {
 
         /**
         * **Static** Re-draw the layer panel to represent the current state of the layers.
-        * @param {ol.Map} map The OpenLayers Map instance to render layers for
+        * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
         * @param {Element} panel The DOM Element into which the layer tree will be rendered
         */
 
@@ -329,7 +331,7 @@ var LayerSwitcher = function (_Control) {
 
         /**
         * **Static** Ensure only the top-most base layer is visible if more than one is visible.
-        * @param {ol.Map} map The map instance.
+        * @param {ol/Map~Map} map The map instance.
         * @private
         */
 
@@ -366,8 +368,8 @@ var LayerSwitcher = function (_Control) {
         * Takes care of hiding other layers in the same exclusive group if the layer
         * is toggle to visible.
         * @private
-        * @param {ol.Map} map The map instance.
-        * @param {ol.layer.Base} The layer whose visibility will be toggled.
+        * @param {ol/Map~Map} map The map instance.
+        * @param {ol/layer/Base~BaseLayer} The layer whose visibility will be toggled.
         */
 
     }, {
@@ -393,8 +395,8 @@ var LayerSwitcher = function (_Control) {
         /**
         * **Static** Render all layers that are children of a group.
         * @private
-        * @param {ol.Map} map The map instance.
-        * @param {ol.layer.Base} lyr Layer to be rendered (should have a title property).
+        * @param {ol/Map~Map} map The map instance.
+        * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
         * @param {Number} idx Position in parent group list.
         */
 
@@ -486,8 +488,8 @@ var LayerSwitcher = function (_Control) {
         /**
         * **Static** Render all layers that are children of a group.
         * @private
-        * @param {ol.Map} map The map instance.
-        * @param {ol.layer.Group} lyr Group layer whose children will be rendered.
+        * @param {ol/Map~Map} map The map instance.
+        * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
         * @param {Element} elm DOM element that children will be appended to.
         */
 
@@ -506,9 +508,9 @@ var LayerSwitcher = function (_Control) {
         /**
         * **Static** Call the supplied function for each layer in the passed layer group
         * recursing nested groups.
-        * @param {ol.layer.Group} lyr The layer group to start iterating from.
-        * @param {Function} fn Callback which will be called for each `ol.layer.Base`
-        * found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach`
+        * @param {ol/layer/Group~LayerGroup} lyr The layer group to start iterating from.
+        * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
+        * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
         */
 
     }, {
@@ -577,6 +579,7 @@ var LayerSwitcher = function (_Control) {
 
         /**
         * Fold/unfold layer group
+        * @private
         */
 
     }, {
