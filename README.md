@@ -92,15 +92,15 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
 
 ### LayerSwitcher
 
-**Extends ol.control.Control**
+**Extends ol/control/Control~Control**
 
 OpenLayers Layer Switcher Control.
 See [the examples](./examples) for usage.
 
 **Parameters**
 
--   `opt_options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Control options, extends olx.control.ControlOptions adding:  
-    **`tipLabel`** `String` - the button tooltip.
+-   `opt_options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Control options, extends ol/control/Control~Control#options adding:
+    -   `opt_options.tipLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the button tooltip.
 
 #### setMap
 
@@ -108,7 +108,7 @@ Set the map instance the control is associated with.
 
 **Parameters**
 
--   `map` **ol.Map** The map instance.
+-   `map` **ol/Map~Map** The map instance.
 
 #### showPanel
 
@@ -128,8 +128,9 @@ Re-draw the layer panel to represent the current state of the layers.
 
 **Parameters**
 
--   `map` **ol.Map** The OpenLayers Map instance to render layers for
+-   `map` **ol/Map~Map** The OpenLayers Map instance to render layers for
 -   `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
+-   `options`  
 
 #### forEachRecursive
 
@@ -138,13 +139,13 @@ recursing nested groups.
 
 **Parameters**
 
--   `lyr` **ol.layer.Group** The layer group to start iterating from.
--   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Callback which will be called for each `ol.layer.Base`
-    found under `lyr`. The signature for `fn` is the same as `ol.Collection#forEach`
+-   `lyr` **ol/layer/Group~LayerGroup** The layer group to start iterating from.
+-   `fn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Callback which will be called for each `ol/layer/Base~BaseLayer`
+    found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
 
 #### uuid
 
-**Static** Generate a UUID  
+**Static** Generate a UUID
 Adapted from <http://stackoverflow.com/a/2117523/526860>
 
 Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** UUID
