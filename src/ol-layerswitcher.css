@@ -70,7 +70,7 @@
 
 .layer-switcher li.layer label, .layer-switcher li.layer input {
     display: table-cell;
-    vertical-align: sub;
+    vertical-align: middle;
 }
 
 .layer-switcher label.disabled {
@@ -95,24 +95,30 @@
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
-.layer-switcher .group.layer-switcher-fold > label:before  {
-    content: '';
-    border: solid black;
-    border-width: 0 3px 3px 0;
+.layer-switcher .group button {
     display: inline-block;
-    padding: 2px;
-    margin-right: 2px;
-    margin-bottom: 2px;
+    vertical-align: top;
+    float: none;
+    width: 16px;
+    height: 16px;
+    background-position: center 2px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAW0lEQVR4nGNgGAWMyBwXFxcGBgaGeii3EU0tXHzPnj1wQRYsihqQ+I0ExDEMQAYNONgoAN0AmMkNaDSyQSheY8JiaCMOGzE04zIAmyFYNTMw4A+DRhzsUUBtAADw4BCeIZkGdwAAAABJRU5ErkJggg==');
+    -webkit-transition: -webkit-transform .2s ease-in-out;
+    -ms-transition: -ms-transform .2s ease-in-out;
+    transition: transform .2s ease-in-out;
 }
 
-.layer-switcher .group.layer-switcher-fold.layer-switcher-close > label:before {
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
+.layer-switcher .group.layer-switcher-close button {
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
 }
 
-.layer-switcher .group.layer-switcher-fold.layer-switcher-open > label:before {
-    transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
+li.group.layer-switcher-fold {
+    margin-left: -18px;
+}
+
+.layer-switcher .group.layer-switcher-fold > ul {
+    padding-left: 3em;
 }
 
 .layer-switcher .group.layer-switcher-fold.layer-switcher-close > ul {

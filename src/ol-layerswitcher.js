@@ -193,9 +193,11 @@ export default class LayerSwitcher extends Control {
             if (lyr.get('fold')) {
               li.classList.add(CSS_PREFIX + 'fold');
               li.classList.add(CSS_PREFIX + lyr.get('fold'));
-              label.onclick = function (e) {
+              const btn = document.createElement('button');
+              btn.onclick = function (e) {
                 LayerSwitcher.toggleFold_(lyr, li);
               };
+              li.appendChild(btn);
             }
 
             label.innerHTML = lyrTitle;
@@ -272,7 +274,7 @@ export default class LayerSwitcher extends Control {
     }
 
     /**
-    * **Static** Generate a UUID  
+    * **Static** Generate a UUID
     * Adapted from http://stackoverflow.com/a/2117523/526860
     * @returns {String} UUID
     */
