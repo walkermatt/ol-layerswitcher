@@ -101,6 +101,9 @@ See [the examples](./examples) for usage.
 
 -   `opt_options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Control options, extends ol/control/Control~Control#options adding:
     -   `opt_options.tipLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the button tooltip.
+    -   `opt_options.groupSelectStyle` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** either `'none'` - groups don't get a checkbox,
+          `'children'` (default) groups have a checkbox and affect child visibility or
+          `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
 
 #### setMap
 

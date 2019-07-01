@@ -52,12 +52,8 @@
 }
 
 .layer-switcher ul {
-    padding-left: 1em;
+    padding-left: 2em;
     list-style: none;
-}
-
-.layer-switcher li.group {
-    padding-top: 5px;
 }
 
 .layer-switcher li.group > label {
