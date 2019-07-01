@@ -113,18 +113,4 @@ describe('ol.control.LayerSwitcher - Two maps', function() {
         });
     });
 
-    /**
-     * Returns the Layer instance that has the given title
-     */
-    function getLayerByTitle(map, title) {
-        var layer = null;
-        ol.control.LayerSwitcher.forEachRecursive(map, function(lyr) {
-            if (lyr.get('title') && lyr.get('title') === title) {
-                layer = lyr;
-                return;
-            }
-        });
-        return layer;
-    }
-
 });

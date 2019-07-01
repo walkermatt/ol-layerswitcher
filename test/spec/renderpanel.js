@@ -148,15 +148,15 @@ describe('ol.control.LayerSwitcher.renderPanel', function() {
         it('Re-rendering reflects current layer state', function() {
             // Initial render
             ol.control.LayerSwitcher.renderPanel(map, panel);
-            var input = getElmByTitle('Bar');
+            var input = getElmByTitle(panel, 'Bar');
             // Assert the Bar layer is initially visible
             expect(input.checked).to.be(true);
             // Hide the layer
-            var bar = getLayerByTitle('Bar');
+            var bar = getLayerByTitle(map, 'Bar');
             bar.setVisible(false);
             // Re-render to update layer tree
             ol.control.LayerSwitcher.renderPanel(map, panel);
-            input = getElmByTitle('Bar');
+            input = getElmByTitle(panel, 'Bar');
             expect(input.checked).to.be(false);
         });
     });
@@ -169,26 +169,5 @@ describe('ol.control.LayerSwitcher.renderPanel', function() {
         });
     });
     */
-
-    /**
-     * Returns the Layer instance that has the given title
-     */
-    function getLayerByTitle(title) {
-        var layer = null;
-        ol.control.LayerSwitcher.forEachRecursive(map, function(lyr) {
-            if (lyr.get('title') && lyr.get('title') === title) {
-                layer = lyr;
-                return;
-            }
-        });
-        return layer;
-    }
-
-    /**
-     * Get the input associated with a layer by it's title
-     */
-    function getElmByTitle(name) {
-        return jQuery('label:contains("' + name + '")', panel).siblings('input').get(0);
-    }
 
 });
