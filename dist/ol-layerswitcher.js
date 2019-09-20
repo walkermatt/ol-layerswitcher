@@ -124,7 +124,7 @@ var LayerSwitcher = function (_Control) {
 
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
 
-        _this.groupSelectStyle = ['none', 'children', 'group'].indexOf(options.groupSelectStyle) >= 0 ? options.groupSelectStyle : 'children';
+        _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
         _this.mapListeners = [];
 
@@ -240,6 +240,8 @@ var LayerSwitcher = function (_Control) {
         value: function renderPanel(map, panel, options) {
 
             options = options || {};
+
+            options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
             LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -588,6 +590,17 @@ var LayerSwitcher = function (_Control) {
             li.classList.remove(CSS_PREFIX + lyr.get('fold'));
             lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
             li.classList.add(CSS_PREFIX + lyr.get('fold'));
+        }
+
+        /**
+         * If a valid groupSelectStyle value is not provided then return the default
+         * @private
+         */
+
+    }, {
+        key: 'getGroupSelectStyle',
+        value: function getGroupSelectStyle(groupSelectStyle) {
+            return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0 ? groupSelectStyle : 'children';
         }
     }]);
     return LayerSwitcher;

@@ -27,10 +27,7 @@ export default class LayerSwitcher extends Control {
 
         super({element: element, target: options.target});
 
-        this.groupSelectStyle =
-            ['none', 'children', 'group'].indexOf(options.groupSelectStyle) >= 0
-                ? options.groupSelectStyle
-                : 'children';
+        this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
         this.mapListeners = [];
 
@@ -129,6 +126,8 @@ export default class LayerSwitcher extends Control {
     static renderPanel(map, panel, options) {
 
         options = options || {};
+
+        options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
         LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
 
@@ -444,6 +443,16 @@ export default class LayerSwitcher extends Control {
         li.classList.remove(CSS_PREFIX + lyr.get('fold'));
         lyr.set('fold', (lyr.get('fold')==='open') ? 'close' : 'open');
         li.classList.add(CSS_PREFIX + lyr.get('fold'));
+    }
+
+    /**
+     * If a valid groupSelectStyle value is not provided then return the default
+     * @private
+     */
+    static getGroupSelectStyle(groupSelectStyle) {
+        return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0
+                        ? groupSelectStyle
+                        : 'children';
     }
 
 }

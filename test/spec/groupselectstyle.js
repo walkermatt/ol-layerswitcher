@@ -206,4 +206,15 @@ describe('groupSelectStyle', function() {
         });
     });
 
+    describe('getGroupSelectStyle', function() {
+        it('Returns provided value if it\'s valid', function() {
+            expect(LayerSwitcher.getGroupSelectStyle('none')).to.be('none');
+            expect(LayerSwitcher.getGroupSelectStyle('children')).to.be('children');
+            expect(LayerSwitcher.getGroupSelectStyle('group')).to.be('group');
+        });
+        it('Returns default value if provided value is not valid', function() {
+            expect(LayerSwitcher.getGroupSelectStyle('foo')).to.be('children');
+        });
+    });
+
 });
