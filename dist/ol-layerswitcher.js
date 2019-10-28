@@ -245,11 +245,6 @@ var LayerSwitcher = function (_Control) {
             // Define that the event name is 'render'.
             render_event.initEvent('render', true, true);
 
-            // Listen for the event.
-            panel.addEventListener('render', function (e) {
-                // e.target matches panel
-            }, false);
-
             panel.dispatchEvent(render_event);
 
             options = options || {};
@@ -290,11 +285,6 @@ var LayerSwitcher = function (_Control) {
 
             // Define that the event name is 'render'.
             rendercomplete_event.initEvent('rendercomplete', true, true);
-
-            // Listen for the event.
-            panel.addEventListener('rendercomplete', function (e) {
-                // e.target matches panel
-            }, false);
 
             panel.dispatchEvent(rendercomplete_event);
         }
