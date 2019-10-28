@@ -224,9 +224,9 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'renderPanel',
         value: function renderPanel() {
-            LayerSwitcher.renderPanel(this.getMap(), this.panel, {
-                groupSelectStyle: this.groupSelectStyle
-            });
+            this.dispatchEvent({ type: 'render' });
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+            this.dispatchEvent({ type: 'rendercomplete' });
         }
 
         /**
@@ -238,6 +238,10 @@ var LayerSwitcher = function (_Control) {
     }], [{
         key: 'renderPanel',
         value: function renderPanel(map, panel, options) {
+            // Create the event.
+            var render_event = new Event('render');
+            // Dispatch the event.
+            panel.dispatchEvent(render_event);
 
             options = options || {};
 
@@ -271,6 +275,11 @@ var LayerSwitcher = function (_Control) {
                 // console.log('render');
                 LayerSwitcher.renderPanel(map, panel, options);
             });
+
+            // Create the event.
+            var rendercomplete_event = new Event('rendercomplete');
+            // Dispatch the event.
+            panel.dispatchEvent(rendercomplete_event);
         }
     }, {
         key: 'isBaseGroup',

@@ -108,14 +108,14 @@ export default class LayerSwitcher extends Control {
             this.element.classList.remove(this.shownClassName);
         }
     }
-
+    
     /**
     * Re-draw the layer panel to represent the current state of the layers.
     */
     renderPanel() {
-        LayerSwitcher.renderPanel(this.getMap(), this.panel, {
-            groupSelectStyle: this.groupSelectStyle
-        });
+        this.dispatchEvent({ type: 'render' });
+        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+        this.dispatchEvent({ type: 'rendercomplete' });
     }
 
     /**
@@ -124,6 +124,10 @@ export default class LayerSwitcher extends Control {
     * @param {Element} panel The DOM Element into which the layer tree will be rendered
     */
     static renderPanel(map, panel, options) {
+        // Create the event.
+        var render_event = new Event('render');
+        // Dispatch the event.
+        panel.dispatchEvent(render_event);
 
         options = options || {};
 
@@ -158,6 +162,10 @@ export default class LayerSwitcher extends Control {
             LayerSwitcher.renderPanel(map, panel, options);
         });
 
+        // Create the event.
+        var rendercomplete_event = new Event('rendercomplete');
+        // Dispatch the event.
+        panel.dispatchEvent(rendercomplete_event);
     }
 
     static isBaseGroup(lyr) {
