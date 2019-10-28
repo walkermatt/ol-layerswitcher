@@ -125,6 +125,19 @@ export default class LayerSwitcher extends Control {
     */
     static renderPanel(map, panel, options) {
 
+        // Create the event.
+        let render_event = document.createEvent('Event');
+
+        // Define that the event name is 'render'.
+        render_event.initEvent('render', true, true);
+
+        // Listen for the event.
+        panel.addEventListener('render', function (e) {
+            // e.target matches panel
+        }, false);
+
+        panel.dispatchEvent(render_event);
+
         options = options || {};
 
         options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
@@ -157,6 +170,20 @@ export default class LayerSwitcher extends Control {
             // console.log('render');
             LayerSwitcher.renderPanel(map, panel, options);
         });
+
+        
+        // Create the event.
+        let rendercomplete_event = document.createEvent('Event');
+
+        // Define that the event name is 'render'.
+        rendercomplete_event.initEvent('rendercomplete', true, true);
+
+        // Listen for the event.
+        panel.addEventListener('rendercomplete', function (e) {
+            // e.target matches panel
+        }, false);
+
+        panel.dispatchEvent(rendercomplete_event);
 
     }
 
