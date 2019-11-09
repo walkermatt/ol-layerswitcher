@@ -10,6 +10,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * @extends {ol/control/Control~Control}
  * @param {Object} opt_options Control options, extends ol/control/Control~Control#options adding:
  * @param {String} opt_options.tipLabel the button tooltip.
+ * @param {String} opt_options.buttonUDCChar the button Unicode Decimal Character Code.
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
@@ -22,6 +23,9 @@ export default class LayerSwitcher extends Control {
 
         var tipLabel = options.tipLabel ?
             options.tipLabel : 'Legend';
+
+        var buttonUDCChar = options.buttonUDCChar ?
+            options.buttonUDCChar : '9776'
 
         var element = document.createElement('div');
 
@@ -40,7 +44,10 @@ export default class LayerSwitcher extends Control {
         element.className = this.hiddenClassName;
 
         var button = document.createElement('button');
+        button.setAttribute('class', 'layer-switcher-open-main')
+        button.setAttribute('type', 'button');
         button.setAttribute('title', tipLabel);
+        button.innerHTML = String.fromCharCode(buttonUDCChar);
         element.appendChild(button);
 
         this.panel = document.createElement('div');
