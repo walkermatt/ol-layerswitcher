@@ -25,7 +25,7 @@ export default class LayerSwitcher extends Control {
             options.tipLabel : 'Legend';
 
         var buttonUDCChar = options.buttonUDCChar ?
-            options.buttonUDCChar : '9776'
+            options.buttonUDCChar : '';
 
         var element = document.createElement('div');
 
