@@ -8,7 +8,7 @@ layers should have a `type` property set to `base`. Group layers
 a `fold` property set to either `open` or `close` will be displayed with a
 toggle. See [Examples](#examples) for usage.
 
-Compatible with OpenLayers version 3, 4 and 5 (see note in [Install - Parcel,
+Compatible with OpenLayers version 3, 4, 5 and 6 (see note in [Install - Parcel,
 Webpack etc.](#parcel-webpack-etc) regarding installing the appropriate version
 of `ol-layerswitcher` for OpenLayers).
 
