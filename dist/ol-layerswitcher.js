@@ -218,15 +218,36 @@ var LayerSwitcher = function (_Control) {
         }
 
         /**
+        * Dispatch panel render events.
+        */
+
+    }, {
+        key: 'panelEvent',
+        value: function panelEvent(render_event) {
+            var retVal = false;
+            switch (render_event) {
+                case 'render':
+                    this.dispatchEvent({ type: 'render' });
+                    retVal = true;
+                case 'rendercomplete':
+                    this.dispatchEvent({ type: 'rendercomplete' });
+                    retVal = true;
+            }
+
+            return retVal;
+        }
+
+        /**
         * Re-draw the layer panel to represent the current state of the layers.
         */
 
     }, {
         key: 'renderPanel',
         value: function renderPanel() {
-            LayerSwitcher.renderPanel(this.getMap(), this.panel, {
-                groupSelectStyle: this.groupSelectStyle
-            });
+            var panel_event;
+            panel_event = this.panelEvent("render");
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, panel_event, { groupSelectStyle: this.groupSelectStyle });
+            panel_event = this.panelEvent("rendercomplete");
         }
 
         /**
@@ -237,15 +258,14 @@ var LayerSwitcher = function (_Control) {
 
     }], [{
         key: 'renderPanel',
-        value: function renderPanel(map, panel, options) {
+        value: function renderPanel(map, panel, panel_event, options) {
 
-            // Create the event.
-            var render_event = document.createEvent('Event');
-
-            // Define that the event name is 'render'.
-            render_event.initEvent('render', true, true);
-
-            panel.dispatchEvent(render_event);
+            if (!panel_event) {
+                // Create the event.
+                var render_event = new Event('render');
+                // Dispatch the event.
+                document.dispatchEvent(render_event);
+            }
 
             options = options || {};
 
@@ -277,16 +297,15 @@ var LayerSwitcher = function (_Control) {
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
             LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
                 // console.log('render');
-                LayerSwitcher.renderPanel(map, panel, options);
+                LayerSwitcher.renderPanel(map, panel, panel_event, options);
             });
 
-            // Create the event.
-            var rendercomplete_event = document.createEvent('Event');
-
-            // Define that the event name is 'render'.
-            rendercomplete_event.initEvent('rendercomplete', true, true);
-
-            panel.dispatchEvent(rendercomplete_event);
+            if (!panel_event) {
+                // Create the event.
+                var rendercomplete_event = new Event('rendercomplete');
+                // Dispatch the event.
+                document.dispatchEvent(rendercomplete_event);
+            }
         }
     }, {
         key: 'isBaseGroup',
