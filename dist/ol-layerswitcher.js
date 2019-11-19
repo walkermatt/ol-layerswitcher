@@ -224,14 +224,16 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'panelEvent',
         value: function panelEvent(render_event) {
-            var retVal = false;
+            var retVal;
             switch (render_event) {
                 case 'render':
                     this.dispatchEvent({ type: 'render' });
                     retVal = true;
+                    break;
                 case 'rendercomplete':
                     this.dispatchEvent({ type: 'rendercomplete' });
                     retVal = true;
+                    break;
             }
 
             return retVal;
@@ -247,7 +249,7 @@ var LayerSwitcher = function (_Control) {
             var panel_event;
             panel_event = this.panelEvent("render");
             LayerSwitcher.renderPanel(this.getMap(), this.panel, panel_event, { groupSelectStyle: this.groupSelectStyle });
-            panel_event = this.panelEvent("rendercomplete");
+            this.panelEvent("rendercomplete");
         }
 
         /**
@@ -258,7 +260,10 @@ var LayerSwitcher = function (_Control) {
 
     }], [{
         key: 'renderPanel',
-        value: function renderPanel(map, panel, panel_event, options) {
+        value: function renderPanel(map, panel) {
+            var panel_event = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+            var options = arguments[3];
+
 
             if (!panel_event) {
                 // Create the event.

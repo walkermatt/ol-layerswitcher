@@ -113,14 +113,16 @@ export default class LayerSwitcher extends Control {
     * Dispatch panel render events.
     */
     panelEvent(render_event) {
-        var retVal = false;
+        var retVal;
         switch(render_event) {
             case 'render':
                 this.dispatchEvent({ type: 'render' });
                 retVal = true;
+                break;
             case 'rendercomplete':
-                    this.dispatchEvent({ type: 'rendercomplete' });
+                this.dispatchEvent({ type: 'rendercomplete' });
                 retVal = true;
+                break;
         }
 
         return retVal;
@@ -133,7 +135,7 @@ export default class LayerSwitcher extends Control {
         var panel_event;
         panel_event = this.panelEvent("render");
         LayerSwitcher.renderPanel(this.getMap(), this.panel, panel_event, { groupSelectStyle: this.groupSelectStyle });
-        panel_event = this.panelEvent("rendercomplete");
+        this.panelEvent("rendercomplete");
     }
 
     /**
@@ -141,7 +143,7 @@ export default class LayerSwitcher extends Control {
     * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
     * @param {Element} panel The DOM Element into which the layer tree will be rendered
     */
-    static renderPanel(map, panel, panel_event, options) {
+    static renderPanel(map, panel, panel_event=false, options) {
 
         if(!panel_event) {
             // Create the event.
