@@ -149,7 +149,7 @@ export default class LayerSwitcher extends Control {
             // Create the event.
             var render_event = new Event('render');
             // Dispatch the event.
-            document.dispatchEvent(render_event);
+            panel.dispatchEvent(render_event);
         };
 
         options = options || {};
@@ -189,7 +189,7 @@ export default class LayerSwitcher extends Control {
             // Create the event.
             var rendercomplete_event = new Event('rendercomplete');
             // Dispatch the event.
-            document.dispatchEvent(rendercomplete_event);
+            panel.dispatchEvent(rendercomplete_event);
         };
     }
 

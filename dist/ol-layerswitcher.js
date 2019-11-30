@@ -269,7 +269,7 @@ var LayerSwitcher = function (_Control) {
                 // Create the event.
                 var render_event = new Event('render');
                 // Dispatch the event.
-                document.dispatchEvent(render_event);
+                panel.dispatchEvent(render_event);
             }
 
             options = options || {};
@@ -309,7 +309,7 @@ var LayerSwitcher = function (_Control) {
                 // Create the event.
                 var rendercomplete_event = new Event('rendercomplete');
                 // Dispatch the event.
-                document.dispatchEvent(rendercomplete_event);
+                panel.dispatchEvent(rendercomplete_event);
             }
         }
     }, {
