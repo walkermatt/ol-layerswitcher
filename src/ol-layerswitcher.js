@@ -108,34 +108,14 @@ export default class LayerSwitcher extends Control {
             this.element.classList.remove(this.shownClassName);
         }
     }
-
-    /**
-    * Dispatch panel render events.
-    */
-    panelEvent(render_event) {
-        var retVal;
-        switch(render_event) {
-            case 'render':
-                this.dispatchEvent({ type: 'render' });
-                retVal = true;
-                break;
-            case 'rendercomplete':
-                this.dispatchEvent({ type: 'rendercomplete' });
-                retVal = true;
-                break;
-        }
-
-        return retVal;
-    }
-
+    
     /**
     * Re-draw the layer panel to represent the current state of the layers.
     */
     renderPanel() {
-        var panel_event;
-        panel_event = this.panelEvent("render");
-        LayerSwitcher.renderPanel(this.getMap(), this.panel, panel_event, { groupSelectStyle: this.groupSelectStyle });
-        this.panelEvent("rendercomplete");
+        this.dispatchEvent({ type: 'render' });
+        LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+        this.dispatchEvent({ type: 'rendercomplete' });
     }
 
     /**
@@ -143,14 +123,11 @@ export default class LayerSwitcher extends Control {
     * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
     * @param {Element} panel The DOM Element into which the layer tree will be rendered
     */
-    static renderPanel(map, panel, panel_event=false, options) {
-
-        if(!panel_event) {
-            // Create the event.
-            var render_event = new Event('render');
-            // Dispatch the event.
-            panel.dispatchEvent(render_event);
-        };
+    static renderPanel(map, panel, options) {
+        // Create the event.
+        var render_event = new Event('render');
+        // Dispatch the event.
+        panel.dispatchEvent(render_event);
 
         options = options || {};
 
@@ -182,15 +159,13 @@ export default class LayerSwitcher extends Control {
         // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
         LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
             // console.log('render');
-            LayerSwitcher.renderPanel(map, panel, panel_event, options);
+            LayerSwitcher.renderPanel(map, panel, options);
         });
 
-        if(!panel_event) {
-            // Create the event.
-            var rendercomplete_event = new Event('rendercomplete');
-            // Dispatch the event.
-            panel.dispatchEvent(rendercomplete_event);
-        };
+        // Create the event.
+        var rendercomplete_event = new Event('rendercomplete');
+        // Dispatch the event.
+        panel.dispatchEvent(rendercomplete_event);
     }
 
     static isBaseGroup(lyr) {
