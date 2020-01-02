@@ -107,6 +107,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+ * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
 
 var LayerSwitcher = function (_Control) {
@@ -125,6 +126,8 @@ var LayerSwitcher = function (_Control) {
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
 
         _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+
+        _this.reverse = options.reverse !== false;
 
         _this.mapListeners = [];
 
@@ -225,7 +228,7 @@ var LayerSwitcher = function (_Control) {
         key: 'renderPanel',
         value: function renderPanel() {
             this.dispatchEvent({ type: 'render' });
-            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle });
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, { groupSelectStyle: this.groupSelectStyle, reverse: this.reverse });
             this.dispatchEvent({ type: 'rendercomplete' });
         }
 
@@ -507,7 +510,8 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'renderLayers_',
         value: function renderLayers_(map, lyr, elm, options, render) {
-            var lyrs = lyr.getLayers().getArray().slice().reverse();
+            var lyrs = lyr.getLayers().getArray().slice();
+            if (options.reverse) lyrs = lyrs.reverse();
             for (var i = 0, l; i < lyrs.length; i++) {
                 l = lyrs[i];
                 if (l.get('title')) {
