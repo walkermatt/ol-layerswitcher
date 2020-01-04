@@ -102,6 +102,13 @@ See [the examples](./examples) for usage.
 **Parameters**
 
 -   `opt_options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Control options, extends ol/control/Control~Control#options adding:
+    -   `opt_options.activationMode` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Event to use on the button to collapse or expand the panel.
+          `'mouseover'` (default) the layerswitcher panel stays expanded while button or panel are hovered. 
+          `'click'` a click on the button toggles the layerswitcher visibility.
+    -   `opt_options.collapseLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Text label to use for the expanded layerswitcher button. E.g.:
+          `'»'` (default) or `'\u00BB'`, `'-'` or `'\u2212'`. Not visible if activation mode is `'mouseover'`
+    -   `opt_options.label` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Text label to use for the collapsed layerswitcher button. E.g.:
+          `''` (default), `'«'` or `'\u00AB'`, `'+'`.
     -   `opt_options.tipLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the button tooltip.
     -   `opt_options.groupSelectStyle` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** either `'none'` - groups don't get a checkbox,
           `'children'` (default) groups have a checkbox and affect child visibility or
