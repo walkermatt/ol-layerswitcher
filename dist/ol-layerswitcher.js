@@ -438,7 +438,9 @@ var LayerSwitcher = function (_Control) {
                     li.classList.add(CSS_PREFIX + lyr.get('fold'));
                     var btn = document.createElement('button');
                     btn.onclick = function (e) {
+                        e = e || window.event;
                         LayerSwitcher.toggleFold_(lyr, li);
+                        e.preventDefault();
                     };
                     li.appendChild(btn);
                 }

@@ -306,7 +306,9 @@ export default class LayerSwitcher extends Control {
               li.classList.add(CSS_PREFIX + lyr.get('fold'));
               const btn = document.createElement('button');
               btn.onclick = function (e) {
+                e = e || window.event;
                 LayerSwitcher.toggleFold_(lyr, li);
+                e.preventDefault();
               };
               li.appendChild(btn);
             }
