@@ -42,13 +42,13 @@ The source for all examples can be found in [examples](examples).
 Load `ol-layerswitcher.js` after OpenLayers. The layerswitcher control is available as `LayerSwitcher` or `ol.control.LayerSwitcher`.
 
 ```HTML
-<script src="https://unpkg.com/ol-layerswitcher@3.4.0"></script>
+<script src="https://unpkg.com/ol-layerswitcher@3.5.0"></script>
 ```
 
 #### CSS
 
 ```HTML
-<link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.4.0/src/ol-layerswitcher.css" />
+<link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.5.0/src/ol-layerswitcher.css" />
 ```
 
 ### Parcel, Webpack etc.
