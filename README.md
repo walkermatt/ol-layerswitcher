@@ -164,3 +164,14 @@ MIT (c) Matt Walker.
 
 If you find the layer switcher useful you might also like the
 [ol-popup](https://github.com/walkermatt/ol-popup).
+
+## Publishing
+
+    npm run build
+    # Open ./tests/ in browser
+    # Open examples and manually test
+    # Update version number in `package.json`, `bower.json` and `README.md`
+    # Determine new version number (check current with `git tag --list`, check npm and GitHub)
+    git tag vX.Y.Z
+    git push origin master --tags
+    npm publish
