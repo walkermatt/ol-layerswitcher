@@ -103,6 +103,13 @@ var CSS_PREFIX = 'layer-switcher-';
  * @constructor
  * @extends {ol/control/Control~Control}
  * @param {Object} opt_options Control options, extends ol/control/Control~Control#options adding:
+ * @param {String} opt_options.activationMode Event to use on the button to collapse or expand the panel.
+ *   `'mouseover'` (default) the layerswitcher panel stays expanded while button or panel are hovered. 
+ *   `'click'` a click on the button toggles the layerswitcher visibility.
+ * @param {String} opt_options.collapseLabel Text label to use for the expanded layerswitcher button. E.g.:
+ *   `'»'` (default) or `'\u00BB'`, `'-'` or `'\u2212'`. Not visible if activation mode is `'mouseover'`
+ * @param {String} opt_options.label Text label to use for the collapsed layerswitcher button. E.g.:
+ *   `''` (default), `'«'` or `'\u00AB'`, `'+'`.
  * @param {String} opt_options.tipLabel the button tooltip.
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
@@ -124,6 +131,12 @@ var LayerSwitcher = function (_Control) {
         var element = document.createElement('div');
 
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
+
+        _this.activationMode = options.activationMode || 'mouseover';
+
+        var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
+
+        var label = options.label !== undefined ? options.label : '';
 
         _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
@@ -149,6 +162,24 @@ var LayerSwitcher = function (_Control) {
         LayerSwitcher.enableTouchScroll_(_this.panel);
 
         var this_ = _this;
+
+        button.textContent = label;
+
+        if (_this.activationMode == 'click') {
+            element.classList.add('activationModeClick');
+            button.onclick = function (e) {
+                e = e || window.event;
+                if (this_.element.classList.contains(this_.shownClassName)) {
+                    this_.hidePanel();
+                    button.textContent = label;
+                } else {
+                    this_.showPanel();
+                    button.textContent = collapseLabel;
+                }
+                e.preventDefault();
+            };
+            return possibleConstructorReturn(_this);
+        }
 
         button.onmouseover = function (e) {
             this_.showPanel();
@@ -187,11 +218,12 @@ var LayerSwitcher = function (_Control) {
             // Wire up listeners etc. and store reference to new map
             get(LayerSwitcher.prototype.__proto__ || Object.getPrototypeOf(LayerSwitcher.prototype), 'setMap', this).call(this, map);
             if (map) {
+                this.renderPanel();
+                if (this.activationMode == 'click') return;
                 var this_ = this;
                 this.mapListeners.push(map.on('pointerdown', function () {
                     this_.hidePanel();
                 }));
-                this.renderPanel();
             }
         }
 

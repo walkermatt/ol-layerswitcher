@@ -9,6 +9,13 @@ var CSS_PREFIX = 'layer-switcher-';
  * @constructor
  * @extends {ol/control/Control~Control}
  * @param {Object} opt_options Control options, extends ol/control/Control~Control#options adding:
+ * @param {String} opt_options.activationMode Event to use on the button to collapse or expand the panel.
+ *   `'mouseover'` (default) the layerswitcher panel stays expanded while button or panel are hovered. 
+ *   `'click'` a click on the button toggles the layerswitcher visibility.
+ * @param {String} opt_options.collapseLabel Text label to use for the expanded layerswitcher button. E.g.:
+ *   `'»'` (default) or `'\u00BB'`, `'-'` or `'\u2212'`. Not visible if activation mode is `'mouseover'`
+ * @param {String} opt_options.label Text label to use for the collapsed layerswitcher button. E.g.:
+ *   `''` (default), `'«'` or `'\u00AB'`, `'+'`.
  * @param {String} opt_options.tipLabel the button tooltip.
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
@@ -27,6 +34,12 @@ export default class LayerSwitcher extends Control {
         var element = document.createElement('div');
 
         super({element: element, target: options.target});
+
+        this.activationMode = options.activationMode || 'mouseover';
+
+        const collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\u00BB';
+
+        const label = options.label !== undefined ? options.label : '';
 
         this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
@@ -52,6 +65,24 @@ export default class LayerSwitcher extends Control {
         LayerSwitcher.enableTouchScroll_(this.panel);
 
         var this_ = this;
+        
+        button.textContent = label;
+
+        if(this.activationMode == 'click') {
+            element.classList.add('activationModeClick');
+            button.onclick = function(e) {
+                e = e || window.event;
+                if (this_.element.classList.contains(this_.shownClassName)) {
+                    this_.hidePanel();
+                    button.textContent = label;
+                } else {
+                    this_.showPanel();
+                    button.textContent = collapseLabel;
+                }
+                e.preventDefault();
+            }
+            return;
+        }
 
         button.onmouseover = function(e) {
             this_.showPanel();
@@ -85,11 +116,12 @@ export default class LayerSwitcher extends Control {
         // Wire up listeners etc. and store reference to new map
         super.setMap(map);
         if (map) {
+            this.renderPanel();
+            if(this.activationMode == 'click') return;
             var this_ = this;
             this.mapListeners.push(map.on('pointerdown', function() {
                 this_.hidePanel();
             }));
-            this.renderPanel();
         }
     }
 

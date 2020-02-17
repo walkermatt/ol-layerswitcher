@@ -47,6 +47,14 @@
     display: none;
 }
 
+.layer-switcher.shown.activationModeClick > button {
+    display: block;
+    background-image: unset;
+    color: black;
+    right: 2px;
+    position: absolute;
+}
+
 .layer-switcher button:focus, .layer-switcher button:hover {
     background-color: white;
 }
