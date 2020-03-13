@@ -17,6 +17,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * @param {String} opt_options.label Text label to use for the collapsed layerswitcher button. E.g.:
  *   `''` (default), `'«'` or `'\u00AB'`, `'+'`.
  * @param {String} opt_options.tipLabel the button tooltip.
+ * @param {String} opt_options.buttonUDCChar the button Unicode Decimal Character Code.
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
@@ -30,6 +31,9 @@ export default class LayerSwitcher extends Control {
 
         var tipLabel = options.tipLabel ?
             options.tipLabel : 'Legend';
+
+        var buttonUDCChar = options.buttonUDCChar ?
+            options.buttonUDCChar : '';
 
         var element = document.createElement('div');
 
@@ -56,7 +60,10 @@ export default class LayerSwitcher extends Control {
         element.className = this.hiddenClassName;
 
         var button = document.createElement('button');
+        button.setAttribute('class', 'layer-switcher-open-main')
+        button.setAttribute('type', 'button');
         button.setAttribute('title', tipLabel);
+        if (buttonUDCChar !== '') button.innerHTML = String.fromCharCode(buttonUDCChar);
         element.appendChild(button);
 
         this.panel = document.createElement('div');
