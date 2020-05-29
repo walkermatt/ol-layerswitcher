@@ -6,7 +6,7 @@ import PluggableMap from 'ol/PluggableMap';
 type GroupSelectStyle = 'none' | 'children' | 'group';
 
 export interface Options extends ControlOptions {
-    activationMode?: string;
+    activationMode?: 'click' | 'mouseover';
     collapseLabel?: string;
     label?: string;
     tipLabel?: string;
