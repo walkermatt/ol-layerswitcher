@@ -18,8 +18,8 @@ export default class LayerSwitcher extends Control {
     constructor(options?: Options);
     static isBaseGroup(lyr: BaseLayer): boolean;
     static renderPanel(map: PluggableMap, panel: Element, options?: {groupSelectStyle?: GroupSelectStyle; reverse?: boolean;}): void;
-    static setGroupVisibility(map: PluggableMap): any[];
-    static setChildVisibility(map: PluggableMap): any[];
+    static setGroupVisibility(map: PluggableMap): void;
+    static setChildVisibility(map: PluggableMap): void;
     static forEachRecursive(lyr: Group, fn: (lry: BaseLayer, idx: number, a: BaseLayer[]) => void): void
     getGroupsAndLayers(lyr: PluggableMap, filterFn?: (l: BaseLayer, idx: number, a: BaseLayer[]) => boolean): any[];
     hidePanel(): void;
