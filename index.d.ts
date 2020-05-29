@@ -1,4 +1,4 @@
-import { Group } from 'ol/layer';
+import { Group, Heatmap, Image, Layer, Tile, Vector, VectorImage, VectorTile } from 'ol/layer';
 import BaseLayer from 'ol/layer/Base';
 import Control, { Options as ControlOptions } from 'ol/control/Control';
 import PluggableMap from 'ol/PluggableMap';
@@ -21,7 +21,10 @@ export default class LayerSwitcher extends Control {
     static setGroupVisibility(map: PluggableMap): void;
     static setChildVisibility(map: PluggableMap): void;
     static forEachRecursive(lyr: Group, fn: (lry: BaseLayer, idx: number, a: BaseLayer[]) => void): void
-    getGroupsAndLayers(lyr: PluggableMap, filterFn?: (l: BaseLayer, idx: number, a: BaseLayer[]) => boolean): any[];
+    getGroupsAndLayers(
+        lyr: PluggableMap,
+        filterFn?: (l: BaseLayer, idx: number, a: BaseLayer[]) => boolean,
+      ): (Group | Heatmap | Image | Layer | Tile | Vector | VectorImage | VectorTile)[];
     hidePanel(): void;
     renderPanel(): void
     setMap(map: PluggableMap): void;
