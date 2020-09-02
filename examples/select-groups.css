@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   height: 100%;
   padding: 0;
   margin: 0;
@@ -12,8 +13,8 @@ html, body {
 }
 
 #group-select-style {
-    position: absolute;
-    top: 0.5em;
-    right: 0.5em;
-    z-index: 100;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+  z-index: 100;
 }
