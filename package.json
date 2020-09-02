@@ -1,6 +1,6 @@
 {
   "name": "ol-layerswitcher",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Layer switcher control for OpenLayers",
   "main": "dist/ol-layerswitcher.js",
   "repository": {
@@ -12,7 +12,8 @@
     "Thomas Gratier <thomas_gratier@yahoo.fr>",
     "Poul Kjeldager Sørensen <pks@s-innovations.net>",
     "Micho García <micho.garcia@geomati.co>",
-    "olivierdalang <olivier.dalang@gmail.com>"
+    "olivierdalang <olivier.dalang@gmail.com>",
+    "Peter Goulborn <petergoulborn@astuntechnology.com>"
   ],
   "keywords": [
     "openlayers",
@@ -43,5 +44,11 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "quoteProps": "consistent"
   }
 }
