@@ -56,6 +56,10 @@
   position: absolute;
 }
 
+.layer-switcher.activationModeClick li.group:first-of-type > label {
+  padding-right: 26px;
+}
+
 .layer-switcher button:focus,
 .layer-switcher button:hover {
   background-color: white;
