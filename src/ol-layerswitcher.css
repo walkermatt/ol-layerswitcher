@@ -70,22 +70,37 @@
 }
 
 .layer-switcher ul {
-  padding-left: 2em;
   list-style: none;
+  margin: 1.2em 1em;
+  padding-left: 0;
+}
+.layer-switcher ul ul {
+  padding-left: 1.3em;
+  margin: 0.1em 0 0 0;
+}
+.layer-switcher li.group + li.group {
+  margin-top: 0.4em;
+}
+.layer-switcher li.group + li.layer-switcher-base-group {
+  padding-top: 0.8em;
+  border-top: 1px dashed #999;
 }
 
 .layer-switcher li.group > label {
   font-weight: bold;
 }
 
-.layer-switcher li.layer {
-  display: table;
+.layer-switcher li {
+  position: relative;
 }
 
-.layer-switcher li.layer label,
-.layer-switcher li.layer input {
-  display: table-cell;
-  vertical-align: middle;
+.layer-switcher li input {
+  position: absolute;
+}
+.layer-switcher li label {
+  padding-left: 16px;
+  display: inline-block;
+  margin-top: 1px;
 }
 
 .layer-switcher label.disabled {
@@ -93,7 +108,7 @@
 }
 
 .layer-switcher input {
-  margin: 4px;
+  margin: 0px;
 }
 
 .layer-switcher.touch ::-webkit-scrollbar {
@@ -108,6 +123,10 @@
 .layer-switcher.touch ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+
+li.layer-switcher-base-group > label {
+  padding-left: 0;
 }
 
 .layer-switcher .group button {
