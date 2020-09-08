@@ -92,6 +92,7 @@
 
 .layer-switcher li {
   position: relative;
+  margin-top: 0.3em;
 }
 
 .layer-switcher li input {
@@ -148,7 +149,6 @@ li.layer-switcher-base-group > label {
 }
 
 li.group.layer-switcher-fold {
-  margin-left: -18px;
 }
 
 .layer-switcher .group.layer-switcher-fold > ul {
