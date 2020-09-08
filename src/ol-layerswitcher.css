@@ -6,7 +6,6 @@
 }
 
 .layer-switcher .panel {
-  padding: 0 1em 0 0;
   margin: 0;
   border: 4px solid #eee;
   border-radius: 4px;
@@ -71,11 +70,11 @@
 
 .layer-switcher ul {
   list-style: none;
-  margin: 1.2em 1em;
+  margin: 1.6em 0.4em;
   padding-left: 0;
 }
 .layer-switcher ul ul {
-  padding-left: 1.3em;
+  padding-left: 1.2em;
   margin: 0.1em 0 0 0;
 }
 .layer-switcher li.group + li.group {
@@ -97,9 +96,14 @@
 
 .layer-switcher li input {
   position: absolute;
+  left: 1.2em;
+  height: 1em;
+  width: 1em;
+  font-size: 1em;
 }
 .layer-switcher li label {
-  padding-left: 16px;
+  padding-left: 2.4em;
+  padding-right: 1.2em;
   display: inline-block;
   margin-top: 1px;
 }
@@ -127,15 +131,19 @@
 }
 
 li.layer-switcher-base-group > label {
-  padding-left: 0;
+  padding-left: 1.2em;
 }
 
 .layer-switcher .group button {
+  position: absolute;
+  left: 0;
   display: inline-block;
   vertical-align: top;
   float: none;
-  width: 16px;
-  height: 16px;
+  font-size: 1em;
+  width: 1em;
+  height: 1em;
+  margin: 0;
   background-position: center 2px;
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAW0lEQVR4nGNgGAWMyBwXFxcGBgaGeii3EU0tXHzPnj1wQRYsihqQ+I0ExDEMQAYNONgoAN0AmMkNaDSyQSheY8JiaCMOGzE04zIAmyFYNTMw4A+DRhzsUUBtAADw4BCeIZkGdwAAAABJRU5ErkJggg==');
   -webkit-transition: -webkit-transform 0.2s ease-in-out;
@@ -146,13 +154,6 @@ li.layer-switcher-base-group > label {
 .layer-switcher .group.layer-switcher-close button {
   transform: rotate(-90deg);
   -webkit-transform: rotate(-90deg);
-}
-
-li.group.layer-switcher-fold {
-}
-
-.layer-switcher .group.layer-switcher-fold > ul {
-  padding-left: 3em;
 }
 
 .layer-switcher .group.layer-switcher-fold.layer-switcher-close > ul {
