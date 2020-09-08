@@ -13,6 +13,7 @@
   background-color: white;
   display: none;
   max-height: inherit;
+  height: 100%;
   box-sizing: border-box;
   overflow-y: auto;
 }
