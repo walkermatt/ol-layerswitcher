@@ -58,14 +58,13 @@
   background-image: unset;
   right: 2px;
   position: absolute;
+  background-color: #eee;
+  margin: 0 1px;
 }
 
-.layer-switcher.shown.activationModeClick li.group:first-of-type > label {
-  padding-right: 26px;
-}
 .layer-switcher.shown button:focus,
 .layer-switcher.shown button:hover {
-  background-color: transparent;
+  background-color: #fafafa;
 }
 
 .layer-switcher ul {
@@ -100,7 +99,7 @@
   font-size: 1em;
 }
 .layer-switcher li label {
-  padding-left: 2.4em;
+  padding-left: 2.7em;
   padding-right: 1.2em;
   display: inline-block;
   margin-top: 1px;
@@ -158,3 +157,23 @@ li.layer-switcher-base-group > label {
   overflow: hidden;
   height: 0;
 }
+
+/*layerswitcher on the right*/
+.layer-switcher.shown.activationModeClick {
+  padding-left: 34px;
+}
+.layer-switcher.shown.activationModeClick > button {
+  left: 0;
+  border-right: 0;
+}
+
+/*layerswitcher on the left*/
+/*
+.layer-switcher.shown.activationModeClick {
+  padding-right: 34px;
+}
+.layer-switcher.shown.activationModeClick > button {
+  right: 0;
+  border-left: 0;
+}
+*/

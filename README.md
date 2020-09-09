@@ -31,7 +31,16 @@ The examples demonstrate usage and can be viewed online thanks to [raw.githack.c
 - [Bundling with `ol` package (Browserify, Parcel, Webpack...)](https://github.com/walkermatt/ol-layerswitcher-examples)
   - To use the layer switcher with the [`ol` package](https://www.npmjs.com/package/ol) and a module bundler such as Browserify, Parcel, Webpack etc. see [ol-layerswitcher-examples](https://github.com/walkermatt/ol-layerswitcher-examples).
 - [Activate panel with click](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/activation-mode-click.html)
-  - Shows setting `activationMode: 'click'` (default is `'mouseover'`). When using this mode the control's button persists in the panel - use `collapseLabel` to set its text (default is `collapseLabel: '»'`, see the comments in [examples/layerswitcher.js](./examples/layerswitcher.js) for other examples).
+  - Shows setting `activationMode: 'click'` (default is `'mouseover'`). When using this mode the control's button persists in the panel - use `collapseLabel` to set its text (default is `collapseLabel: '»'`, see the comments in [examples/layerswitcher.js](./examples/layerswitcher.js) for other examples). The close button is positioned to the left of the panel, to move it to the right add the following to your CSS: ```css
+
+.layer-switcher.shown.activationModeClick {
+padding-right: 34px;
+}
+.layer-switcher.shown.activationModeClick > button {
+right: 0;
+border-left: 0;
+}```
+
 - [Start with panel active](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/startactive-click.html)
   - Example with the layer switcher starting open using `startActive: true`. Here shown in combination with `activationMode: 'click' which, while not required, is probably the most common scenario.
 
