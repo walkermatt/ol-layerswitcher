@@ -81,8 +81,6 @@
   margin-top: 0.4em;
 }
 .layer-switcher li.group + li.layer-switcher-base-group {
-  padding-top: 0.8em;
-  border-top: 1px dashed #999;
 }
 
 .layer-switcher li.group > label {

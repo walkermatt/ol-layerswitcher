@@ -34,7 +34,8 @@ The examples demonstrate usage and can be viewed online thanks to [raw.githack.c
   - Shows setting `activationMode: 'click'` (default is `'mouseover'`). When using this mode the control's button persists in the panel - use `collapseLabel` to set its text (default is `collapseLabel: '»'`, see the comments in [examples/layerswitcher.js](./examples/layerswitcher.js) for other examples).
 - [Start with panel active](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/startactive-click.html)
   - Example with the layer switcher starting open using `startActive: true`. Here shown in combination with `activationMode: 'click' which, while not required, is probably the most common scenario.
-    The source for all examples can be found in [examples](examples).
+
+The source for all examples can be found in [examples](examples).
 
 ## Install
 
