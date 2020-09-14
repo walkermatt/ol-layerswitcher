@@ -1,25 +1,11 @@
 {
   "name": "ol-layerswitcher",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "homepage": "https://github.com/walkermatt/ol-layerswitcher",
-  "authors": [
-    "Matt Walker (http://longwayaround.org.uk)"
-  ],
+  "authors": ["Matt Walker (http://longwayaround.org.uk)"],
   "description": "Layer switcher control for OpenLayers",
-  "main": [
-    "dist/ol-layerswitcher.js",
-    "src/ol-layerswitcher.css"
-  ],
-  "keywords": [
-    "openlayers",
-    "ol",
-    "layerswitcher"
-  ],
+  "main": ["dist/ol-layerswitcher.js", "src/ol-layerswitcher.css"],
+  "keywords": ["openlayers", "ol", "layerswitcher"],
   "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test"
-  ]
+  "ignore": ["**/.*", "node_modules", "bower_components", "test"]
 }
