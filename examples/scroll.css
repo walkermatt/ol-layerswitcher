@@ -1,4 +1,4 @@
 /* Set the maxmimum height of the layerswitcher when it's shown */
 .layer-switcher.shown {
-    max-height: 170px;
+  max-height: 170px;
 }
