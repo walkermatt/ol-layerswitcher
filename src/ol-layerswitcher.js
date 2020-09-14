@@ -108,7 +108,7 @@ export default class LayerSwitcher extends Control {
    */
   setMap(map) {
     // Clean up listeners associated with the previous map
-    for (var i = 0, key; i < this.mapListeners.length; i++) {
+    for (var i = 0; i < this.mapListeners.length; i++) {
       unByKey(this.mapListeners[i]);
     }
     this.mapListeners.length = 0;
