@@ -61,7 +61,7 @@ function groupToJson(group) {
     });
     return g;
   }
-  let g = walk({ title: 'map', visible: true, layers: [] }, group);
+  const g = walk({ title: 'map', visible: true, layers: [] }, group);
   return g;
 }
 

@@ -215,7 +215,7 @@ export default class LayerSwitcher extends Control {
   }
 
   static isBaseGroup(lyr) {
-    let lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
+    const lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
     return lyrs.length && lyrs[0].get('type') === 'base';
   }
 
@@ -227,8 +227,8 @@ export default class LayerSwitcher extends Control {
     // console.log(groups.map(g => g.get('title')));
     groups.forEach(function (group) {
       // TODO Can we use getLayersArray, is it public in the esm build?
-      let descendantVisibility = group.getLayersArray().map(function (l) {
-        let state = l.getVisible();
+      const descendantVisibility = group.getLayersArray().map(function (l) {
+        const state = l.getVisible();
         // console.log('>', l.get('title'), state);
         return state;
       });
@@ -293,7 +293,7 @@ export default class LayerSwitcher extends Control {
   }
 
   static getGroupsAndLayers(lyr, filterFn) {
-    let layers = [];
+    const layers = [];
     filterFn =
       filterFn ||
       function (l, idx, a) {
