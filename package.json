@@ -29,7 +29,7 @@
     "doc": "documentation readme src/ol-layerswitcher.js --section=API  && prettier --write README.md",
     "lint": "eslint src examples && prettier --check .",
     "format": "eslint --fix src examples && prettier --write .",
-    "build": "npm run lint && rollup --config rollup.config.js"
+    "build": "npm run lint && npm run doc && rollup --config rollup.config.js"
   },
   "peerDependencies": {
     "ol": ">=5.0.0"
