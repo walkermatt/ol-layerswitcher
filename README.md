@@ -44,7 +44,7 @@ border-left: 0;
 ```
 
 - [Start with panel active](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/startactive-click.html)
-  - Example with the layer switcher starting open using `startActive: true`. Here shown in combination with `activationMode: 'click' which, while not required, is probably the most common scenario.
+  - Example with the layer switcher starting open using `startActive: true`. Here shown in combination with \`activationMode: 'click' which, while not required, is probably the most common scenario.
 
 The source for all examples can be found in [examples](examples).
 
@@ -117,6 +117,7 @@ See [the examples](./examples) for usage.
 **Parameters**
 
 - `opt_options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Control options, extends ol/control/Control~Control#options adding:
+  - `opt_options.startActive` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Whether panel is open when created. Defaults to false.
   - `opt_options.activationMode` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Event to use on the button to collapse or expand the panel.
     `'mouseover'` (default) the layerswitcher panel stays expanded while button or panel are hovered.
     `'click'` a click on the button toggles the layerswitcher visibility.
@@ -129,6 +130,7 @@ See [the examples](./examples) for usage.
     `'children'` (default) groups have a checkbox and affect child visibility or
     `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
   - `opt_options.reverse` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Reverse the layer order. Defaults to true.
+  - `opt_options.buttonClasses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Additional classes to apply to the button
 
 #### setMap
 
@@ -158,7 +160,11 @@ Re-draw the layer panel to represent the current state of the layers.
 
 - `map` **ol/Map~Map** The OpenLayers Map instance to render layers for
 - `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
-- `options`
+- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Options for panel, group, and layers
+  - `options.groupSelectStyle` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** either `'none'` - groups don't get a checkbox,
+    `'children'` (default) groups have a checkbox and affect child visibility or
+    `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+  - `options.reverse` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Reverse the layer order. Defaults to true.
 
 #### forEachRecursive
 
