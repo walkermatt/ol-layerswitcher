@@ -119,7 +119,7 @@ export default class LayerSwitcher extends Control {
    */
   setMap(map) {
     // Clean up listeners associated with the previous map
-    for (var i = 0, key; i < this.mapListeners.length; i++) {
+    for (var i = 0; i < this.mapListeners.length; i++) {
       unByKey(this.mapListeners[i]);
     }
     this.mapListeners.length = 0;
@@ -177,6 +177,11 @@ export default class LayerSwitcher extends Control {
    * **Static** Re-draw the layer panel to represent the current state of the layers.
    * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
    * @param {Element} panel The DOM Element into which the layer tree will be rendered
+   * @param {Object} options Options for panel, group, and layers
+   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+   *   `'children'` (default) groups have a checkbox and affect child visibility or
+   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
    */
   static renderPanel(map, panel, options) {
     // Create the event.
@@ -231,7 +236,7 @@ export default class LayerSwitcher extends Control {
   }
 
   static isBaseGroup(lyr) {
-    let lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
+    const lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
     return lyrs.length && lyrs[0].get('type') === 'base';
   }
 
@@ -243,8 +248,8 @@ export default class LayerSwitcher extends Control {
     // console.log(groups.map(g => g.get('title')));
     groups.forEach(function (group) {
       // TODO Can we use getLayersArray, is it public in the esm build?
-      let descendantVisibility = group.getLayersArray().map(function (l) {
-        let state = l.getVisible();
+      const descendantVisibility = group.getLayersArray().map(function (l) {
+        const state = l.getVisible();
         // console.log('>', l.get('title'), state);
         return state;
       });
@@ -309,7 +314,7 @@ export default class LayerSwitcher extends Control {
   }
 
   static getGroupsAndLayers(lyr, filterFn) {
-    let layers = [];
+    const layers = [];
     filterFn =
       filterFn ||
       function (l, idx, a) {
@@ -331,7 +336,12 @@ export default class LayerSwitcher extends Control {
    * is toggle to visible.
    * @private
    * @param {ol/Map~Map} map The map instance.
-   * @param {ol/layer/Base~BaseLayer} The layer whose visibility will be toggled.
+   * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
+   * @param {Boolean} visible Set whether the layer is shown
+   * @param {String} groupSelectStyle either:
+   *   `'none'` - groups don't get a checkbox,
+   *   `'children'` (default) groups have a checkbox and affect child visibility or
+   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
    */
   static setVisible_(map, lyr, visible, groupSelectStyle) {
     // console.log(lyr.get('title'), visible, groupSelectStyle);
@@ -361,6 +371,13 @@ export default class LayerSwitcher extends Control {
    * @param {ol/Map~Map} map The map instance.
    * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
    * @param {Number} idx Position in parent group list.
+   * @param {Object} options Options for groups and layers
+   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+   *   `'children'` (default) groups have a checkbox and affect child visibility or
+   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+   * @param {Function} render Callback for change event on layer
+   * @returns {HTMLElement} List item containing layer control markup
    */
   static renderLayer_(map, lyr, idx, options, render) {
     var li = document.createElement('li');
@@ -460,6 +477,12 @@ export default class LayerSwitcher extends Control {
    * @param {ol/Map~Map} map The map instance.
    * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
    * @param {Element} elm DOM element that children will be appended to.
+   * @param {Object} options Options for groups and layers
+   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+   *   `'children'` (default) groups have a checkbox and affect child visibility or
+   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+   * @param {Function} render Callback for change event on layer
    */
   static renderLayers_(map, lyr, elm, options, render) {
     var lyrs = lyr.getLayers().getArray().slice();
@@ -507,6 +530,7 @@ export default class LayerSwitcher extends Control {
    * @private
    * @desc Apply workaround to enable scrolling of overflowing content within an
    * element. Adapted from https://gist.github.com/chrismbarr/4107472
+   * @param {HTMLElement} elm Element on which to enable touch scrolling
    */
   static enableTouchScroll_(elm) {
     if (LayerSwitcher.isTouchDevice_()) {
@@ -532,6 +556,7 @@ export default class LayerSwitcher extends Control {
    * @private
    * @desc Determine if the current browser supports touch events. Adapted from
    * https://gist.github.com/chrismbarr/4107472
+   * @returns {Boolean} True if client can have 'TouchEvent' event
    */
   static isTouchDevice_() {
     try {
@@ -545,6 +570,8 @@ export default class LayerSwitcher extends Control {
   /**
    * Fold/unfold layer group
    * @private
+   * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
+   * @param {HTMLElement} li List item containing layer group
    */
   static toggleFold_(lyr, li) {
     li.classList.remove(CSS_PREFIX + lyr.get('fold'));
@@ -555,6 +582,8 @@ export default class LayerSwitcher extends Control {
   /**
    * If a valid groupSelectStyle value is not provided then return the default
    * @private
+   * @param {String} groupSelectStyle The string to check for validity
+   * @returns {String} The value groupSelectStyle, if valid, the default otherwise
    */
   static getGroupSelectStyle(groupSelectStyle) {
     return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0
