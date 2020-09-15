@@ -143,7 +143,11 @@ Re-draw the layer panel to represent the current state of the layers.
 
 - `map` **ol/Map~Map** The OpenLayers Map instance to render layers for
 - `panel` **[Element](https://developer.mozilla.org/docs/Web/API/Element)** The DOM Element into which the layer tree will be rendered
-- `options`
+- `options` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** Options for panel, group, and layers
+  - `options.groupSelectStyle` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** either `'none'` - groups don't get a checkbox,
+    `'children'` (default) groups have a checkbox and affect child visibility or
+    `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+  - `options.reverse` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Reverse the layer order. Defaults to true.
 
 #### forEachRecursive
 
