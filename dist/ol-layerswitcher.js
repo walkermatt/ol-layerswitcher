@@ -189,24 +189,24 @@ var LayerSwitcher = function (_Control) {
         }
         e.preventDefault();
       };
-    } else {
-      button.onmouseover = function (e) {
-        this_.showPanel();
-      };
-
-      button.onclick = function (e) {
-        e = e || window.event;
-        this_.showPanel();
-        e.preventDefault();
-      };
-
-      this_.panel.onmouseout = function (e) {
-        e = e || window.event;
-        if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-          this_.hidePanel();
-        }
-      };
+      return possibleConstructorReturn(_this);
     }
+    button.onmouseover = function (e) {
+      this_.showPanel();
+    };
+
+    button.onclick = function (e) {
+      e = e || window.event;
+      this_.showPanel();
+      e.preventDefault();
+    };
+
+    this_.panel.onmouseout = function (e) {
+      e = e || window.event;
+      if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
+        this_.hidePanel();
+      }
+    };
     return _this;
   }
 
