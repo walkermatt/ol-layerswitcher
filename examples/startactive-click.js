@@ -9,7 +9,7 @@
         layers: [
           new ol.layer.Group({
             // A layer must have a title to appear in the layerswitcher
-            title: 'Watercolor with labels',
+            title: 'Water color with labels',
             // Setting the layers type to 'base' results
             // in it having a radio button and only one
             // base layer being visibile at a time
@@ -33,7 +33,7 @@
           }),
           new ol.layer.Tile({
             // A layer must have a title to appear in the layerswitcher
-            title: 'Watercolor',
+            title: 'Water color',
             // Again set this layer as a base layer
             type: 'base',
             visible: false,

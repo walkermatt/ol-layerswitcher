@@ -20,7 +20,7 @@ describe('groupSelectStyle', function () {
           title: 'Base maps',
           layers: [
             new ol.layer.Group({
-              title: 'Watercolor with labels',
+              title: 'Water color with labels',
               type: 'base',
               combine: true,
               visible: false,
@@ -34,7 +34,7 @@ describe('groupSelectStyle', function () {
               ]
             }),
             new ol.layer.Tile({
-              title: 'Watercolor',
+              title: 'Water color',
               type: 'base',
               visible: false,
               source: tileDebugSource()
@@ -82,35 +82,35 @@ describe('groupSelectStyle', function () {
   });
 
   var STATE_ALL_OVERLAYS_VISIBLE = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":false}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":false}]}]}]}'
   );
 
   var STATE_ALL_OVERLAYS_HIDDEN = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
   );
 
   var STATE_CHILDREN_WARD_OVERLAY_HIDDEN = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
   );
 
   var STATE_CHILDREN_WARD_OVERLAY_VISIBLE = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":false}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":false}]}]}]}'
   );
 
   var STATE_GROUP_OVERLAYS_HIDDEN = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":true},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":true},{"title":"Wards","visible":true,"indeterminate":true}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":true},{"title":"Census","visible":true,"indeterminate":true,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":true},{"title":"Wards","visible":true,"indeterminate":true}]}]}]}'
   );
 
   var STATE_GROUP_WARD_OVERLAY_HIDDEN = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":true,"indeterminate":false},{"title":"Census","visible":true,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":true,"indeterminate":false},{"title":"Wards","visible":false,"indeterminate":false}]}]}]}'
   );
 
   var STATE_GROUP_WARD_OVERLAY_VISIBLE = JSON.parse(
-    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Watercolor with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Watercolor","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":true}]}]}]}'
+    '{"title":"map","visible":true,"layers":[{"title":"Base maps","visible":true,"indeterminate":false,"layers":[{"title":"Water color with labels","visible":false,"indeterminate":false,"layers":[]},{"title":"Water color","visible":false,"indeterminate":false},{"title":"OSM","visible":true,"indeterminate":false}]},{"title":"Overlays","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Countries","visible":false,"indeterminate":false},{"title":"Census","visible":false,"indeterminate":false,"fold":"open","layers":[{"title":"Districts","visible":false,"indeterminate":false},{"title":"Wards","visible":true,"indeterminate":true}]}]}]}'
   );
 
   var STATE_DOM_GROUP_WARD_OVERLAY_VISIBLE = JSON.parse(
-    '[{"title":"Overlays","className":"group layer-switcher-fold layer-switcher-open","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Census","className":"group layer-switcher-fold layer-switcher-open","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Wards","className":"layer","checked":true,"indeterminate":true,"type":"checkbox"},{"title":"Districts","className":"layer","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Countries","className":"layer","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Base maps","className":"group layer-switcher-base-group"},{"title":"OSM","className":"layer","checked":true,"indeterminate":false,"type":"radio"},{"title":"Watercolor","className":"layer","checked":false,"indeterminate":false,"type":"radio"},{"title":"Watercolor with labels","className":"layer","checked":false,"indeterminate":false,"type":"radio"}]'
+    '[{"title":"Overlays","className":"group layer-switcher-fold layer-switcher-open","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Census","className":"group layer-switcher-fold layer-switcher-open","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Wards","className":"layer","checked":true,"indeterminate":true,"type":"checkbox"},{"title":"Districts","className":"layer","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Countries","className":"layer","checked":false,"indeterminate":false,"type":"checkbox"},{"title":"Base maps","className":"group layer-switcher-base-group"},{"title":"OSM","className":"layer","checked":true,"indeterminate":false,"type":"radio"},{"title":"Water color","className":"layer","checked":false,"indeterminate":false,"type":"radio"},{"title":"Water color with labels","className":"layer","checked":false,"indeterminate":false,"type":"radio"}]'
   );
 
   describe('groupSelectStyle none', function () {

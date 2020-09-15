@@ -11,7 +11,7 @@
         title: 'Base maps',
         layers: [
           new ol.layer.Tile({
-            title: 'Stamen - Watercolor',
+            title: 'Stamen - Water color',
             type: 'base',
             visible: false,
             source: new ol.source.Stamen({

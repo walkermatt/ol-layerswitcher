@@ -7,7 +7,7 @@
         fold: 'open',
         layers: [
           new ol.layer.Group({
-            title: 'Watercolor with labels',
+            title: 'Water color with labels',
             type: 'base',
             combine: true,
             visible: false,
@@ -25,7 +25,7 @@
             ]
           }),
           new ol.layer.Tile({
-            title: 'Watercolor',
+            title: 'Water color',
             type: 'base',
             visible: false,
             source: new ol.source.Stamen({
