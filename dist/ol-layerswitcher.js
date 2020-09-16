@@ -112,6 +112,7 @@ var CSS_PREFIX = 'layer-switcher-';
  * @param {String} opt_options.label Text label to use for the collapsed layerswitcher button. E.g.:
  *   `''` (default), `'«'` or `'\u00AB'`, `'+'`.
  * @param {String} opt_options.tipLabel the button tooltip.
+ * @param {String} opt_options.collapseTipLabel the button tooltip when the panel is open.
  * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
  *   `'children'` (default) groups have a checkbox and affect child visibility or
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
@@ -128,6 +129,7 @@ var LayerSwitcher = function (_Control) {
     var options = opt_options || {};
 
     var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
+    var collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
 
     var element = document.createElement('div');
 
@@ -173,40 +175,46 @@ var LayerSwitcher = function (_Control) {
 
     button.textContent = label;
 
-    if (_this.activationMode == 'click') {
+    element.classList.add(CSS_PREFIX + 'group-select-style-' + _this.groupSelectStyle);
+
+    element.classList.add(CSS_PREFIX + 'activation-mode-' + _this.activationMode);
+
+    if (_this.activationMode === 'click') {
       if (_this.startActive) {
         button.textContent = collapseLabel;
+        button.setAttribute('title', collapseTipLabel);
       }
-      element.classList.add('activationModeClick');
       button.onclick = function (e) {
         e = e || window.event;
         if (this_.element.classList.contains(this_.shownClassName)) {
           this_.hidePanel();
           button.textContent = label;
+          button.setAttribute('title', tipLabel);
         } else {
           this_.showPanel();
           button.textContent = collapseLabel;
+          button.setAttribute('title', collapseTipLabel);
         }
         e.preventDefault();
       };
-      return possibleConstructorReturn(_this);
+    } else {
+      button.onmouseover = function (e) {
+        this_.showPanel();
+      };
+
+      button.onclick = function (e) {
+        e = e || window.event;
+        this_.showPanel();
+        e.preventDefault();
+      };
+
+      this_.panel.onmouseout = function (e) {
+        e = e || window.event;
+        if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
+          this_.hidePanel();
+        }
+      };
     }
-    button.onmouseover = function (e) {
-      this_.showPanel();
-    };
-
-    button.onclick = function (e) {
-      e = e || window.event;
-      this_.showPanel();
-      e.preventDefault();
-    };
-
-    this_.panel.onmouseout = function (e) {
-      e = e || window.event;
-      if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
-        this_.hidePanel();
-      }
-    };
     return _this;
   }
 

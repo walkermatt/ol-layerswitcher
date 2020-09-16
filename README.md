@@ -126,6 +126,7 @@ See [the examples](./examples) for usage.
   - `opt_options.label` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** Text label to use for the collapsed layerswitcher button. E.g.:
     `''` (default), `'«'` or `'\u00AB'`, `'+'`.
   - `opt_options.tipLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the button tooltip.
+  - `opt_options.collapseTipLabel` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the button tooltip when the panel is open.
   - `opt_options.groupSelectStyle` **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** either `'none'` - groups don't get a checkbox,
     `'children'` (default) groups have a checkbox and affect child visibility or
     `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
