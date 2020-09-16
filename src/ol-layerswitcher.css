@@ -86,6 +86,10 @@
   font-weight: bold;
 }
 
+.layer-switcher.layer-switcher-group-select-style-none li.group > label {
+  padding-left: 1.2em;
+}
+
 .layer-switcher li {
   position: relative;
   margin-top: 0.3em;

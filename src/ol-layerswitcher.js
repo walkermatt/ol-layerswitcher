@@ -77,6 +77,10 @@ export default class LayerSwitcher extends Control {
 
     button.textContent = label;
 
+    element.classList.add(
+      CSS_PREFIX + 'group-select-style-' + this.groupSelectStyle
+    );
+
     if (this.activationMode == 'click') {
       if (this.startActive) {
         button.textContent = collapseLabel;
