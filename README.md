@@ -34,10 +34,10 @@ The examples demonstrate usage and can be viewed online thanks to [raw.githack.c
   - Shows setting `activationMode: 'click'` (default is `'mouseover'`). When using this mode the control's button persists in the panel - use `collapseLabel` to set its text (default is `collapseLabel: '»'`, see the comments in [examples/layerswitcher.js](./examples/layerswitcher.js) for other examples). The close button is positioned to the left of the panel, to move it to the right add the following to your CSS:
 
 ```CSS
-.layer-switcher.shown.activationModeClick {
+.layer-switcher.shown.layer-switcher-activation-mode-click {
 padding-right: 34px;
 }
-.layer-switcher.shown.activationModeClick > button {
+.layer-switcher.shown.layer-switcher-activation-mode-click > button {
 right: 0;
 border-left: 0;
 }

@@ -81,11 +81,14 @@ export default class LayerSwitcher extends Control {
       CSS_PREFIX + 'group-select-style-' + this.groupSelectStyle
     );
 
+    element.classList.add(
+      CSS_PREFIX + 'activation-mode-' + this.activationMode
+    );
+
     if (this.activationMode == 'click') {
       if (this.startActive) {
         button.textContent = collapseLabel;
       }
-      element.classList.add('activationModeClick');
       button.onclick = function (e) {
         e = e || window.event;
         if (this_.element.classList.contains(this_.shownClassName)) {

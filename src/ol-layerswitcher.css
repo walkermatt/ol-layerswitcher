@@ -53,7 +53,7 @@
   display: none;
 }
 
-.layer-switcher.shown.activationModeClick > button {
+.layer-switcher.shown.layer-switcher-activation-mode-click > button {
   display: block;
   background-image: unset;
   right: 2px;
@@ -163,20 +163,20 @@ li.layer-switcher-base-group > label {
 }
 
 /*layerswitcher on the right*/
-.layer-switcher.shown.activationModeClick {
+.layer-switcher.shown.layer-switcher-activation-mode-click {
   padding-left: 34px;
 }
-.layer-switcher.shown.activationModeClick > button {
+.layer-switcher.shown.layer-switcher-activation-mode-click > button {
   left: 0;
   border-right: 0;
 }
 
 /*layerswitcher on the left*/
 /*
-.layer-switcher.shown.activationModeClick {
+.layer-switcher.shown.layer-switcher-activation-mode-click {
   padding-right: 34px;
 }
-.layer-switcher.shown.activationModeClick > button {
+.layer-switcher.shown.layer-switcher-activation-mode-click > button {
   right: 0;
   border-left: 0;
 }
