@@ -86,6 +86,8 @@
   });
 
   var layerSwitcher = new ol.control.LayerSwitcher({
+    activationMode: 'click',
+    startActive: true,
     groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
   });
   map.addControl(layerSwitcher);
@@ -115,6 +117,8 @@
   select.onchange = function (e) {
     map.removeControl(layerSwitcher);
     layerSwitcher = new ol.control.LayerSwitcher({
+      activationMode: 'click',
+      startActive: true,
       groupSelectStyle: select.value
     });
     map.addControl(layerSwitcher);
