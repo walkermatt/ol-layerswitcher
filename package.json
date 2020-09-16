@@ -25,7 +25,7 @@
     "url": "https://github.com/walkermatt/ol-layerswitcher/issues"
   },
   "scripts": {
-    "watch": "chokidar 'src/**' --initial --command 'WATCH=1 npm run build'",
+    "watch": "chokidar 'src/**' --initial --command 'WATCH=1 rollup --config rollup.config.js'",
     "doc": "documentation readme src/ol-layerswitcher.js --quiet --section=API  && prettier --write README.md",
     "lint": "eslint src examples && prettier --check .",
     "format": "eslint --fix src examples && prettier --write .",
