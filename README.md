@@ -131,7 +131,6 @@ See [the examples](./examples) for usage.
     `'children'` (default) groups have a checkbox and affect child visibility or
     `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
   - `opt_options.reverse` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Reverse the layer order. Defaults to true.
-  - `opt_options.buttonClasses` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>** Additional classes to apply to the button
 
 #### setMap
 

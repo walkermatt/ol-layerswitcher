@@ -23,7 +23,6 @@ var CSS_PREFIX = 'layer-switcher-';
  *   `'children'` (default) groups have a checkbox and affect child visibility or
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
- * @param {Array<String>} opt_options.buttonClasses Additional classes to apply to the button
  */
 export default class LayerSwitcher extends Control {
   constructor(opt_options) {
@@ -65,11 +64,6 @@ export default class LayerSwitcher extends Control {
 
     var button = document.createElement('button');
     button.setAttribute('title', tipLabel);
-    if (Array.isArray(options.buttonClasses)) {
-      options.buttonClasses.forEach(function (className) {
-        button.classList.add(className);
-      });
-    }
     element.appendChild(button);
 
     this.panel = document.createElement('div');
