@@ -106,7 +106,8 @@
 
   var layerSwitcher = new ol.control.LayerSwitcher({
     activationMode: 'click',
-    tipLabel: 'Légende', // Optional label for button
+    tipLabel: 'Show layer list', // Optional label for button
+    collapseTipLabel: 'Hide layer list', // Optional label for button
     groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
   });
   map.addControl(layerSwitcher);
