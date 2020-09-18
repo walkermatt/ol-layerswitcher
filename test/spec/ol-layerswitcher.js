@@ -144,7 +144,7 @@ describe('ol.control.LayerSwitcher', function () {
   });
 
   describe('Show and hide', function () {
-    it('is initially hidden', function () {
+    it('is initially hidden by default', function () {
       expect(jQuery('.layer-switcher').hasClass('.shown')).to.be(false);
       expect(jQuery('.layer-switcher .panel:visible').length).to.be(0);
     });

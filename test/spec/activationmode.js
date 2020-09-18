@@ -1,0 +1,109 @@
+describe('activationMode option', function () {
+  var map, target;
+
+  beforeEach(function () {
+    target = document.createElement('div');
+    target.style.height = '200px';
+    document.body.appendChild(target);
+    map = new ol.Map({
+      target: target,
+      layers: [
+        new ol.layer.Tile({
+          title: 'OSM',
+          visible: true,
+          source: new ol.source.TileDebug()
+        })
+      ]
+    });
+  });
+
+  afterEach(function () {
+    document.body.removeChild(target);
+    map = null;
+    target = null;
+  });
+
+  describe("activationMode: 'click'", function () {
+    it('When hidden shows panel when button is clicked', function () {
+      var switcher = new LayerSwitcher({
+        activationMode: 'click',
+        startActive: false
+      });
+      map.addControl(switcher);
+      // Panel is initally not shown
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(0);
+      // Click the button
+      jQuery('.layer-switcher button').click();
+      // Has shown class, panel is visible
+      expect(switcher.element.classList).to.contain('shown');
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
+    });
+    it('When shown a button with collapseTipLabel tooltip for closing the panel is visible', function () {
+      var collapseTipLabel = '66db642e-70c5-4ab1-8830-e2c472650a07';
+      var switcher = new LayerSwitcher({
+        activationMode: 'click',
+        collapseTipLabel: collapseTipLabel,
+        startActive: true
+      });
+      map.addControl(switcher);
+      // Panel is initally shown (and hence should be displaying the button used
+      // to close it
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
+      expect(jQuery('.layer-switcher button:visible').length).to.be(1);
+      expect(jQuery('.layer-switcher button:visible').attr('title')).to.equal(
+        collapseTipLabel
+      );
+    });
+    it('When shown hides panel when button is clicked', function () {
+      var switcher = new LayerSwitcher({
+        activationMode: 'click',
+        startActive: true
+      });
+      map.addControl(switcher);
+      // Panel is initally shown
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
+      // Click the button
+      jQuery('.layer-switcher button').click();
+      // Doesn't have shown class, panel is invisible
+      expect(switcher.element.classList).to.not.contain('shown');
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(0);
+    });
+    it('When shown clicking the map does not hide the panel', function () {
+      var switcher = new LayerSwitcher({
+        activationMode: 'click',
+        startActive: true
+      });
+      map.addControl(switcher);
+      // Panel is initally shown
+      expect(switcher.element.classList).to.contain('shown');
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
+      // Click the map
+      jQuery('#map').click();
+      // Panel should still be shown as activationMode is 'click'
+      expect(switcher.element.classList).to.contain('shown');
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
+    });
+    it('Adds a layer-switcher-activation-mode-click class to the control', function () {
+      var switcher = new LayerSwitcher({
+        activationMode: 'click'
+      });
+      map.addControl(switcher);
+      expect(switcher.element.classList).to.contain(
+        'layer-switcher-activation-mode-click'
+      );
+    });
+  });
+
+  describe("activationMode: 'mouseover'", function () {
+    // NOTE: As mouseover is the default, showing/ hiding is tested in ./ol-layerswitcher.js
+    it('Adds a layer-switcher-activation-mode-mouseover class to the control', function () {
+      var switcher = new LayerSwitcher({
+        activationMode: 'mouseover'
+      });
+      map.addControl(switcher);
+      expect(switcher.element.classList).to.contain(
+        'layer-switcher-activation-mode-mouseover'
+      );
+    });
+  });
+});

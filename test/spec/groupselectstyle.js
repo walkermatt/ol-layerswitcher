@@ -126,6 +126,15 @@ describe('groupSelectStyle', function () {
         expect(includesTag(jQuery(group).children(), 'INPUT')).to.be(false);
       });
     });
+    it('Adds a layer-switcher-group-select-style-none class to the control', function () {
+      var switcher = new LayerSwitcher({
+        groupSelectStyle: 'none'
+      });
+      map.addControl(switcher);
+      expect(switcher.element.classList).to.contain(
+        'layer-switcher-group-select-style-none'
+      );
+    });
   });
 
   describe('groupSelectStyle children', function () {
@@ -182,6 +191,15 @@ describe('groupSelectStyle', function () {
         .siblings('input')
         .click();
       expectEqual(groupToJson(map), STATE_CHILDREN_WARD_OVERLAY_VISIBLE);
+    });
+    it('Adds a layer-switcher-group-select-style-children class to the control', function () {
+      var switcher = new LayerSwitcher({
+        groupSelectStyle: 'children'
+      });
+      map.addControl(switcher);
+      expect(switcher.element.classList).to.contain(
+        'layer-switcher-group-select-style-children'
+      );
     });
   });
 
@@ -242,6 +260,15 @@ describe('groupSelectStyle', function () {
       expectEqual(
         domToJson(switcher.element),
         STATE_DOM_GROUP_WARD_OVERLAY_VISIBLE
+      );
+    });
+    it('Adds a layer-switcher-group-select-style-group class to the control', function () {
+      var switcher = new LayerSwitcher({
+        groupSelectStyle: 'group'
+      });
+      map.addControl(switcher);
+      expect(switcher.element.classList).to.contain(
+        'layer-switcher-group-select-style-group'
       );
     });
   });

@@ -127,7 +127,10 @@ var LayerSwitcher = function (_Control) {
 
     var options = opt_options || {};
 
+    // TODO Next: Rename to showButtonTitle
     var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
+
+    // TODO Next: Rename to hideButtonTitle
     var collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
 
     var element = document.createElement('div');
@@ -138,9 +141,11 @@ var LayerSwitcher = function (_Control) {
 
     _this.startActive = options.startActive === true;
 
-    var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
-
+    // TODO Next: Rename to showButtonContent
     var label = options.label !== undefined ? options.label : '';
+
+    // TODO Next: Rename to hideButtonContent
+    var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
 
     _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
 
@@ -174,6 +179,8 @@ var LayerSwitcher = function (_Control) {
     element.classList.add(CSS_PREFIX + 'activation-mode-' + _this.activationMode);
 
     if (_this.activationMode === 'click') {
+      // TODO Next: Remove in favour of layer-switcher-activation-mode-click
+      element.classList.add('activationModeClick');
       if (_this.startActive) {
         button.textContent = collapseLabel;
         button.setAttribute('title', collapseTipLabel);
