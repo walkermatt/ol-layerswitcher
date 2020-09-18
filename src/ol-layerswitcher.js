@@ -28,7 +28,10 @@ export default class LayerSwitcher extends Control {
   constructor(opt_options) {
     var options = opt_options || {};
 
+    // TODO Next: Rename to showButtonTitle
     var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
+
+    // TODO Next: Rename to hideButtonTitle
     var collapseTipLabel = options.collapseTipLabel
       ? options.collapseTipLabel
       : 'Collapse legend';
@@ -41,10 +44,12 @@ export default class LayerSwitcher extends Control {
 
     this.startActive = options.startActive === true;
 
+    // TODO Next: Rename to showButtonContent
+    const label = options.label !== undefined ? options.label : '';
+
+    // TODO Next: Rename to hideButtonContent
     const collapseLabel =
       options.collapseLabel !== undefined ? options.collapseLabel : '\u00BB';
-
-    const label = options.label !== undefined ? options.label : '';
 
     this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(
       options.groupSelectStyle
@@ -84,6 +89,8 @@ export default class LayerSwitcher extends Control {
     );
 
     if (this.activationMode === 'click') {
+      // TODO Next: Remove in favour of layer-switcher-activation-mode-click
+      element.classList.add('activationModeClick');
       if (this.startActive) {
         button.textContent = collapseLabel;
         button.setAttribute('title', collapseTipLabel);
