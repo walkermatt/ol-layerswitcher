@@ -74,7 +74,7 @@
             layers: [
               new ol.layer.Image({
                 // A layer must have a title to appear in the layerswitcher
-                title: 'Districts',
+                title: 'Local Authority Districts December 2011 Boundaries',
                 source: new ol.source.ImageArcGISRest({
                   ratio: 1,
                   params: { LAYERS: 'show:0' },
