@@ -24,6 +24,25 @@ describe('activationMode option', function () {
   });
 
   describe("activationMode: 'click'", function () {
+    it('When hidden a button with tipLabel tooltip (and aria-label) for opening the panel is visible', function () {
+      var tipLabel = '31374e11-b51d-49ff-a3c7-5dd99adbbe74';
+      var switcher = new LayerSwitcher({
+        activationMode: 'click',
+        tipLabel: tipLabel,
+        startActive: false
+      });
+      map.addControl(switcher);
+      // Panel is initally hidden (and hence should be displaying the button used
+      // to open it
+      expect(jQuery('.layer-switcher .panel:visible').length).to.be(0);
+      expect(jQuery('.layer-switcher button:visible').length).to.be(1);
+      expect(jQuery('.layer-switcher button:visible').attr('title')).to.equal(
+        tipLabel
+      );
+      expect(
+        jQuery('.layer-switcher button:visible').attr('aria-label')
+      ).to.equal(tipLabel);
+    });
     it('When hidden shows panel when button is clicked', function () {
       var switcher = new LayerSwitcher({
         activationMode: 'click',
@@ -38,7 +57,7 @@ describe('activationMode option', function () {
       expect(switcher.element.classList).to.contain('shown');
       expect(jQuery('.layer-switcher .panel:visible').length).to.be(1);
     });
-    it('When shown a button with collapseTipLabel tooltip for closing the panel is visible', function () {
+    it('When shown a button with collapseTipLabel tooltip (and aria-label) for closing the panel is visible', function () {
       var collapseTipLabel = '66db642e-70c5-4ab1-8830-e2c472650a07';
       var switcher = new LayerSwitcher({
         activationMode: 'click',
@@ -53,6 +72,9 @@ describe('activationMode option', function () {
       expect(jQuery('.layer-switcher button:visible').attr('title')).to.equal(
         collapseTipLabel
       );
+      expect(
+        jQuery('.layer-switcher button:visible').attr('aria-label')
+      ).to.equal(collapseTipLabel);
     });
     it('When shown hides panel when button is clicked', function () {
       var switcher = new LayerSwitcher({

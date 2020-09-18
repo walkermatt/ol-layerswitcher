@@ -163,6 +163,7 @@ var LayerSwitcher = function (_Control) {
 
     var button = document.createElement('button');
     button.setAttribute('title', tipLabel);
+    button.setAttribute('aria-label', tipLabel);
     element.appendChild(button);
 
     _this.panel = document.createElement('div');
@@ -184,6 +185,7 @@ var LayerSwitcher = function (_Control) {
       if (_this.startActive) {
         button.textContent = collapseLabel;
         button.setAttribute('title', collapseTipLabel);
+        button.setAttribute('aria-label', collapseTipLabel);
       }
       button.onclick = function (e) {
         e = e || window.event;
@@ -191,10 +193,12 @@ var LayerSwitcher = function (_Control) {
           this_.hidePanel();
           button.textContent = label;
           button.setAttribute('title', tipLabel);
+          button.setAttribute('aria-label', tipLabel);
         } else {
           this_.showPanel();
           button.textContent = collapseLabel;
           button.setAttribute('title', collapseTipLabel);
+          button.setAttribute('aria-label', collapseTipLabel);
         }
         e.preventDefault();
       };

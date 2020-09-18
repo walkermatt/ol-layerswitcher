@@ -69,6 +69,7 @@ export default class LayerSwitcher extends Control {
 
     var button = document.createElement('button');
     button.setAttribute('title', tipLabel);
+    button.setAttribute('aria-label', tipLabel);
     element.appendChild(button);
 
     this.panel = document.createElement('div');
@@ -94,6 +95,7 @@ export default class LayerSwitcher extends Control {
       if (this.startActive) {
         button.textContent = collapseLabel;
         button.setAttribute('title', collapseTipLabel);
+        button.setAttribute('aria-label', collapseTipLabel);
       }
       button.onclick = function (e) {
         e = e || window.event;
@@ -101,10 +103,12 @@ export default class LayerSwitcher extends Control {
           this_.hidePanel();
           button.textContent = label;
           button.setAttribute('title', tipLabel);
+          button.setAttribute('aria-label', tipLabel);
         } else {
           this_.showPanel();
           button.textContent = collapseLabel;
           button.setAttribute('title', collapseTipLabel);
+          button.setAttribute('aria-label', collapseTipLabel);
         }
         e.preventDefault();
       };
