@@ -256,7 +256,9 @@ export default class LayerSwitcher extends Control {
 
   static isBaseGroup(lyr) {
     const lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
-    return lyrs.length && lyrs[0].get('type') === 'base';
+    return (
+      lyr.get('exclusive') || (lyrs.length && lyrs[0].get('type') === 'base')
+    );
   }
 
   static setGroupVisibility(map) {
@@ -366,9 +368,15 @@ export default class LayerSwitcher extends Control {
     // console.log(lyr.get('title'), visible, groupSelectStyle);
     lyr.setVisible(visible);
     if (visible && lyr.get('type') === 'base') {
+      // Save the layers uniqueBase value.
+      const exclusiveId = lyr.exclusiveId;
       // Hide all other base layers regardless of grouping
       LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-        if (l != lyr && l.get('type') === 'base') {
+        if (
+          l != lyr &&
+          l.get('type') === 'base' &&
+          l.exclusiveId == exclusiveId
+        ) {
           l.setVisible(false);
         }
       });
@@ -458,7 +466,11 @@ export default class LayerSwitcher extends Control {
       var input = document.createElement('input');
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
-        input.name = 'base';
+        if (lyr.exclusiveId) {
+          input.name = lyr.exclusiveId;
+        } else {
+          input.name = 'base';
+        }
       } else {
         input.type = 'checkbox';
       }
@@ -506,8 +518,13 @@ export default class LayerSwitcher extends Control {
   static renderLayers_(map, lyr, elm, options, render) {
     var lyrs = lyr.getLayers().getArray().slice();
     if (options.reverse) lyrs = lyrs.reverse();
+    let exclusiveId = false;
+    if (lyr.get('exclusive')) {
+      exclusiveId = LayerSwitcher.uuid();
+    }
     for (var i = 0, l; i < lyrs.length; i++) {
       l = lyrs[i];
+      l.exclusiveId = exclusiveId;
       if (l.get('title')) {
         elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, options, render));
       }
