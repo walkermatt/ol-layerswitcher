@@ -94,6 +94,36 @@
                 })
               })
             ]
+          }),
+          new ol.layer.Group({
+            // A layer must have a title to appear in the layerswitcher
+            title: 'Exclusive overlay',
+            exclusive: true,
+            layers: [
+              new ol.layer.Image({
+                // A layer must have a title to appear in the layerswitcher
+                type: 'base',
+                title: 'Countries',
+                source: new ol.source.ImageArcGISRest({
+                  ratio: 1,
+                  params: { LAYERS: 'show:0' },
+                  url:
+                    'https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Countries_December_2016_Boundaries/MapServer'
+                })
+              }),
+              new ol.layer.Image({
+                // A layer must have a title to appear in the layerswitcher
+                type: 'base',
+                title: 'Wards',
+                visible: false,
+                source: new ol.source.ImageArcGISRest({
+                  ratio: 1,
+                  params: { LAYERS: 'show:0' },
+                  url:
+                    'https://ons-inspire.esriuk.com/arcgis/rest/services/Census_Boundaries/Census_Merged_Wards_December_2011_Boundaries/MapServer'
+                })
+              }),
+            ]
           })
         ]
       })
