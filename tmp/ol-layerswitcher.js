@@ -1,30 +1,18 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ol/control/Control'), require('ol/Observable')) :
-	typeof define === 'function' && define.amd ? define(['ol/control/Control', 'ol/Observable'], factory) :
-	(global.LayerSwitcher = factory(global.ol.control.Control,global.ol.Observable));
-}(this, (function (Control,ol_Observable) { 'use strict';
-
-Control = 'default' in Control ? Control['default'] : Control;
-
-var __extends = undefined && undefined.__extends || function () {
-    var _extendStatics = function extendStatics(d, b) {
-        _extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) {
-                if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-            }
-        };
-        return _extendStatics(d, b);
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
     };
     return function (d, b) {
-        _extendStatics(d, b);
-        function __() {
-            this.constructor = d;
-        }
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-}();
+})();
+import Control from 'ol/control/Control';
+import { unByKey } from 'ol/Observable';
 var CSS_PREFIX = 'layer-switcher-';
 /**
  * OpenLayers Layer Switcher Control.
@@ -47,7 +35,7 @@ var CSS_PREFIX = 'layer-switcher-';
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
-var LayerSwitcher = /** @class */function (_super) {
+var LayerSwitcher = /** @class */ (function (_super) {
     __extends(LayerSwitcher, _super);
     function LayerSwitcher(opt_options) {
         var _this = this;
@@ -55,7 +43,9 @@ var LayerSwitcher = /** @class */function (_super) {
         // TODO Next: Rename to showButtonTitle
         var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
         // TODO Next: Rename to hideButtonTitle
-        var collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
+        var collapseTipLabel = options.collapseTipLabel
+            ? options.collapseTipLabel
+            : 'Collapse legend';
         var element = document.createElement('div');
         _this = _super.call(this, { element: element, target: options.target }) || this;
         _this.activationMode = options.activationMode || 'mouseover';
@@ -63,7 +53,7 @@ var LayerSwitcher = /** @class */function (_super) {
         // TODO Next: Rename to showButtonContent
         var label = options.label !== undefined ? options.label : '';
         // TODO Next: Rename to hideButtonContent
-        var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
+        var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\u00BB';
         _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
         _this.reverse = options.reverse !== false;
         _this.mapListeners = [];
@@ -100,7 +90,8 @@ var LayerSwitcher = /** @class */function (_super) {
                     button.textContent = label;
                     button.setAttribute('title', tipLabel);
                     button.setAttribute('aria-label', tipLabel);
-                } else {
+                }
+                else {
                     this_.showPanel();
                     button.textContent = collapseLabel;
                     button.setAttribute('title', collapseTipLabel);
@@ -108,7 +99,8 @@ var LayerSwitcher = /** @class */function (_super) {
                 }
                 evt.preventDefault();
             };
-        } else {
+        }
+        else {
             button.onmouseover = function (e) {
                 this_.showPanel();
             };
@@ -133,7 +125,7 @@ var LayerSwitcher = /** @class */function (_super) {
     LayerSwitcher.prototype.setMap = function (map) {
         // Clean up listeners associated with the previous map
         for (var i = 0; i < this.mapListeners.length; i++) {
-            ol_Observable.unByKey(this.mapListeners[i]);
+            unByKey(this.mapListeners[i]);
         }
         this.mapListeners.length = 0;
         // Wire up listeners etc. and store reference to new map
@@ -141,7 +133,8 @@ var LayerSwitcher = /** @class */function (_super) {
         if (map) {
             if (this.startActive) {
                 this.showPanel();
-            } else {
+            }
+            else {
                 this.renderPanel();
             }
             if (this.activationMode !== 'click') {
@@ -206,11 +199,13 @@ var LayerSwitcher = /** @class */function (_super) {
         LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
             l.set('indeterminate', false);
         });
-        if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
+        if (options.groupSelectStyle === 'children' ||
+            options.groupSelectStyle === 'none') {
             // Set visibile and indeterminate state of groups based on
             // their children's visibility
             LayerSwitcher.setGroupVisibility(map);
-        } else if (options.groupSelectStyle === 'group') {
+        }
+        else if (options.groupSelectStyle === 'group') {
             // Set child indetermiate state based on their parent's visibility
             LayerSwitcher.setChildVisibility(map);
         }
@@ -249,12 +244,14 @@ var LayerSwitcher = /** @class */function (_super) {
             })) {
                 group.setVisible(true);
                 group.set('indeterminate', false);
-            } else if (descendantVisibility.every(function (v) {
+            }
+            else if (descendantVisibility.every(function (v) {
                 return v === false;
             })) {
                 group.setVisible(false);
                 group.set('indeterminate', false);
-            } else {
+            }
+            else {
                 group.setVisible(true);
                 group.set('indeterminate', true);
             }
@@ -269,7 +266,10 @@ var LayerSwitcher = /** @class */function (_super) {
             // console.log(group.get('title'));
             var groupVisible = group.getVisible();
             var groupIndeterminate = group.get('indeterminate');
-            group.getLayers().getArray().forEach(function (l) {
+            group
+                .getLayers()
+                .getArray()
+                .forEach(function (l) {
                 // console.log('>', l.get('title'));
                 l.set('indeterminate', false);
                 if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
@@ -290,13 +290,16 @@ var LayerSwitcher = /** @class */function (_super) {
                 lastVisibleBaseLyr = l;
             }
         });
-        if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
+        if (lastVisibleBaseLyr)
+            LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
     };
     LayerSwitcher.getGroupsAndLayers = function (lyr, filterFn) {
         var layers = [];
-        filterFn = filterFn || function (l, idx, a) {
-            return true;
-        };
+        filterFn =
+            filterFn ||
+                function (l, idx, a) {
+                    return true;
+                };
         LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
             if (l.get('title')) {
                 if (filterFn(l, idx, a)) {
@@ -330,7 +333,9 @@ var LayerSwitcher = /** @class */function (_super) {
                 }
             });
         }
-        if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
+        if (lyr.getLayers &&
+            !lyr.get('combine') &&
+            groupSelectStyle === 'children') {
             lyr.getLayers().forEach(function (l) {
                 LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
             });
@@ -392,13 +397,15 @@ var LayerSwitcher = /** @class */function (_super) {
             var ul = document.createElement('ul');
             li.appendChild(ul);
             LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
-        } else {
+        }
+        else {
             li.className = 'layer';
             var input = document.createElement('input');
             if (lyr.get('type') === 'base') {
                 input.type = 'radio';
                 input.name = 'base';
-            } else {
+            }
+            else {
                 input.type = 'checkbox';
             }
             input.id = checkboxId;
@@ -435,7 +442,8 @@ var LayerSwitcher = /** @class */function (_super) {
      */
     LayerSwitcher.renderLayers_ = function (map, lyr, elm, options, render) {
         var lyrs = lyr.getLayers().getArray().slice();
-        if (options.reverse) lyrs = lyrs.reverse();
+        if (options.reverse)
+            lyrs = lyrs.reverse();
         for (var i = 0, l; i < lyrs.length; i++) {
             l = lyrs[i];
             if (l.get('title')) {
@@ -465,8 +473,7 @@ var LayerSwitcher = /** @class */function (_super) {
      */
     LayerSwitcher.uuid = function () {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : r & 0x3 | 0x8;
+            var r = (Math.random() * 16) | 0, v = c == 'x' ? r : (r & 0x3) | 0x8;
             return v.toString(16);
         });
     };
@@ -497,7 +504,8 @@ var LayerSwitcher = /** @class */function (_super) {
         try {
             document.createEvent('TouchEvent');
             return true;
-        } catch (e) {
+        }
+        catch (e) {
             return false;
         }
     };
@@ -519,16 +527,15 @@ var LayerSwitcher = /** @class */function (_super) {
      * @returns {String} The value groupSelectStyle, if valid, the default otherwise
      */
     LayerSwitcher.getGroupSelectStyle = function (groupSelectStyle) {
-        return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0 ? groupSelectStyle : 'children';
+        return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0
+            ? groupSelectStyle
+            : 'children';
     };
     return LayerSwitcher;
-}(Control);
+}(Control));
+export default LayerSwitcher;
 // Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
 // OpenLayers
 if (window.ol && window.ol.control) {
     window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
 }
-
-return LayerSwitcher;
-
-})));

@@ -1,11 +1,10 @@
 import babel from 'rollup-plugin-babel';
 
 module.exports = {
-  entry: 'src/ol-layerswitcher.js',
+  entry: 'tmp/ol-layerswitcher.js',
   targets: [
     {
       dest: 'dist/ol-layerswitcher.js',
-      // format: 'iife',
       format: 'umd',
       moduleName: 'LayerSwitcher'
     }

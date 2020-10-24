@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./dist",
+    "allowJs": true,
+    "baseUrl": "./",
+    "outDir": "./tmp",
+    "target": "es5",
+    "module": "es6"
+  },
+  "include": ["./src/*"]
+}

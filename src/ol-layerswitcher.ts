@@ -1,4 +1,5 @@
 import Control from 'ol/control/Control';
+import { EventsKey } from 'ol/events';
 import { unByKey } from 'ol/Observable';
 
 var CSS_PREFIX = 'layer-switcher-';
@@ -25,6 +26,14 @@ var CSS_PREFIX = 'layer-switcher-';
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
 export default class LayerSwitcher extends Control {
+  private activationMode: 'mouseover' | 'click';
+  private startActive: boolean;
+  private groupSelectStyle: 'none' | 'children' | 'group';
+  private reverse: boolean;
+  private mapListeners: Array<EventsKey>;
+  private hiddenClassName: string;
+  private shownClassName: string;
+  private panel: HTMLElement;
   constructor(opt_options) {
     var options = opt_options || {};
 
@@ -97,8 +106,8 @@ export default class LayerSwitcher extends Control {
         button.setAttribute('title', collapseTipLabel);
         button.setAttribute('aria-label', collapseTipLabel);
       }
-      button.onclick = function (e) {
-        e = e || window.event;
+      button.onclick = function (e: Event) {
+        const evt = e || window.event;
         if (this_.element.classList.contains(this_.shownClassName)) {
           this_.hidePanel();
           button.textContent = label;
@@ -110,7 +119,7 @@ export default class LayerSwitcher extends Control {
           button.setAttribute('title', collapseTipLabel);
           button.setAttribute('aria-label', collapseTipLabel);
         }
-        e.preventDefault();
+        evt.preventDefault();
       };
     } else {
       button.onmouseover = function (e) {
@@ -118,14 +127,14 @@ export default class LayerSwitcher extends Control {
       };
 
       button.onclick = function (e) {
-        e = e || window.event;
+        const evt = e || window.event;
         this_.showPanel();
-        e.preventDefault();
+        evt.preventDefault();
       };
 
       this_.panel.onmouseout = function (e) {
-        e = e || window.event;
-        if (!this_.panel.contains(e.toElement || e.relatedTarget)) {
+        const evt: any = e || window.event;
+        if (!this_.panel.contains(evt.toElement || evt.relatedTarget)) {
           this_.hidePanel();
         }
       };
@@ -184,12 +193,12 @@ export default class LayerSwitcher extends Control {
    * Re-draw the layer panel to represent the current state of the layers.
    */
   renderPanel() {
-    this.dispatchEvent({ type: 'render' });
+    this.dispatchEvent('render');
     LayerSwitcher.renderPanel(this.getMap(), this.panel, {
       groupSelectStyle: this.groupSelectStyle,
       reverse: this.reverse
     });
-    this.dispatchEvent({ type: 'rendercomplete' });
+    this.dispatchEvent('rendercomplete');
   }
 
   /**
@@ -214,7 +223,10 @@ export default class LayerSwitcher extends Control {
       options.groupSelectStyle
     );
 
-    LayerSwitcher.ensureTopVisibleBaseLayerShown_(map);
+    LayerSwitcher.ensureTopVisibleBaseLayerShown_(
+      map,
+      options.groupSelectStyle
+    );
 
     while (panel.firstChild) {
       panel.removeChild(panel.firstChild);
@@ -321,7 +333,7 @@ export default class LayerSwitcher extends Control {
    * @param {ol/Map~Map} map The map instance.
    * @private
    */
-  static ensureTopVisibleBaseLayerShown_(map) {
+  static ensureTopVisibleBaseLayerShown_(map, groupSelectStyle) {
     var lastVisibleBaseLyr;
     LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
       if (l.get('type') === 'base' && l.getVisible()) {
@@ -329,7 +341,12 @@ export default class LayerSwitcher extends Control {
       }
     });
     if (lastVisibleBaseLyr)
-      LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true);
+      LayerSwitcher.setVisible_(
+        map,
+        lastVisibleBaseLyr,
+        true,
+        groupSelectStyle
+      );
   }
 
   static getGroupsAndLayers(lyr, filterFn) {
@@ -421,9 +438,9 @@ export default class LayerSwitcher extends Control {
         li.classList.add(CSS_PREFIX + lyr.get('fold'));
         const btn = document.createElement('button');
         btn.onclick = function (e) {
-          e = e || window.event;
+          const evt = e || window.event;
           LayerSwitcher.toggleFold_(lyr, li);
-          e.preventDefault();
+          evt.preventDefault();
         };
         li.appendChild(btn);
       }
@@ -435,10 +452,11 @@ export default class LayerSwitcher extends Control {
         input.checked = lyr.getVisible();
         input.indeterminate = lyr.get('indeterminate');
         input.onchange = function (e) {
+          const target = <HTMLInputElement>e.target;
           LayerSwitcher.setVisible_(
             map,
             lyr,
-            e.target.checked,
+            target.checked,
             options.groupSelectStyle
           );
           render(lyr);
@@ -466,10 +484,11 @@ export default class LayerSwitcher extends Control {
       input.checked = lyr.get('visible');
       input.indeterminate = lyr.get('indeterminate');
       input.onchange = function (e) {
+        const target = <HTMLInputElement>e.target;
         LayerSwitcher.setVisible_(
           map,
           lyr,
-          e.target.checked,
+          target.checked,
           options.groupSelectStyle
         );
         render(lyr);
@@ -614,5 +633,5 @@ export default class LayerSwitcher extends Control {
 // Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
 // OpenLayers
 if (window.ol && window.ol.control) {
-  window.ol.control.LayerSwitcher = LayerSwitcher;
+  window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
 }
