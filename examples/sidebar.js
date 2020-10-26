@@ -113,6 +113,6 @@
     position: 'left'
   });
   var toc = document.getElementById('layers');
-  ol.control.LayerSwitcher.renderPanel(map, toc);
+  ol.control.LayerSwitcher.renderPanel(map, toc, {reverse: true});
   map.addControl(sidebar);
 })();

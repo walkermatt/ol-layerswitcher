@@ -110,7 +110,6 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
   - [renderPanel](#renderpanel-1)
   - [forEachRecursive](#foreachrecursive)
   - [uuid](#uuid)
-- [Control](#control)
 
 ### LayerSwitcher
 
@@ -188,8 +187,6 @@ recursing nested groups.
 Adapted from <http://stackoverflow.com/a/2117523/526860>
 
 Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** UUID
-
-### Control
 
 ## License
 

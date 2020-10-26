@@ -1,8 +1,29 @@
 import Control from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import { unByKey } from 'ol/Observable';
+import { Options as ControlOptions } from 'ol/control/Control';
+import PluggableMap from 'ol/PluggableMap';
+import BaseLayer from 'ol/layer/Base';
+import GroupLayer from 'ol/layer/Group';
 
 var CSS_PREFIX = 'layer-switcher-';
+
+type GroupSelectStyle = 'none' | 'children' | 'group';
+
+interface RenderOptions {
+  groupSelectStyle?: GroupSelectStyle;
+  reverse?: boolean;
+}
+
+interface Options extends ControlOptions, RenderOptions {
+  activationMode?: 'mouseover' | 'click';
+  startActive?: boolean;
+  label?: string;
+  collapseLabel?: string;
+  tipLabel?: string;
+  collapseTipLabel?: string;
+  target?: string;
+}
 
 /**
  * OpenLayers Layer Switcher Control.
@@ -34,8 +55,8 @@ export default class LayerSwitcher extends Control {
   private hiddenClassName: string;
   private shownClassName: string;
   private panel: HTMLElement;
-  constructor(opt_options) {
-    var options = opt_options || {};
+  constructor(opt_options: Options) {
+    var options = Object.assign({}, opt_options);
 
     // TODO Next: Rename to showButtonTitle
     var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
@@ -145,7 +166,7 @@ export default class LayerSwitcher extends Control {
    * Set the map instance the control is associated with.
    * @param {ol/Map~Map} map The map instance.
    */
-  setMap(map) {
+  setMap(map: PluggableMap) {
     // Clean up listeners associated with the previous map
     for (var i = 0; i < this.mapListeners.length; i++) {
       unByKey(this.mapListeners[i]);
@@ -162,7 +183,7 @@ export default class LayerSwitcher extends Control {
       if (this.activationMode !== 'click') {
         var this_ = this;
         this.mapListeners.push(
-          map.on('pointerdown', function () {
+          <EventsKey>map.on('pointerdown', function () {
             this_.hidePanel();
           })
         );
@@ -211,7 +232,7 @@ export default class LayerSwitcher extends Control {
    *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
    * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
    */
-  static renderPanel(map, panel, options) {
+  static renderPanel(map: PluggableMap, panel: HTMLElement, options: RenderOptions) {
     // Create the event.
     var render_event = new Event('render');
     // Dispatch the event.
@@ -266,12 +287,16 @@ export default class LayerSwitcher extends Control {
     panel.dispatchEvent(rendercomplete_event);
   }
 
-  static isBaseGroup(lyr) {
-    const lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
-    return lyrs.length && lyrs[0].get('type') === 'base';
+  static isBaseGroup(lyr: BaseLayer) {
+    if (lyr instanceof GroupLayer) {
+        const lyrs = lyr.getLayers().getArray();
+        return lyrs.length && lyrs[0].get('type') === 'base';
+    } else {
+        return false;
+    }
   }
 
-  static setGroupVisibility(map) {
+  static setGroupVisibility(map: PluggableMap) {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
@@ -306,12 +331,13 @@ export default class LayerSwitcher extends Control {
     });
   }
 
-  static setChildVisibility(map) {
+  static setChildVisibility(map: PluggableMap) {
     // console.log('setChildVisibility');
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
-      return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+      return l instanceof GroupLayer && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
     });
-    groups.forEach(function (group) {
+    groups.forEach(function (grp) {
+      var group = <GroupLayer>grp;
       // console.log(group.get('title'));
       var groupVisible = group.getVisible();
       var groupIndeterminate = group.get('indeterminate');
@@ -333,7 +359,7 @@ export default class LayerSwitcher extends Control {
    * @param {ol/Map~Map} map The map instance.
    * @private
    */
-  static ensureTopVisibleBaseLayerShown_(map, groupSelectStyle) {
+  static ensureTopVisibleBaseLayerShown_(map: PluggableMap, groupSelectStyle: GroupSelectStyle) {
     var lastVisibleBaseLyr;
     LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
       if (l.get('type') === 'base' && l.getVisible()) {
@@ -349,7 +375,7 @@ export default class LayerSwitcher extends Control {
       );
   }
 
-  static getGroupsAndLayers(lyr, filterFn) {
+  static getGroupsAndLayers(lyr: PluggableMap | GroupLayer, filterFn: Function): BaseLayer[] {
     const layers = [];
     filterFn =
       filterFn ||
@@ -379,7 +405,7 @@ export default class LayerSwitcher extends Control {
    *   `'children'` (default) groups have a checkbox and affect child visibility or
    *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
    */
-  static setVisible_(map, lyr, visible, groupSelectStyle) {
+  static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle) {
     // console.log(lyr.get('title'), visible, groupSelectStyle);
     lyr.setVisible(visible);
     if (visible && lyr.get('type') === 'base') {
@@ -391,7 +417,7 @@ export default class LayerSwitcher extends Control {
       });
     }
     if (
-      lyr.getLayers &&
+      lyr instanceof GroupLayer &&
       !lyr.get('combine') &&
       groupSelectStyle === 'children'
     ) {
@@ -415,7 +441,7 @@ export default class LayerSwitcher extends Control {
    * @param {Function} render Callback for change event on layer
    * @returns {HTMLElement} List item containing layer control markup
    */
-  static renderLayer_(map, lyr, idx, options, render) {
+  static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function) {
     var li = document.createElement('li');
 
     var lyrTitle = lyr.get('title');
@@ -424,7 +450,7 @@ export default class LayerSwitcher extends Control {
 
     var label = document.createElement('label');
 
-    if (lyr.getLayers && !lyr.get('combine')) {
+    if (lyr instanceof GroupLayer && !lyr.get('combine')) {
       const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
       li.classList.add('group');
@@ -522,7 +548,7 @@ export default class LayerSwitcher extends Control {
    * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
    * @param {Function} render Callback for change event on layer
    */
-  static renderLayers_(map, lyr, elm, options, render) {
+  static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function) {
     var lyrs = lyr.getLayers().getArray().slice();
     if (options.reverse) lyrs = lyrs.reverse();
     for (var i = 0, l; i < lyrs.length; i++) {
@@ -540,10 +566,10 @@ export default class LayerSwitcher extends Control {
    * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
    * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
    */
-  static forEachRecursive(lyr, fn) {
+  static forEachRecursive(lyr: PluggableMap | GroupLayer, fn: Function) {
     lyr.getLayers().forEach(function (lyr, idx, a) {
       fn(lyr, idx, a);
-      if (lyr.getLayers) {
+      if (lyr instanceof GroupLayer) {
         LayerSwitcher.forEachRecursive(lyr, fn);
       }
     });
@@ -570,7 +596,7 @@ export default class LayerSwitcher extends Control {
    * element. Adapted from https://gist.github.com/chrismbarr/4107472
    * @param {HTMLElement} elm Element on which to enable touch scrolling
    */
-  static enableTouchScroll_(elm) {
+  static enableTouchScroll_(elm: HTMLElement) {
     if (LayerSwitcher.isTouchDevice_()) {
       var scrollStartPos = 0;
       elm.addEventListener(
@@ -611,7 +637,7 @@ export default class LayerSwitcher extends Control {
    * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
    * @param {HTMLElement} li List item containing layer group
    */
-  static toggleFold_(lyr, li) {
+  static toggleFold_(lyr: GroupLayer, li: HTMLElement) {
     li.classList.remove(CSS_PREFIX + lyr.get('fold'));
     lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
     li.classList.add(CSS_PREFIX + lyr.get('fold'));
@@ -623,7 +649,7 @@ export default class LayerSwitcher extends Control {
    * @param {String} groupSelectStyle The string to check for validity
    * @returns {String} The value groupSelectStyle, if valid, the default otherwise
    */
-  static getGroupSelectStyle(groupSelectStyle) {
+  static getGroupSelectStyle(groupSelectStyle: GroupSelectStyle): GroupSelectStyle {
     return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0
       ? groupSelectStyle
       : 'children';

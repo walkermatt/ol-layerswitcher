@@ -1,30 +1,101 @@
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ol/control/Control'), require('ol/Observable')) :
-	typeof define === 'function' && define.amd ? define(['ol/control/Control', 'ol/Observable'], factory) :
-	(global.LayerSwitcher = factory(global.ol.control.Control,global.ol.Observable));
-}(this, (function (Control,ol_Observable) { 'use strict';
+	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('ol/control/Control'), require('ol/Observable'), require('ol/layer/Group')) :
+	typeof define === 'function' && define.amd ? define(['ol/control/Control', 'ol/Observable', 'ol/layer/Group'], factory) :
+	(global.LayerSwitcher = factory(global.ol.control.Control,global.ol.Observable,global.ol.layer.Group));
+}(this, (function (Control,ol_Observable,GroupLayer) { 'use strict';
 
 Control = 'default' in Control ? Control['default'] : Control;
+GroupLayer = 'default' in GroupLayer ? GroupLayer['default'] : GroupLayer;
 
-var __extends = undefined && undefined.__extends || function () {
-    var _extendStatics = function extendStatics(d, b) {
-        _extendStatics = Object.setPrototypeOf || { __proto__: [] } instanceof Array && function (d, b) {
-            d.__proto__ = b;
-        } || function (d, b) {
-            for (var p in b) {
-                if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-            }
-        };
-        return _extendStatics(d, b);
-    };
-    return function (d, b) {
-        _extendStatics(d, b);
-        function __() {
-            this.constructor = d;
-        }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
+var classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+var createClass = function () {
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+
+  return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) defineProperties(Constructor, staticProps);
+    return Constructor;
+  };
 }();
+
+
+
+
+
+
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+var inherits = function (subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      enumerable: false,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+};
+
+
+
+
+
+
+
+
+
+
+
+var possibleConstructorReturn = function (self, call) {
+  if (!self) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return call && (typeof call === "object" || typeof call === "function") ? call : self;
+};
+
 var CSS_PREFIX = 'layer-switcher-';
 /**
  * OpenLayers Layer Switcher Control.
@@ -47,17 +118,22 @@ var CSS_PREFIX = 'layer-switcher-';
  *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
-var LayerSwitcher = /** @class */function (_super) {
-    __extends(LayerSwitcher, _super);
+
+var LayerSwitcher = function (_Control) {
+    inherits(LayerSwitcher, _Control);
+
     function LayerSwitcher(opt_options) {
-        var _this = this;
-        var options = opt_options || {};
+        classCallCheck(this, LayerSwitcher);
+
+        var options = Object.assign({}, opt_options);
         // TODO Next: Rename to showButtonTitle
         var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
         // TODO Next: Rename to hideButtonTitle
         var collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
         var element = document.createElement('div');
-        _this = _super.call(this, { element: element, target: options.target }) || this;
+
+        var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
+
         _this.activationMode = options.activationMode || 'mouseover';
         _this.startActive = options.startActive === true;
         // TODO Next: Rename to showButtonContent
@@ -130,401 +206,459 @@ var LayerSwitcher = /** @class */function (_super) {
      * Set the map instance the control is associated with.
      * @param {ol/Map~Map} map The map instance.
      */
-    LayerSwitcher.prototype.setMap = function (map) {
-        // Clean up listeners associated with the previous map
-        for (var i = 0; i < this.mapListeners.length; i++) {
-            ol_Observable.unByKey(this.mapListeners[i]);
+
+
+    createClass(LayerSwitcher, [{
+        key: 'setMap',
+        value: function setMap(map) {
+            // Clean up listeners associated with the previous map
+            for (var i = 0; i < this.mapListeners.length; i++) {
+                ol_Observable.unByKey(this.mapListeners[i]);
+            }
+            this.mapListeners.length = 0;
+            // Wire up listeners etc. and store reference to new map
+            get(LayerSwitcher.prototype.__proto__ || Object.getPrototypeOf(LayerSwitcher.prototype), 'setMap', this).call(this, map);
+            if (map) {
+                if (this.startActive) {
+                    this.showPanel();
+                } else {
+                    this.renderPanel();
+                }
+                if (this.activationMode !== 'click') {
+                    var this_ = this;
+                    this.mapListeners.push(map.on('pointerdown', function () {
+                        this_.hidePanel();
+                    }));
+                }
+            }
         }
-        this.mapListeners.length = 0;
-        // Wire up listeners etc. and store reference to new map
-        _super.prototype.setMap.call(this, map);
-        if (map) {
-            if (this.startActive) {
-                this.showPanel();
-            } else {
+        /**
+         * Show the layer panel.
+         */
+
+    }, {
+        key: 'showPanel',
+        value: function showPanel() {
+            if (!this.element.classList.contains(this.shownClassName)) {
+                this.element.classList.add(this.shownClassName);
                 this.renderPanel();
             }
-            if (this.activationMode !== 'click') {
-                var this_ = this;
-                this.mapListeners.push(map.on('pointerdown', function () {
-                    this_.hidePanel();
-                }));
+        }
+        /**
+         * Hide the layer panel.
+         */
+
+    }, {
+        key: 'hidePanel',
+        value: function hidePanel() {
+            if (this.element.classList.contains(this.shownClassName)) {
+                this.element.classList.remove(this.shownClassName);
             }
         }
-    };
-    /**
-     * Show the layer panel.
-     */
-    LayerSwitcher.prototype.showPanel = function () {
-        if (!this.element.classList.contains(this.shownClassName)) {
-            this.element.classList.add(this.shownClassName);
-            this.renderPanel();
-        }
-    };
-    /**
-     * Hide the layer panel.
-     */
-    LayerSwitcher.prototype.hidePanel = function () {
-        if (this.element.classList.contains(this.shownClassName)) {
-            this.element.classList.remove(this.shownClassName);
-        }
-    };
-    /**
-     * Re-draw the layer panel to represent the current state of the layers.
-     */
-    LayerSwitcher.prototype.renderPanel = function () {
-        this.dispatchEvent('render');
-        LayerSwitcher.renderPanel(this.getMap(), this.panel, {
-            groupSelectStyle: this.groupSelectStyle,
-            reverse: this.reverse
-        });
-        this.dispatchEvent('rendercomplete');
-    };
-    /**
-     * **Static** Re-draw the layer panel to represent the current state of the layers.
-     * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
-     * @param {Element} panel The DOM Element into which the layer tree will be rendered
-     * @param {Object} options Options for panel, group, and layers
-     * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-     *   `'children'` (default) groups have a checkbox and affect child visibility or
-     *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-     * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
-     */
-    LayerSwitcher.renderPanel = function (map, panel, options) {
-        // Create the event.
-        var render_event = new Event('render');
-        // Dispatch the event.
-        panel.dispatchEvent(render_event);
-        options = options || {};
-        options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
-        LayerSwitcher.ensureTopVisibleBaseLayerShown_(map, options.groupSelectStyle);
-        while (panel.firstChild) {
-            panel.removeChild(panel.firstChild);
-        }
-        // Reset indeterminate state for all layers and groups before
-        // applying based on groupSelectStyle
-        LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-            l.set('indeterminate', false);
-        });
-        if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
-            // Set visibile and indeterminate state of groups based on
-            // their children's visibility
-            LayerSwitcher.setGroupVisibility(map);
-        } else if (options.groupSelectStyle === 'group') {
-            // Set child indetermiate state based on their parent's visibility
-            LayerSwitcher.setChildVisibility(map);
-        }
-        var ul = document.createElement('ul');
-        panel.appendChild(ul);
-        // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-        LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
-            // console.log('render');
-            LayerSwitcher.renderPanel(map, panel, options);
-        });
-        // Create the event.
-        var rendercomplete_event = new Event('rendercomplete');
-        // Dispatch the event.
-        panel.dispatchEvent(rendercomplete_event);
-    };
-    LayerSwitcher.isBaseGroup = function (lyr) {
-        var lyrs = lyr.getLayers ? lyr.getLayers().getArray() : [];
-        return lyrs.length && lyrs[0].get('type') === 'base';
-    };
-    LayerSwitcher.setGroupVisibility = function (map) {
-        // Get a list of groups, with the deepest first
-        var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
-            return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
-        }).reverse();
-        // console.log(groups.map(g => g.get('title')));
-        groups.forEach(function (group) {
-            // TODO Can we use getLayersArray, is it public in the esm build?
-            var descendantVisibility = group.getLayersArray().map(function (l) {
-                var state = l.getVisible();
-                // console.log('>', l.get('title'), state);
-                return state;
+        /**
+         * Re-draw the layer panel to represent the current state of the layers.
+         */
+
+    }, {
+        key: 'renderPanel',
+        value: function renderPanel() {
+            this.dispatchEvent('render');
+            LayerSwitcher.renderPanel(this.getMap(), this.panel, {
+                groupSelectStyle: this.groupSelectStyle,
+                reverse: this.reverse
             });
-            // console.log(descendantVisibility);
-            if (descendantVisibility.every(function (v) {
-                return v === true;
-            })) {
-                group.setVisible(true);
-                group.set('indeterminate', false);
-            } else if (descendantVisibility.every(function (v) {
-                return v === false;
-            })) {
-                group.setVisible(false);
-                group.set('indeterminate', false);
-            } else {
-                group.setVisible(true);
-                group.set('indeterminate', true);
+            this.dispatchEvent('rendercomplete');
+        }
+        /**
+         * **Static** Re-draw the layer panel to represent the current state of the layers.
+         * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
+         * @param {Element} panel The DOM Element into which the layer tree will be rendered
+         * @param {Object} options Options for panel, group, and layers
+         * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+         *   `'children'` (default) groups have a checkbox and affect child visibility or
+         *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+         */
+
+    }], [{
+        key: 'renderPanel',
+        value: function renderPanel(map, panel, options) {
+            // Create the event.
+            var render_event = new Event('render');
+            // Dispatch the event.
+            panel.dispatchEvent(render_event);
+            options = options || {};
+            options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
+            LayerSwitcher.ensureTopVisibleBaseLayerShown_(map, options.groupSelectStyle);
+            while (panel.firstChild) {
+                panel.removeChild(panel.firstChild);
             }
-        });
-    };
-    LayerSwitcher.setChildVisibility = function (map) {
-        // console.log('setChildVisibility');
-        var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
-            return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
-        });
-        groups.forEach(function (group) {
-            // console.log(group.get('title'));
-            var groupVisible = group.getVisible();
-            var groupIndeterminate = group.get('indeterminate');
-            group.getLayers().getArray().forEach(function (l) {
-                // console.log('>', l.get('title'));
-                l.set('indeterminate', false);
-                if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
-                    l.set('indeterminate', true);
-                }
-            });
-        });
-    };
-    /**
-     * **Static** Ensure only the top-most base layer is visible if more than one is visible.
-     * @param {ol/Map~Map} map The map instance.
-     * @private
-     */
-    LayerSwitcher.ensureTopVisibleBaseLayerShown_ = function (map, groupSelectStyle) {
-        var lastVisibleBaseLyr;
-        LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-            if (l.get('type') === 'base' && l.getVisible()) {
-                lastVisibleBaseLyr = l;
-            }
-        });
-        if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
-    };
-    LayerSwitcher.getGroupsAndLayers = function (lyr, filterFn) {
-        var layers = [];
-        filterFn = filterFn || function (l, idx, a) {
-            return true;
-        };
-        LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
-            if (l.get('title')) {
-                if (filterFn(l, idx, a)) {
-                    layers.push(l);
-                }
-            }
-        });
-        return layers;
-    };
-    /**
-     * **Static** Toggle the visible state of a layer.
-     * Takes care of hiding other layers in the same exclusive group if the layer
-     * is toggle to visible.
-     * @private
-     * @param {ol/Map~Map} map The map instance.
-     * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
-     * @param {Boolean} visible Set whether the layer is shown
-     * @param {String} groupSelectStyle either:
-     *   `'none'` - groups don't get a checkbox,
-     *   `'children'` (default) groups have a checkbox and affect child visibility or
-     *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-     */
-    LayerSwitcher.setVisible_ = function (map, lyr, visible, groupSelectStyle) {
-        // console.log(lyr.get('title'), visible, groupSelectStyle);
-        lyr.setVisible(visible);
-        if (visible && lyr.get('type') === 'base') {
-            // Hide all other base layers regardless of grouping
+            // Reset indeterminate state for all layers and groups before
+            // applying based on groupSelectStyle
             LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-                if (l != lyr && l.get('type') === 'base') {
-                    l.setVisible(false);
+                l.set('indeterminate', false);
+            });
+            if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
+                // Set visibile and indeterminate state of groups based on
+                // their children's visibility
+                LayerSwitcher.setGroupVisibility(map);
+            } else if (options.groupSelectStyle === 'group') {
+                // Set child indetermiate state based on their parent's visibility
+                LayerSwitcher.setChildVisibility(map);
+            }
+            var ul = document.createElement('ul');
+            panel.appendChild(ul);
+            // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
+            LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
+                // console.log('render');
+                LayerSwitcher.renderPanel(map, panel, options);
+            });
+            // Create the event.
+            var rendercomplete_event = new Event('rendercomplete');
+            // Dispatch the event.
+            panel.dispatchEvent(rendercomplete_event);
+        }
+    }, {
+        key: 'isBaseGroup',
+        value: function isBaseGroup(lyr) {
+            if (lyr instanceof GroupLayer) {
+                var lyrs = lyr.getLayers().getArray();
+                return lyrs.length && lyrs[0].get('type') === 'base';
+            } else {
+                return false;
+            }
+        }
+    }, {
+        key: 'setGroupVisibility',
+        value: function setGroupVisibility(map) {
+            // Get a list of groups, with the deepest first
+            var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
+                return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+            }).reverse();
+            // console.log(groups.map(g => g.get('title')));
+            groups.forEach(function (group) {
+                // TODO Can we use getLayersArray, is it public in the esm build?
+                var descendantVisibility = group.getLayersArray().map(function (l) {
+                    var state = l.getVisible();
+                    // console.log('>', l.get('title'), state);
+                    return state;
+                });
+                // console.log(descendantVisibility);
+                if (descendantVisibility.every(function (v) {
+                    return v === true;
+                })) {
+                    group.setVisible(true);
+                    group.set('indeterminate', false);
+                } else if (descendantVisibility.every(function (v) {
+                    return v === false;
+                })) {
+                    group.setVisible(false);
+                    group.set('indeterminate', false);
+                } else {
+                    group.setVisible(true);
+                    group.set('indeterminate', true);
                 }
             });
         }
-        if (lyr.getLayers && !lyr.get('combine') && groupSelectStyle === 'children') {
-            lyr.getLayers().forEach(function (l) {
-                LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
+    }, {
+        key: 'setChildVisibility',
+        value: function setChildVisibility(map) {
+            // console.log('setChildVisibility');
+            var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
+                return l instanceof GroupLayer && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+            });
+            groups.forEach(function (grp) {
+                var group = grp;
+                // console.log(group.get('title'));
+                var groupVisible = group.getVisible();
+                var groupIndeterminate = group.get('indeterminate');
+                group.getLayers().getArray().forEach(function (l) {
+                    // console.log('>', l.get('title'));
+                    l.set('indeterminate', false);
+                    if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
+                        l.set('indeterminate', true);
+                    }
+                });
             });
         }
-    };
-    /**
-     * **Static** Render all layers that are children of a group.
-     * @private
-     * @param {ol/Map~Map} map The map instance.
-     * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
-     * @param {Number} idx Position in parent group list.
-     * @param {Object} options Options for groups and layers
-     * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-     *   `'children'` (default) groups have a checkbox and affect child visibility or
-     *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-     * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
-     * @param {Function} render Callback for change event on layer
-     * @returns {HTMLElement} List item containing layer control markup
-     */
-    LayerSwitcher.renderLayer_ = function (map, lyr, idx, options, render) {
-        var li = document.createElement('li');
-        var lyrTitle = lyr.get('title');
-        var checkboxId = LayerSwitcher.uuid();
-        var label = document.createElement('label');
-        if (lyr.getLayers && !lyr.get('combine')) {
-            var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
-            li.classList.add('group');
-            if (isBaseGroup) {
-                li.classList.add(CSS_PREFIX + 'base-group');
+        /**
+         * **Static** Ensure only the top-most base layer is visible if more than one is visible.
+         * @param {ol/Map~Map} map The map instance.
+         * @private
+         */
+
+    }, {
+        key: 'ensureTopVisibleBaseLayerShown_',
+        value: function ensureTopVisibleBaseLayerShown_(map, groupSelectStyle) {
+            var lastVisibleBaseLyr;
+            LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+                if (l.get('type') === 'base' && l.getVisible()) {
+                    lastVisibleBaseLyr = l;
+                }
+            });
+            if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
+        }
+    }, {
+        key: 'getGroupsAndLayers',
+        value: function getGroupsAndLayers(lyr, filterFn) {
+            var layers = [];
+            filterFn = filterFn || function (l, idx, a) {
+                return true;
+            };
+            LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
+                if (l.get('title')) {
+                    if (filterFn(l, idx, a)) {
+                        layers.push(l);
+                    }
+                }
+            });
+            return layers;
+        }
+        /**
+         * **Static** Toggle the visible state of a layer.
+         * Takes care of hiding other layers in the same exclusive group if the layer
+         * is toggle to visible.
+         * @private
+         * @param {ol/Map~Map} map The map instance.
+         * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
+         * @param {Boolean} visible Set whether the layer is shown
+         * @param {String} groupSelectStyle either:
+         *   `'none'` - groups don't get a checkbox,
+         *   `'children'` (default) groups have a checkbox and affect child visibility or
+         *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         */
+
+    }, {
+        key: 'setVisible_',
+        value: function setVisible_(map, lyr, visible, groupSelectStyle) {
+            // console.log(lyr.get('title'), visible, groupSelectStyle);
+            lyr.setVisible(visible);
+            if (visible && lyr.get('type') === 'base') {
+                // Hide all other base layers regardless of grouping
+                LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+                    if (l != lyr && l.get('type') === 'base') {
+                        l.setVisible(false);
+                    }
+                });
             }
-            // Group folding
-            if (lyr.get('fold')) {
-                li.classList.add(CSS_PREFIX + 'fold');
-                li.classList.add(CSS_PREFIX + lyr.get('fold'));
-                var btn = document.createElement('button');
-                btn.onclick = function (e) {
-                    var evt = e || window.event;
-                    LayerSwitcher.toggleFold_(lyr, li);
-                    evt.preventDefault();
-                };
-                li.appendChild(btn);
+            if (lyr instanceof GroupLayer && !lyr.get('combine') && groupSelectStyle === 'children') {
+                lyr.getLayers().forEach(function (l) {
+                    LayerSwitcher.setVisible_(map, l, lyr.getVisible(), groupSelectStyle);
+                });
             }
-            if (!isBaseGroup && options.groupSelectStyle != 'none') {
-                var input_1 = document.createElement('input');
-                input_1.type = 'checkbox';
-                input_1.id = checkboxId;
-                input_1.checked = lyr.getVisible();
-                input_1.indeterminate = lyr.get('indeterminate');
-                input_1.onchange = function (e) {
+        }
+        /**
+         * **Static** Render all layers that are children of a group.
+         * @private
+         * @param {ol/Map~Map} map The map instance.
+         * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
+         * @param {Number} idx Position in parent group list.
+         * @param {Object} options Options for groups and layers
+         * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+         *   `'children'` (default) groups have a checkbox and affect child visibility or
+         *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+         * @param {Function} render Callback for change event on layer
+         * @returns {HTMLElement} List item containing layer control markup
+         */
+
+    }, {
+        key: 'renderLayer_',
+        value: function renderLayer_(map, lyr, idx, options, render) {
+            var li = document.createElement('li');
+            var lyrTitle = lyr.get('title');
+            var checkboxId = LayerSwitcher.uuid();
+            var label = document.createElement('label');
+            if (lyr instanceof GroupLayer && !lyr.get('combine')) {
+                var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
+                li.classList.add('group');
+                if (isBaseGroup) {
+                    li.classList.add(CSS_PREFIX + 'base-group');
+                }
+                // Group folding
+                if (lyr.get('fold')) {
+                    li.classList.add(CSS_PREFIX + 'fold');
+                    li.classList.add(CSS_PREFIX + lyr.get('fold'));
+                    var btn = document.createElement('button');
+                    btn.onclick = function (e) {
+                        var evt = e || window.event;
+                        LayerSwitcher.toggleFold_(lyr, li);
+                        evt.preventDefault();
+                    };
+                    li.appendChild(btn);
+                }
+                if (!isBaseGroup && options.groupSelectStyle != 'none') {
+                    var _input = document.createElement('input');
+                    _input.type = 'checkbox';
+                    _input.id = checkboxId;
+                    _input.checked = lyr.getVisible();
+                    _input.indeterminate = lyr.get('indeterminate');
+                    _input.onchange = function (e) {
+                        var target = e.target;
+                        LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
+                        render(lyr);
+                    };
+                    li.appendChild(_input);
+                    label.htmlFor = checkboxId;
+                }
+                label.innerHTML = lyrTitle;
+                li.appendChild(label);
+                var ul = document.createElement('ul');
+                li.appendChild(ul);
+                LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
+            } else {
+                li.className = 'layer';
+                var input = document.createElement('input');
+                if (lyr.get('type') === 'base') {
+                    input.type = 'radio';
+                    input.name = 'base';
+                } else {
+                    input.type = 'checkbox';
+                }
+                input.id = checkboxId;
+                input.checked = lyr.get('visible');
+                input.indeterminate = lyr.get('indeterminate');
+                input.onchange = function (e) {
                     var target = e.target;
                     LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
                     render(lyr);
                 };
-                li.appendChild(input_1);
+                li.appendChild(input);
                 label.htmlFor = checkboxId;
+                label.innerHTML = lyrTitle;
+                var rsl = map.getView().getResolution();
+                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                    label.className += ' disabled';
+                }
+                li.appendChild(label);
             }
-            label.innerHTML = lyrTitle;
-            li.appendChild(label);
-            var ul = document.createElement('ul');
-            li.appendChild(ul);
-            LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
-        } else {
-            li.className = 'layer';
-            var input = document.createElement('input');
-            if (lyr.get('type') === 'base') {
-                input.type = 'radio';
-                input.name = 'base';
-            } else {
-                input.type = 'checkbox';
-            }
-            input.id = checkboxId;
-            input.checked = lyr.get('visible');
-            input.indeterminate = lyr.get('indeterminate');
-            input.onchange = function (e) {
-                var target = e.target;
-                LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
-                render(lyr);
-            };
-            li.appendChild(input);
-            label.htmlFor = checkboxId;
-            label.innerHTML = lyrTitle;
-            var rsl = map.getView().getResolution();
-            if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-                label.className += ' disabled';
-            }
-            li.appendChild(label);
+            return li;
         }
-        return li;
-    };
-    /**
-     * **Static** Render all layers that are children of a group.
-     * @private
-     * @param {ol/Map~Map} map The map instance.
-     * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
-     * @param {Element} elm DOM element that children will be appended to.
-     * @param {Object} options Options for groups and layers
-     * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-     *   `'children'` (default) groups have a checkbox and affect child visibility or
-     *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-     * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
-     * @param {Function} render Callback for change event on layer
-     */
-    LayerSwitcher.renderLayers_ = function (map, lyr, elm, options, render) {
-        var lyrs = lyr.getLayers().getArray().slice();
-        if (options.reverse) lyrs = lyrs.reverse();
-        for (var i = 0, l; i < lyrs.length; i++) {
-            l = lyrs[i];
-            if (l.get('title')) {
-                elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, options, render));
+        /**
+         * **Static** Render all layers that are children of a group.
+         * @private
+         * @param {ol/Map~Map} map The map instance.
+         * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
+         * @param {Element} elm DOM element that children will be appended to.
+         * @param {Object} options Options for groups and layers
+         * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
+         *   `'children'` (default) groups have a checkbox and affect child visibility or
+         *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+         * @param {Function} render Callback for change event on layer
+         */
+
+    }, {
+        key: 'renderLayers_',
+        value: function renderLayers_(map, lyr, elm, options, render) {
+            var lyrs = lyr.getLayers().getArray().slice();
+            if (options.reverse) lyrs = lyrs.reverse();
+            for (var i = 0, l; i < lyrs.length; i++) {
+                l = lyrs[i];
+                if (l.get('title')) {
+                    elm.appendChild(LayerSwitcher.renderLayer_(map, l, i, options, render));
+                }
             }
         }
-    };
-    /**
-     * **Static** Call the supplied function for each layer in the passed layer group
-     * recursing nested groups.
-     * @param {ol/layer/Group~LayerGroup} lyr The layer group to start iterating from.
-     * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
-     * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
-     */
-    LayerSwitcher.forEachRecursive = function (lyr, fn) {
-        lyr.getLayers().forEach(function (lyr, idx, a) {
-            fn(lyr, idx, a);
-            if (lyr.getLayers) {
-                LayerSwitcher.forEachRecursive(lyr, fn);
+        /**
+         * **Static** Call the supplied function for each layer in the passed layer group
+         * recursing nested groups.
+         * @param {ol/layer/Group~LayerGroup} lyr The layer group to start iterating from.
+         * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
+         * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
+         */
+
+    }, {
+        key: 'forEachRecursive',
+        value: function forEachRecursive(lyr, fn) {
+            lyr.getLayers().forEach(function (lyr, idx, a) {
+                fn(lyr, idx, a);
+                if (lyr instanceof GroupLayer) {
+                    LayerSwitcher.forEachRecursive(lyr, fn);
+                }
+            });
+        }
+        /**
+         * **Static** Generate a UUID
+         * Adapted from http://stackoverflow.com/a/2117523/526860
+         * @returns {String} UUID
+         */
+
+    }, {
+        key: 'uuid',
+        value: function uuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : r & 0x3 | 0x8;
+                return v.toString(16);
+            });
+        }
+        /**
+         * @private
+         * @desc Apply workaround to enable scrolling of overflowing content within an
+         * element. Adapted from https://gist.github.com/chrismbarr/4107472
+         * @param {HTMLElement} elm Element on which to enable touch scrolling
+         */
+
+    }, {
+        key: 'enableTouchScroll_',
+        value: function enableTouchScroll_(elm) {
+            if (LayerSwitcher.isTouchDevice_()) {
+                var scrollStartPos = 0;
+                elm.addEventListener('touchstart', function (event) {
+                    scrollStartPos = this.scrollTop + event.touches[0].pageY;
+                }, false);
+                elm.addEventListener('touchmove', function (event) {
+                    this.scrollTop = scrollStartPos - event.touches[0].pageY;
+                }, false);
             }
-        });
-    };
-    /**
-     * **Static** Generate a UUID
-     * Adapted from http://stackoverflow.com/a/2117523/526860
-     * @returns {String} UUID
-     */
-    LayerSwitcher.uuid = function () {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-            var r = Math.random() * 16 | 0,
-                v = c == 'x' ? r : r & 0x3 | 0x8;
-            return v.toString(16);
-        });
-    };
-    /**
-     * @private
-     * @desc Apply workaround to enable scrolling of overflowing content within an
-     * element. Adapted from https://gist.github.com/chrismbarr/4107472
-     * @param {HTMLElement} elm Element on which to enable touch scrolling
-     */
-    LayerSwitcher.enableTouchScroll_ = function (elm) {
-        if (LayerSwitcher.isTouchDevice_()) {
-            var scrollStartPos = 0;
-            elm.addEventListener('touchstart', function (event) {
-                scrollStartPos = this.scrollTop + event.touches[0].pageY;
-            }, false);
-            elm.addEventListener('touchmove', function (event) {
-                this.scrollTop = scrollStartPos - event.touches[0].pageY;
-            }, false);
         }
-    };
-    /**
-     * @private
-     * @desc Determine if the current browser supports touch events. Adapted from
-     * https://gist.github.com/chrismbarr/4107472
-     * @returns {Boolean} True if client can have 'TouchEvent' event
-     */
-    LayerSwitcher.isTouchDevice_ = function () {
-        try {
-            document.createEvent('TouchEvent');
-            return true;
-        } catch (e) {
-            return false;
+        /**
+         * @private
+         * @desc Determine if the current browser supports touch events. Adapted from
+         * https://gist.github.com/chrismbarr/4107472
+         * @returns {Boolean} True if client can have 'TouchEvent' event
+         */
+
+    }, {
+        key: 'isTouchDevice_',
+        value: function isTouchDevice_() {
+            try {
+                document.createEvent('TouchEvent');
+                return true;
+            } catch (e) {
+                return false;
+            }
         }
-    };
-    /**
-     * Fold/unfold layer group
-     * @private
-     * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
-     * @param {HTMLElement} li List item containing layer group
-     */
-    LayerSwitcher.toggleFold_ = function (lyr, li) {
-        li.classList.remove(CSS_PREFIX + lyr.get('fold'));
-        lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
-        li.classList.add(CSS_PREFIX + lyr.get('fold'));
-    };
-    /**
-     * If a valid groupSelectStyle value is not provided then return the default
-     * @private
-     * @param {String} groupSelectStyle The string to check for validity
-     * @returns {String} The value groupSelectStyle, if valid, the default otherwise
-     */
-    LayerSwitcher.getGroupSelectStyle = function (groupSelectStyle) {
-        return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0 ? groupSelectStyle : 'children';
-    };
+        /**
+         * Fold/unfold layer group
+         * @private
+         * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
+         * @param {HTMLElement} li List item containing layer group
+         */
+
+    }, {
+        key: 'toggleFold_',
+        value: function toggleFold_(lyr, li) {
+            li.classList.remove(CSS_PREFIX + lyr.get('fold'));
+            lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
+            li.classList.add(CSS_PREFIX + lyr.get('fold'));
+        }
+        /**
+         * If a valid groupSelectStyle value is not provided then return the default
+         * @private
+         * @param {String} groupSelectStyle The string to check for validity
+         * @returns {String} The value groupSelectStyle, if valid, the default otherwise
+         */
+
+    }, {
+        key: 'getGroupSelectStyle',
+        value: function getGroupSelectStyle(groupSelectStyle) {
+            return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0 ? groupSelectStyle : 'children';
+        }
+    }]);
     return LayerSwitcher;
 }(Control);
-// Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
-// OpenLayers
 if (window.ol && window.ol.control) {
     window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
 }
