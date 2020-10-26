@@ -23,6 +23,7 @@ module.exports = {
   globals: {
     'ol/Map': 'ol.Map',
     'ol/Observable': 'ol.Observable',
-    'ol/control/Control': 'ol.control.Control'
+    'ol/control/Control': 'ol.control.Control',
+    'ol/layer/Group': 'ol.layer.Group'
   }
 };
