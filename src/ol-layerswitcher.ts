@@ -359,7 +359,7 @@ export default class LayerSwitcher extends Control {
    * @param {ol/Map~Map} map The map instance.
    * @private
    */
-  static ensureTopVisibleBaseLayerShown_(map: PluggableMap, groupSelectStyle: GroupSelectStyle) {
+  protected static ensureTopVisibleBaseLayerShown_(map: PluggableMap, groupSelectStyle: GroupSelectStyle) {
     var lastVisibleBaseLyr;
     LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
       if (l.get('type') === 'base' && l.getVisible()) {

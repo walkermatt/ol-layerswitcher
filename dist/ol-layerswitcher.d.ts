@@ -136,7 +136,7 @@ export default class LayerSwitcher extends Control {
      * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
      * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
      */
-    static forEachRecursive(lyr: PluggableMap | GroupLayer, fn: Function): void;
+    static forEachRecursive(lyr: PluggableMap | GroupLayer, fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void): void;
     /**
      * **Static** Generate a UUID
      * Adapted from http://stackoverflow.com/a/2117523/526860
