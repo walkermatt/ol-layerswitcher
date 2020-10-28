@@ -55,7 +55,7 @@ export default class LayerSwitcher extends Control {
   protected hiddenClassName: string;
   protected shownClassName: string;
   protected panel: HTMLElement;
-  constructor(opt_options: Options) {
+  constructor(opt_options?: Options) {
     var options = Object.assign({}, opt_options);
 
     // TODO Next: Rename to showButtonTitle
