@@ -6,6 +6,26 @@ import PluggableMap from 'ol/PluggableMap';
 import BaseLayer from 'ol/layer/Base';
 import GroupLayer from 'ol/layer/Group';
 
+// Extend OpenLayers layer and group options types to include the properties
+// used by ol-layerswitcher such as `title`, `type`, `fold` etc.
+import { Options as BaseLayerOptions } from 'ol/layer/Base';
+import { Options as GroupLayerOptions } from 'ol/layer/Group';
+
+declare module "ol/layer/Base" {
+    interface BaseLayerOptions {
+        title?: string;
+        type?: string;
+        indeterminate?: boolean;
+    }
+}
+
+declare module "ol/layer/Group" {
+    interface GroupLayerOptions {
+        combine?: boolean;
+        fold?: boolean;
+    }
+}
+
 var CSS_PREFIX = 'layer-switcher-';
 
 type GroupSelectStyle = 'none' | 'children' | 'group';
@@ -678,3 +698,5 @@ export default class LayerSwitcher extends Control {
 if (window.ol && window.ol.control) {
   window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
 }
+
+export { BaseLayerOptions, GroupLayerOptions };
