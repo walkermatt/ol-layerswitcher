@@ -395,7 +395,7 @@ export default class LayerSwitcher extends Control {
     const layers = [];
     filterFn =
       filterFn ||
-      function (l, idx, a) {
+      function (lyr: BaseLayer, idx: number, arr: BaseLayer[]) {
         return true;
       };
     LayerSwitcher.forEachRecursive(grp, function (l, idx, arr) {
@@ -583,7 +583,7 @@ export default class LayerSwitcher extends Control {
    * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
    * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
    */
-  static forEachRecursive(lyr: PluggableMap | GroupLayer, fn: Function) {
+  static forEachRecursive(lyr: PluggableMap | GroupLayer, fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void) {
     lyr.getLayers().forEach(function (lyr, idx, a) {
       fn(lyr, idx, a);
       if (lyr instanceof GroupLayer) {
@@ -597,7 +597,7 @@ export default class LayerSwitcher extends Control {
    * Adapted from http://stackoverflow.com/a/2117523/526860
    * @returns {String} UUID
    */
-  static uuid() {
+  static uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (
       c
     ) {
