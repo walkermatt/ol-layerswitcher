@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.8.0-beta.0
+
+* Migrate source to TypeScript
+* Build .js from .ts as well as TypeScript type definition
+
 ## v3.7.0
 
 * New option: `startActive` - whether panel is open when created. Defaults to `false`.

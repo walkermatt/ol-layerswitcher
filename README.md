@@ -61,13 +61,13 @@ See [CHANGELOG](./CHANGELOG.md) for details of changes in each release.
 Load `ol-layerswitcher.js` after OpenLayers. The layerswitcher control is available as `LayerSwitcher` or `ol.control.LayerSwitcher`.
 
 ```HTML
-<script src="https://unpkg.com/ol-layerswitcher@3.7.0"></script>
+<script src="https://unpkg.com/ol-layerswitcher@3.8.0-beta.0"></script>
 ```
 
 #### CSS
 
 ```HTML
-<link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.7.0/src/ol-layerswitcher.css" />
+<link rel="stylesheet" href="https://unpkg.com/ol-layerswitcher@3.8.0-beta.0/dist/ol-layerswitcher.css" />
 ```
 
 ### Parcel, Webpack etc.
