@@ -289,7 +289,7 @@ var LayerSwitcher = function (_Control) {
             panel.dispatchEvent(render_event);
             options = options || {};
             options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
-            LayerSwitcher.ensureTopVisibleBaseLayerShown_(map, options.groupSelectStyle);
+            LayerSwitcher.ensureTopVisibleBaseLayerShown(map, options.groupSelectStyle);
             while (panel.firstChild) {
                 panel.removeChild(panel.firstChild);
             }
@@ -318,11 +318,17 @@ var LayerSwitcher = function (_Control) {
             // Dispatch the event.
             panel.dispatchEvent(rendercomplete_event);
         }
+        /**
+         * **Static** Determine if a given layer group contains base layers
+         * @param {ol/layer/Group~GroupLayer} grp GroupLayer to test
+         * @returns {boolean}
+         */
+
     }, {
         key: 'isBaseGroup',
-        value: function isBaseGroup(lyr) {
-            if (lyr instanceof GroupLayer) {
-                var lyrs = lyr.getLayers().getArray();
+        value: function isBaseGroup(grp) {
+            if (grp instanceof GroupLayer) {
+                var lyrs = grp.getLayers().getArray();
                 return lyrs.length && lyrs[0].get('type') === 'base';
             } else {
                 return false;
@@ -333,12 +339,12 @@ var LayerSwitcher = function (_Control) {
         value: function setGroupVisibility(map) {
             // Get a list of groups, with the deepest first
             var groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
-                return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+                return l instanceof GroupLayer && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
             }).reverse();
             // console.log(groups.map(g => g.get('title')));
-            groups.forEach(function (group) {
+            groups.forEach(function (grp) {
                 // TODO Can we use getLayersArray, is it public in the esm build?
-                var descendantVisibility = group.getLayersArray().map(function (l) {
+                var descendantVisibility = grp.getLayersArray().map(function (l) {
                     var state = l.getVisible();
                     // console.log('>', l.get('title'), state);
                     return state;
@@ -347,16 +353,16 @@ var LayerSwitcher = function (_Control) {
                 if (descendantVisibility.every(function (v) {
                     return v === true;
                 })) {
-                    group.setVisible(true);
-                    group.set('indeterminate', false);
+                    grp.setVisible(true);
+                    grp.set('indeterminate', false);
                 } else if (descendantVisibility.every(function (v) {
                     return v === false;
                 })) {
-                    group.setVisible(false);
-                    group.set('indeterminate', false);
+                    grp.setVisible(false);
+                    grp.set('indeterminate', false);
                 } else {
-                    group.setVisible(true);
-                    group.set('indeterminate', true);
+                    grp.setVisible(true);
+                    grp.set('indeterminate', true);
                 }
             });
         }
@@ -382,14 +388,18 @@ var LayerSwitcher = function (_Control) {
             });
         }
         /**
-         * **Static** Ensure only the top-most base layer is visible if more than one is visible.
+         * Ensure only the top-most base layer is visible if more than one is visible.
          * @param {ol/Map~Map} map The map instance.
-         * @private
+         * @param {String} groupSelectStyle either:
+         *   `'none'` - groups don't get a checkbox,
+         *   `'children'` (default) groups have a checkbox and affect child visibility or
+         *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         * @protected
          */
 
     }, {
-        key: 'ensureTopVisibleBaseLayerShown_',
-        value: function ensureTopVisibleBaseLayerShown_(map, groupSelectStyle) {
+        key: 'ensureTopVisibleBaseLayerShown',
+        value: function ensureTopVisibleBaseLayerShown(map, groupSelectStyle) {
             var lastVisibleBaseLyr;
             LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
                 if (l.get('type') === 'base' && l.getVisible()) {
@@ -398,16 +408,24 @@ var LayerSwitcher = function (_Control) {
             });
             if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
         }
+        /**
+         * **Static** Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
+         * contained by the specified map or layer group; optionally filtering via `filterFn`
+         * @param {ol/Map~Map|ol/layer/Group~GroupLayer} grp The map or layer group for which layers are found.
+         * @param {Function} filterFn Optional function used to filter the returned layers
+         * @returns {Array<ol/layer/Base~BaseLayer>}
+         */
+
     }, {
         key: 'getGroupsAndLayers',
-        value: function getGroupsAndLayers(lyr, filterFn) {
+        value: function getGroupsAndLayers(grp, filterFn) {
             var layers = [];
-            filterFn = filterFn || function (l, idx, a) {
+            filterFn = filterFn || function (lyr, idx, arr) {
                 return true;
             };
-            LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
+            LayerSwitcher.forEachRecursive(grp, function (l, idx, arr) {
                 if (l.get('title')) {
-                    if (filterFn(l, idx, a)) {
+                    if (filterFn(l, idx, arr)) {
                         layers.push(l);
                     }
                 }
@@ -415,10 +433,10 @@ var LayerSwitcher = function (_Control) {
             return layers;
         }
         /**
-         * **Static** Toggle the visible state of a layer.
+         * Toggle the visible state of a layer.
          * Takes care of hiding other layers in the same exclusive group if the layer
          * is toggle to visible.
-         * @private
+         * @protected
          * @param {ol/Map~Map} map The map instance.
          * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
          * @param {Boolean} visible Set whether the layer is shown
@@ -426,6 +444,7 @@ var LayerSwitcher = function (_Control) {
          *   `'none'` - groups don't get a checkbox,
          *   `'children'` (default) groups have a checkbox and affect child visibility or
          *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+         * @protected
          */
 
     }, {
@@ -448,8 +467,7 @@ var LayerSwitcher = function (_Control) {
             }
         }
         /**
-         * **Static** Render all layers that are children of a group.
-         * @private
+         * Render all layers that are children of a group.
          * @param {ol/Map~Map} map The map instance.
          * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
          * @param {Number} idx Position in parent group list.
@@ -460,6 +478,7 @@ var LayerSwitcher = function (_Control) {
          * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
          * @param {Function} render Callback for change event on layer
          * @returns {HTMLElement} List item containing layer control markup
+         * @protected
          */
 
     }, {
@@ -535,8 +554,7 @@ var LayerSwitcher = function (_Control) {
             return li;
         }
         /**
-         * **Static** Render all layers that are children of a group.
-         * @private
+         * Render all layers that are children of a group.
          * @param {ol/Map~Map} map The map instance.
          * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
          * @param {Element} elm DOM element that children will be appended to.
@@ -546,6 +564,7 @@ var LayerSwitcher = function (_Control) {
          *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
          * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
          * @param {Function} render Callback for change event on layer
+         * @protected
          */
 
     }, {
@@ -594,10 +613,10 @@ var LayerSwitcher = function (_Control) {
             });
         }
         /**
-         * @private
-         * @desc Apply workaround to enable scrolling of overflowing content within an
+         * Apply workaround to enable scrolling of overflowing content within an
          * element. Adapted from https://gist.github.com/chrismbarr/4107472
          * @param {HTMLElement} elm Element on which to enable touch scrolling
+         * @protected
          */
 
     }, {
@@ -614,10 +633,10 @@ var LayerSwitcher = function (_Control) {
             }
         }
         /**
-         * @private
-         * @desc Determine if the current browser supports touch events. Adapted from
+         * Determine if the current browser supports touch events. Adapted from
          * https://gist.github.com/chrismbarr/4107472
          * @returns {Boolean} True if client can have 'TouchEvent' event
+         * @protected
          */
 
     }, {
@@ -632,9 +651,9 @@ var LayerSwitcher = function (_Control) {
         }
         /**
          * Fold/unfold layer group
-         * @private
          * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
          * @param {HTMLElement} li List item containing layer group
+         * @protected
          */
 
     }, {
@@ -646,9 +665,9 @@ var LayerSwitcher = function (_Control) {
         }
         /**
          * If a valid groupSelectStyle value is not provided then return the default
-         * @private
          * @param {String} groupSelectStyle The string to check for validity
          * @returns {String} The value groupSelectStyle, if valid, the default otherwise
+         * @protected
          */
 
     }, {

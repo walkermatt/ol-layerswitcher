@@ -1,8 +1,24 @@
 import Control from 'ol/control/Control';
+import { EventsKey } from 'ol/events';
 import { Options as ControlOptions } from 'ol/control/Control';
 import PluggableMap from 'ol/PluggableMap';
 import BaseLayer from 'ol/layer/Base';
 import GroupLayer from 'ol/layer/Group';
+import { Options as BaseLayerOptions } from 'ol/layer/Base';
+import { Options as GroupLayerOptions } from 'ol/layer/Group';
+declare module "ol/layer/Base" {
+    interface BaseLayerOptions {
+        title?: string;
+        type?: string;
+        indeterminate?: boolean;
+    }
+}
+declare module "ol/layer/Group" {
+    interface GroupLayerOptions {
+        combine?: boolean;
+        fold?: boolean;
+    }
+}
 declare type GroupSelectStyle = 'none' | 'children' | 'group';
 interface RenderOptions {
     groupSelectStyle?: GroupSelectStyle;
@@ -39,15 +55,15 @@ interface Options extends ControlOptions, RenderOptions {
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
 export default class LayerSwitcher extends Control {
-    private activationMode;
-    private startActive;
-    private groupSelectStyle;
-    private reverse;
-    private mapListeners;
-    private hiddenClassName;
-    private shownClassName;
-    private panel;
-    constructor(opt_options: Options);
+    protected activationMode: 'mouseover' | 'click';
+    protected startActive: boolean;
+    protected groupSelectStyle: 'none' | 'children' | 'group';
+    protected reverse: boolean;
+    protected mapListeners: Array<EventsKey>;
+    protected hiddenClassName: string;
+    protected shownClassName: string;
+    protected panel: HTMLElement;
+    constructor(opt_options?: Options);
     /**
      * Set the map instance the control is associated with.
      * @param {ol/Map~Map} map The map instance.
@@ -76,21 +92,37 @@ export default class LayerSwitcher extends Control {
      * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
      */
     static renderPanel(map: PluggableMap, panel: HTMLElement, options: RenderOptions): void;
-    static isBaseGroup(lyr: BaseLayer): boolean;
-    static setGroupVisibility(map: PluggableMap): void;
-    static setChildVisibility(map: PluggableMap): void;
     /**
-     * **Static** Ensure only the top-most base layer is visible if more than one is visible.
-     * @param {ol/Map~Map} map The map instance.
-     * @private
+     * **Static** Determine if a given layer group contains base layers
+     * @param {ol/layer/Group~GroupLayer} grp GroupLayer to test
+     * @returns {boolean}
      */
-    static ensureTopVisibleBaseLayerShown_(map: PluggableMap, groupSelectStyle: GroupSelectStyle): void;
-    static getGroupsAndLayers(lyr: PluggableMap | GroupLayer, filterFn: Function): BaseLayer[];
+    static isBaseGroup(grp: GroupLayer): boolean;
+    protected static setGroupVisibility(map: PluggableMap): void;
+    protected static setChildVisibility(map: PluggableMap): void;
     /**
-     * **Static** Toggle the visible state of a layer.
+     * Ensure only the top-most base layer is visible if more than one is visible.
+     * @param {ol/Map~Map} map The map instance.
+     * @param {String} groupSelectStyle either:
+     *   `'none'` - groups don't get a checkbox,
+     *   `'children'` (default) groups have a checkbox and affect child visibility or
+     *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+     * @protected
+     */
+    protected static ensureTopVisibleBaseLayerShown(map: PluggableMap, groupSelectStyle: GroupSelectStyle): void;
+    /**
+     * **Static** Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
+     * contained by the specified map or layer group; optionally filtering via `filterFn`
+     * @param {ol/Map~Map|ol/layer/Group~GroupLayer} grp The map or layer group for which layers are found.
+     * @param {Function} filterFn Optional function used to filter the returned layers
+     * @returns {Array<ol/layer/Base~BaseLayer>}
+     */
+    static getGroupsAndLayers(grp: PluggableMap | GroupLayer, filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean): BaseLayer[];
+    /**
+     * Toggle the visible state of a layer.
      * Takes care of hiding other layers in the same exclusive group if the layer
      * is toggle to visible.
-     * @private
+     * @protected
      * @param {ol/Map~Map} map The map instance.
      * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
      * @param {Boolean} visible Set whether the layer is shown
@@ -98,11 +130,11 @@ export default class LayerSwitcher extends Control {
      *   `'none'` - groups don't get a checkbox,
      *   `'children'` (default) groups have a checkbox and affect child visibility or
      *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+     * @protected
      */
-    static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle): void;
+    protected static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle): void;
     /**
-     * **Static** Render all layers that are children of a group.
-     * @private
+     * Render all layers that are children of a group.
      * @param {ol/Map~Map} map The map instance.
      * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
      * @param {Number} idx Position in parent group list.
@@ -113,11 +145,11 @@ export default class LayerSwitcher extends Control {
      * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
      * @param {Function} render Callback for change event on layer
      * @returns {HTMLElement} List item containing layer control markup
+     * @protected
      */
-    static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function): HTMLLIElement;
+    protected static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function): HTMLLIElement;
     /**
-     * **Static** Render all layers that are children of a group.
-     * @private
+     * Render all layers that are children of a group.
      * @param {ol/Map~Map} map The map instance.
      * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
      * @param {Element} elm DOM element that children will be appended to.
@@ -127,8 +159,9 @@ export default class LayerSwitcher extends Control {
      *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
      * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
      * @param {Function} render Callback for change event on layer
+     * @protected
      */
-    static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function): void;
+    protected static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function): void;
     /**
      * **Static** Call the supplied function for each layer in the passed layer group
      * recursing nested groups.
@@ -144,32 +177,32 @@ export default class LayerSwitcher extends Control {
      */
     static uuid(): string;
     /**
-     * @private
-     * @desc Apply workaround to enable scrolling of overflowing content within an
+     * Apply workaround to enable scrolling of overflowing content within an
      * element. Adapted from https://gist.github.com/chrismbarr/4107472
      * @param {HTMLElement} elm Element on which to enable touch scrolling
+     * @protected
      */
-    static enableTouchScroll_(elm: HTMLElement): void;
+    protected static enableTouchScroll_(elm: HTMLElement): void;
     /**
-     * @private
-     * @desc Determine if the current browser supports touch events. Adapted from
+     * Determine if the current browser supports touch events. Adapted from
      * https://gist.github.com/chrismbarr/4107472
      * @returns {Boolean} True if client can have 'TouchEvent' event
+     * @protected
      */
-    static isTouchDevice_(): boolean;
+    protected static isTouchDevice_(): boolean;
     /**
      * Fold/unfold layer group
-     * @private
      * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
      * @param {HTMLElement} li List item containing layer group
+     * @protected
      */
-    static toggleFold_(lyr: GroupLayer, li: HTMLElement): void;
+    protected static toggleFold_(lyr: GroupLayer, li: HTMLElement): void;
     /**
      * If a valid groupSelectStyle value is not provided then return the default
-     * @private
      * @param {String} groupSelectStyle The string to check for validity
      * @returns {String} The value groupSelectStyle, if valid, the default otherwise
+     * @protected
      */
-    static getGroupSelectStyle(groupSelectStyle: GroupSelectStyle): GroupSelectStyle;
+    protected static getGroupSelectStyle(groupSelectStyle: GroupSelectStyle): GroupSelectStyle;
 }
-export {};
+export { BaseLayerOptions, GroupLayerOptions };
