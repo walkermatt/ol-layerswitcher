@@ -108,6 +108,8 @@ Then run the tests by opening [test/index.html](test/index.html) in a browser.
   - [hidePanel](#hidepanel)
   - [renderPanel](#renderpanel)
   - [renderPanel](#renderpanel-1)
+  - [isBaseGroup](#isbasegroup)
+  - [getGroupsAndLayers](#getgroupsandlayers)
   - [forEachRecursive](#foreachrecursive)
   - [uuid](#uuid)
 
@@ -169,6 +171,28 @@ Re-draw the layer panel to represent the current state of the layers.
     `'children'` (default) groups have a checkbox and affect child visibility or
     `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
   - `options.reverse` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Reverse the layer order. Defaults to true.
+
+#### isBaseGroup
+
+**Static** Determine if a given layer group contains base layers
+
+**Parameters**
+
+- `grp` **ol/layer/Group~GroupLayer** GroupLayer to test
+
+Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)**
+
+#### getGroupsAndLayers
+
+**Static** Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
+contained by the specified map or layer group; optionally filtering via `filterFn`
+
+**Parameters**
+
+- `grp` **(ol/Map~Map | ol/layer/Group~GroupLayer)** The map or layer group for which layers are found.
+- `filterFn` **[Function](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function)** Optional function used to filter the returned layers
+
+Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;ol/layer/Base~BaseLayer>**
 
 #### forEachRecursive
 

@@ -47,14 +47,14 @@ interface Options extends ControlOptions, RenderOptions {
  * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
  */
 export default class LayerSwitcher extends Control {
-  private activationMode: 'mouseover' | 'click';
-  private startActive: boolean;
-  private groupSelectStyle: 'none' | 'children' | 'group';
-  private reverse: boolean;
-  private mapListeners: Array<EventsKey>;
-  private hiddenClassName: string;
-  private shownClassName: string;
-  private panel: HTMLElement;
+  protected activationMode: 'mouseover' | 'click';
+  protected startActive: boolean;
+  protected groupSelectStyle: 'none' | 'children' | 'group';
+  protected reverse: boolean;
+  protected mapListeners: Array<EventsKey>;
+  protected hiddenClassName: string;
+  protected shownClassName: string;
+  protected panel: HTMLElement;
   constructor(opt_options: Options) {
     var options = Object.assign({}, opt_options);
 
@@ -244,7 +244,7 @@ export default class LayerSwitcher extends Control {
       options.groupSelectStyle
     );
 
-    LayerSwitcher.ensureTopVisibleBaseLayerShown_(
+    LayerSwitcher.ensureTopVisibleBaseLayerShown(
       map,
       options.groupSelectStyle
     );
@@ -287,24 +287,29 @@ export default class LayerSwitcher extends Control {
     panel.dispatchEvent(rendercomplete_event);
   }
 
-  static isBaseGroup(lyr: BaseLayer) {
-    if (lyr instanceof GroupLayer) {
-        const lyrs = lyr.getLayers().getArray();
+  /**
+   * **Static** Determine if a given layer group contains base layers
+   * @param {ol/layer/Group~GroupLayer} grp GroupLayer to test
+   * @returns {boolean}
+   */
+  static isBaseGroup(grp: GroupLayer): boolean {
+    if (grp instanceof GroupLayer) {
+        const lyrs = grp.getLayers().getArray();
         return lyrs.length && lyrs[0].get('type') === 'base';
     } else {
         return false;
     }
   }
 
-  static setGroupVisibility(map: PluggableMap) {
+  protected static setGroupVisibility(map: PluggableMap) {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
     }).reverse();
     // console.log(groups.map(g => g.get('title')));
-    groups.forEach(function (group) {
+    groups.forEach(function (grp) {
       // TODO Can we use getLayersArray, is it public in the esm build?
-      const descendantVisibility = group.getLayersArray().map(function (l) {
+      const descendantVisibility = grp.getLayersArray().map(function (l) {
         const state = l.getVisible();
         // console.log('>', l.get('title'), state);
         return state;
@@ -315,23 +320,23 @@ export default class LayerSwitcher extends Control {
           return v === true;
         })
       ) {
-        group.setVisible(true);
-        group.set('indeterminate', false);
+        grp.setVisible(true);
+        grp.set('indeterminate', false);
       } else if (
         descendantVisibility.every(function (v) {
           return v === false;
         })
       ) {
-        group.setVisible(false);
-        group.set('indeterminate', false);
+        grp.setVisible(false);
+        grp.set('indeterminate', false);
       } else {
-        group.setVisible(true);
-        group.set('indeterminate', true);
+        grp.setVisible(true);
+        grp.set('indeterminate', true);
       }
     });
   }
 
-  static setChildVisibility(map: PluggableMap) {
+  protected static setChildVisibility(map: PluggableMap) {
     // console.log('setChildVisibility');
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return l instanceof GroupLayer && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
@@ -355,11 +360,15 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Ensure only the top-most base layer is visible if more than one is visible.
+   * Ensure only the top-most base layer is visible if more than one is visible.
    * @param {ol/Map~Map} map The map instance.
-   * @private
+   * @param {String} groupSelectStyle either:
+   *   `'none'` - groups don't get a checkbox,
+   *   `'children'` (default) groups have a checkbox and affect child visibility or
+   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @protected
    */
-  protected static ensureTopVisibleBaseLayerShown_(map: PluggableMap, groupSelectStyle: GroupSelectStyle) {
+  protected static ensureTopVisibleBaseLayerShown(map: PluggableMap, groupSelectStyle: GroupSelectStyle) {
     var lastVisibleBaseLyr;
     LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
       if (l.get('type') === 'base' && l.getVisible()) {
@@ -375,16 +384,23 @@ export default class LayerSwitcher extends Control {
       );
   }
 
-  static getGroupsAndLayers(lyr: PluggableMap | GroupLayer, filterFn: Function): BaseLayer[] {
+  /**
+   * **Static** Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
+   * contained by the specified map or layer group; optionally filtering via `filterFn`
+   * @param {ol/Map~Map|ol/layer/Group~GroupLayer} grp The map or layer group for which layers are found.
+   * @param {Function} filterFn Optional function used to filter the returned layers
+   * @returns {Array<ol/layer/Base~BaseLayer>}
+   */
+  static getGroupsAndLayers(grp: PluggableMap | GroupLayer, filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean): BaseLayer[] {
     const layers = [];
     filterFn =
       filterFn ||
       function (l, idx, a) {
         return true;
       };
-    LayerSwitcher.forEachRecursive(lyr, function (l, idx, a) {
+    LayerSwitcher.forEachRecursive(grp, function (l, idx, arr) {
       if (l.get('title')) {
-        if (filterFn(l, idx, a)) {
+        if (filterFn(l, idx, arr)) {
           layers.push(l);
         }
       }
@@ -393,10 +409,10 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Toggle the visible state of a layer.
+   * Toggle the visible state of a layer.
    * Takes care of hiding other layers in the same exclusive group if the layer
    * is toggle to visible.
-   * @private
+   * @protected
    * @param {ol/Map~Map} map The map instance.
    * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
    * @param {Boolean} visible Set whether the layer is shown
@@ -404,8 +420,9 @@ export default class LayerSwitcher extends Control {
    *   `'none'` - groups don't get a checkbox,
    *   `'children'` (default) groups have a checkbox and affect child visibility or
    *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @protected
    */
-  static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle) {
+  protected static setVisible_(map: PluggableMap, lyr: BaseLayer, visible: boolean, groupSelectStyle: GroupSelectStyle) {
     // console.log(lyr.get('title'), visible, groupSelectStyle);
     lyr.setVisible(visible);
     if (visible && lyr.get('type') === 'base') {
@@ -428,8 +445,7 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Render all layers that are children of a group.
-   * @private
+   * Render all layers that are children of a group.
    * @param {ol/Map~Map} map The map instance.
    * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
    * @param {Number} idx Position in parent group list.
@@ -440,8 +456,9 @@ export default class LayerSwitcher extends Control {
    * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
    * @param {Function} render Callback for change event on layer
    * @returns {HTMLElement} List item containing layer control markup
+   * @protected
    */
-  static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function) {
+  protected static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function) {
     var li = document.createElement('li');
 
     var lyrTitle = lyr.get('title');
@@ -536,8 +553,7 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Render all layers that are children of a group.
-   * @private
+   * Render all layers that are children of a group.
    * @param {ol/Map~Map} map The map instance.
    * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
    * @param {Element} elm DOM element that children will be appended to.
@@ -547,8 +563,9 @@ export default class LayerSwitcher extends Control {
    *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
    * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
    * @param {Function} render Callback for change event on layer
+   * @protected
    */
-  static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function) {
+  protected static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function) {
     var lyrs = lyr.getLayers().getArray().slice();
     if (options.reverse) lyrs = lyrs.reverse();
     for (var i = 0, l; i < lyrs.length; i++) {
@@ -591,12 +608,12 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * @private
-   * @desc Apply workaround to enable scrolling of overflowing content within an
+   * Apply workaround to enable scrolling of overflowing content within an
    * element. Adapted from https://gist.github.com/chrismbarr/4107472
    * @param {HTMLElement} elm Element on which to enable touch scrolling
+   * @protected
    */
-  static enableTouchScroll_(elm: HTMLElement) {
+  protected static enableTouchScroll_(elm: HTMLElement) {
     if (LayerSwitcher.isTouchDevice_()) {
       var scrollStartPos = 0;
       elm.addEventListener(
@@ -617,12 +634,12 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * @private
-   * @desc Determine if the current browser supports touch events. Adapted from
+   * Determine if the current browser supports touch events. Adapted from
    * https://gist.github.com/chrismbarr/4107472
    * @returns {Boolean} True if client can have 'TouchEvent' event
+   * @protected
    */
-  static isTouchDevice_() {
+  protected static isTouchDevice_(): boolean {
     try {
       document.createEvent('TouchEvent');
       return true;
@@ -633,11 +650,11 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Fold/unfold layer group
-   * @private
    * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
    * @param {HTMLElement} li List item containing layer group
+   * @protected
    */
-  static toggleFold_(lyr: GroupLayer, li: HTMLElement) {
+  protected static toggleFold_(lyr: GroupLayer, li: HTMLElement) {
     li.classList.remove(CSS_PREFIX + lyr.get('fold'));
     lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
     li.classList.add(CSS_PREFIX + lyr.get('fold'));
@@ -645,11 +662,11 @@ export default class LayerSwitcher extends Control {
 
   /**
    * If a valid groupSelectStyle value is not provided then return the default
-   * @private
    * @param {String} groupSelectStyle The string to check for validity
    * @returns {String} The value groupSelectStyle, if valid, the default otherwise
+   * @protected
    */
-  static getGroupSelectStyle(groupSelectStyle: GroupSelectStyle): GroupSelectStyle {
+  protected static getGroupSelectStyle(groupSelectStyle: GroupSelectStyle): GroupSelectStyle {
     return ['none', 'children', 'group'].indexOf(groupSelectStyle) >= 0
       ? groupSelectStyle
       : 'children';
