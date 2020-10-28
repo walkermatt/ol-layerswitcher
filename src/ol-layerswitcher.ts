@@ -304,7 +304,7 @@ export default class LayerSwitcher extends Control {
   protected static setGroupVisibility(map: PluggableMap) {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
-      return l.getLayers && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
+      return l instanceof GroupLayer && !l.get('combine') && !LayerSwitcher.isBaseGroup(l);
     }).reverse();
     // console.log(groups.map(g => g.get('title')));
     groups.forEach(function (grp) {
