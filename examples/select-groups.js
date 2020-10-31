@@ -114,7 +114,7 @@
   select.add(createOption('group'));
   select.add(createOption('none'));
 
-  select.onchange = function (e) {
+  select.onchange = function (_e) {
     map.removeControl(layerSwitcher);
     layerSwitcher = new ol.control.LayerSwitcher({
       activationMode: 'click',

@@ -5,7 +5,9 @@
   "main": "dist/ol-layerswitcher.js",
   "module": "dist/ol-layerswitcher.js",
   "types": "dist/ol-layerswitcher.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/walkermatt/ol-layerswitcher.git"
@@ -30,9 +32,9 @@
   "scripts": {
     "watch": "chokidar 'src/**' --initial --command 'WATCH=1 rollup --config rollup.config.js'",
     "doc": "documentation readme tmp/ol-layerswitcher.js --quiet  --access=public --access=undefined --section=API  && prettier --write README.md",
-    "lint": "eslint src examples && prettier --check .",
-    "format": "eslint --fix src examples && prettier --write .",
-    "build": "tsc --pretty && npm run doc && rollup --config rollup.config.js && cp src/ol-layerswitcher.css dist/"
+    "lint": "eslint src/*.ts examples && prettier --check src examples",
+    "format": "eslint --fix src/*.ts examples && prettier --write src examples",
+    "build": "npm run lint && tsc --pretty && npm run doc && rollup --config rollup.config.js && cp src/ol-layerswitcher.css dist/"
   },
   "peerDependencies": {
     "ol": ">=5.0.0"
@@ -55,27 +57,30 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0"
   },
   "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
     "extends": [
-      "openlayers",
-      "plugin:prettier/recommended"
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
     ],
     "rules": {
-      "object-curly-spacing": "off",
-      "no-var": "off",
-      "prettier/prettier": [
+      "@typescript-eslint/no-unused-vars": [
         "error",
         {
-          "singleQuote": true,
-          "quoteProps": "consistent",
-          "bracketSpacing": true
+          "argsIgnorePattern": "^_"
         }
       ]
     },
     "globals": {
-      "ol": "readonly"
+      "ol": "readonly",
+      "document": "writable"
     }
   },
   "prettier": {

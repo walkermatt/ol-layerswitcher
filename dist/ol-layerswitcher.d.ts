@@ -6,14 +6,14 @@ import BaseLayer from 'ol/layer/Base';
 import GroupLayer from 'ol/layer/Group';
 import { Options as BaseLayerOptions } from 'ol/layer/Base';
 import { Options as GroupLayerOptions } from 'ol/layer/Group';
-declare module "ol/layer/Base" {
+declare module 'ol/layer/Base' {
     interface BaseLayerOptions {
         title?: string;
         type?: string;
         indeterminate?: boolean;
     }
 }
-declare module "ol/layer/Group" {
+declare module 'ol/layer/Group' {
     interface GroupLayerOptions {
         combine?: boolean;
         fold?: boolean;
@@ -147,7 +147,7 @@ export default class LayerSwitcher extends Control {
      * @returns {HTMLElement} List item containing layer control markup
      * @protected
      */
-    protected static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: Function): HTMLLIElement;
+    protected static renderLayer_(map: PluggableMap, lyr: BaseLayer, idx: number, options: RenderOptions, render: (changedLyr: BaseLayer) => void): HTMLElement;
     /**
      * Render all layers that are children of a group.
      * @param {ol/Map~Map} map The map instance.
@@ -161,7 +161,7 @@ export default class LayerSwitcher extends Control {
      * @param {Function} render Callback for change event on layer
      * @protected
      */
-    protected static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: Function): void;
+    protected static renderLayers_(map: PluggableMap, lyr: PluggableMap | GroupLayer, elm: HTMLElement, options: RenderOptions, render: (changedLyr: BaseLayer) => void): void;
     /**
      * **Static** Call the supplied function for each layer in the passed layer group
      * recursing nested groups.

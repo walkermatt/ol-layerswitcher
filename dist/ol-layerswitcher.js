@@ -157,7 +157,6 @@ var LayerSwitcher = function (_Control) {
         _this.panel.className = 'panel';
         element.appendChild(_this.panel);
         LayerSwitcher.enableTouchScroll_(_this.panel);
-        var this_ = _this;
         button.textContent = label;
         element.classList.add(CSS_PREFIX + 'group-select-style-' + _this.groupSelectStyle);
         element.classList.add(CSS_PREFIX + 'activation-mode-' + _this.activationMode);
@@ -171,13 +170,13 @@ var LayerSwitcher = function (_Control) {
             }
             button.onclick = function (e) {
                 var evt = e || window.event;
-                if (this_.element.classList.contains(this_.shownClassName)) {
-                    this_.hidePanel();
+                if (_this.element.classList.contains(_this.shownClassName)) {
+                    _this.hidePanel();
                     button.textContent = label;
                     button.setAttribute('title', tipLabel);
                     button.setAttribute('aria-label', tipLabel);
                 } else {
-                    this_.showPanel();
+                    _this.showPanel();
                     button.textContent = collapseLabel;
                     button.setAttribute('title', collapseTipLabel);
                     button.setAttribute('aria-label', collapseTipLabel);
@@ -185,18 +184,17 @@ var LayerSwitcher = function (_Control) {
                 evt.preventDefault();
             };
         } else {
-            button.onmouseover = function (e) {
-                this_.showPanel();
+            button.onmouseover = function () {
+                _this.showPanel();
             };
             button.onclick = function (e) {
                 var evt = e || window.event;
-                this_.showPanel();
+                _this.showPanel();
                 evt.preventDefault();
             };
-            this_.panel.onmouseout = function (e) {
-                var evt = e || window.event;
-                if (!this_.panel.contains(evt.toElement || evt.relatedTarget)) {
-                    this_.hidePanel();
+            _this.panel.onmouseout = function (evt) {
+                if (!_this.panel.contains(evt.relatedTarget)) {
+                    _this.hidePanel();
                 }
             };
         }
@@ -211,6 +209,8 @@ var LayerSwitcher = function (_Control) {
     createClass(LayerSwitcher, [{
         key: 'setMap',
         value: function setMap(map) {
+            var _this2 = this;
+
             // Clean up listeners associated with the previous map
             for (var i = 0; i < this.mapListeners.length; i++) {
                 ol_Observable.unByKey(this.mapListeners[i]);
@@ -225,9 +225,8 @@ var LayerSwitcher = function (_Control) {
                     this.renderPanel();
                 }
                 if (this.activationMode !== 'click') {
-                    var this_ = this;
                     this.mapListeners.push(map.on('pointerdown', function () {
-                        this_.hidePanel();
+                        _this2.hidePanel();
                     }));
                 }
             }
@@ -295,7 +294,7 @@ var LayerSwitcher = function (_Control) {
             }
             // Reset indeterminate state for all layers and groups before
             // applying based on groupSelectStyle
-            LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+            LayerSwitcher.forEachRecursive(map, function (l, _idx, _a) {
                 l.set('indeterminate', false);
             });
             if (options.groupSelectStyle === 'children' || options.groupSelectStyle === 'none') {
@@ -309,8 +308,7 @@ var LayerSwitcher = function (_Control) {
             var ul = document.createElement('ul');
             panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
-            LayerSwitcher.renderLayers_(map, map, ul, options, function render(changedLyr) {
-                // console.log('render');
+            LayerSwitcher.renderLayers_(map, map, ul, options, function render(_changedLyr) {
                 LayerSwitcher.renderPanel(map, panel, options);
             });
             // Create the event.
@@ -400,10 +398,10 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'ensureTopVisibleBaseLayerShown',
         value: function ensureTopVisibleBaseLayerShown(map, groupSelectStyle) {
-            var lastVisibleBaseLyr;
-            LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
-                if (l.get('type') === 'base' && l.getVisible()) {
-                    lastVisibleBaseLyr = l;
+            var lastVisibleBaseLyr = void 0;
+            LayerSwitcher.forEachRecursive(map, function (lyr, _idx, _arr) {
+                if (lyr.get('type') === 'base' && lyr.getVisible()) {
+                    lastVisibleBaseLyr = lyr;
                 }
             });
             if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
@@ -420,13 +418,13 @@ var LayerSwitcher = function (_Control) {
         key: 'getGroupsAndLayers',
         value: function getGroupsAndLayers(grp, filterFn) {
             var layers = [];
-            filterFn = filterFn || function (lyr, idx, arr) {
+            filterFn = filterFn || function (_lyr, _idx, _arr) {
                 return true;
             };
-            LayerSwitcher.forEachRecursive(grp, function (l, idx, arr) {
-                if (l.get('title')) {
-                    if (filterFn(l, idx, arr)) {
-                        layers.push(l);
+            LayerSwitcher.forEachRecursive(grp, function (lyr, idx, arr) {
+                if (lyr.get('title')) {
+                    if (filterFn(lyr, idx, arr)) {
+                        layers.push(lyr);
                     }
                 }
             });
@@ -454,7 +452,7 @@ var LayerSwitcher = function (_Control) {
             lyr.setVisible(visible);
             if (visible && lyr.get('type') === 'base') {
                 // Hide all other base layers regardless of grouping
-                LayerSwitcher.forEachRecursive(map, function (l, idx, a) {
+                LayerSwitcher.forEachRecursive(map, function (l, _idx, _arr) {
                     if (l != lyr && l.get('type') === 'base') {
                         l.setVisible(false);
                     }
@@ -507,17 +505,17 @@ var LayerSwitcher = function (_Control) {
                     li.appendChild(btn);
                 }
                 if (!isBaseGroup && options.groupSelectStyle != 'none') {
-                    var _input = document.createElement('input');
-                    _input.type = 'checkbox';
-                    _input.id = checkboxId;
-                    _input.checked = lyr.getVisible();
-                    _input.indeterminate = lyr.get('indeterminate');
-                    _input.onchange = function (e) {
+                    var input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.id = checkboxId;
+                    input.checked = lyr.getVisible();
+                    input.indeterminate = lyr.get('indeterminate');
+                    input.onchange = function (e) {
                         var target = e.target;
                         LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
                         render(lyr);
                     };
-                    li.appendChild(_input);
+                    li.appendChild(input);
                     label.htmlFor = checkboxId;
                 }
                 label.innerHTML = lyrTitle;
@@ -527,22 +525,22 @@ var LayerSwitcher = function (_Control) {
                 LayerSwitcher.renderLayers_(map, lyr, ul, options, render);
             } else {
                 li.className = 'layer';
-                var input = document.createElement('input');
+                var _input = document.createElement('input');
                 if (lyr.get('type') === 'base') {
-                    input.type = 'radio';
-                    input.name = 'base';
+                    _input.type = 'radio';
+                    _input.name = 'base';
                 } else {
-                    input.type = 'checkbox';
+                    _input.type = 'checkbox';
                 }
-                input.id = checkboxId;
-                input.checked = lyr.get('visible');
-                input.indeterminate = lyr.get('indeterminate');
-                input.onchange = function (e) {
+                _input.id = checkboxId;
+                _input.checked = lyr.get('visible');
+                _input.indeterminate = lyr.get('indeterminate');
+                _input.onchange = function (e) {
                     var target = e.target;
                     LayerSwitcher.setVisible_(map, lyr, target.checked, options.groupSelectStyle);
                     render(lyr);
                 };
-                li.appendChild(input);
+                li.appendChild(_input);
                 label.htmlFor = checkboxId;
                 label.innerHTML = lyrTitle;
                 var rsl = map.getView().getResolution();
@@ -678,7 +676,7 @@ var LayerSwitcher = function (_Control) {
     }]);
     return LayerSwitcher;
 }(Control);
-if (window.ol && window.ol.control) {
+if (window['ol'] && window['ol']['control']) {
     window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
 }
 
