@@ -31,7 +31,7 @@
   },
   "scripts": {
     "watch": "chokidar 'src/**' --initial --command 'WATCH=1 rollup --config rollup.config.js'",
-    "doc": "documentation readme tmp/ol-layerswitcher.js --quiet  --access=public --access=undefined --section=API  && prettier --write README.md",
+    "doc": "documentation readme src/ol-layerswitcher.ts  --quiet=true --access=public --access=undefined --section=API --parse-extension ts && node scripts/external-links.js README.md && prettier --write README.md",
     "lint": "eslint src/*.ts examples && prettier --check src examples",
     "format": "eslint --fix src/*.ts examples && prettier --write src examples",
     "build": "npm run lint && tsc --pretty && npm run doc && rollup --config rollup.config.js && cp src/ol-layerswitcher.css dist/"
@@ -41,10 +41,12 @@
   },
   "devDependencies": {
     "@types/ol": "^6.4.1",
+    "@typescript-eslint/eslint-plugin": "^4.6.0",
+    "@typescript-eslint/parser": "^4.6.0",
     "babel-plugin-external-helpers": "^6.22.0",
     "babel-preset-env": "^1.6.1",
     "chokidar-cli": "^1.2.2",
-    "documentation": "^5.3.5",
+    "documentation": "^13.1.0",
     "eslint-config-openlayers": "^14.0.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.1.4",
@@ -57,9 +59,7 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
-    "typescript": "^4.0.3",
-    "@typescript-eslint/eslint-plugin": "^4.6.0",
-    "@typescript-eslint/parser": "^4.6.0"
+    "typescript": "^4.0.3"
   },
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",

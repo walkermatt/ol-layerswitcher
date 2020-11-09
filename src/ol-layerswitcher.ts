@@ -4,67 +4,60 @@ import { unByKey } from 'ol/Observable';
 import { Options as ControlOptions } from 'ol/control/Control';
 import PluggableMap from 'ol/PluggableMap';
 import BaseLayer from 'ol/layer/Base';
-import GroupLayer from 'ol/layer/Group';
-
-// Extend OpenLayers layer and group options types to include the properties
-// used by ol-layerswitcher such as `title`, `type`, `fold` etc.
+import LayerGroup from 'ol/layer/Group';
 import { Options as BaseLayerOptions } from 'ol/layer/Base';
 import { Options as GroupLayerOptions } from 'ol/layer/Group';
 
-declare module 'ol/layer/Base' {
-  interface BaseLayerOptions {
-    title?: string;
-    type?: string;
-    indeterminate?: boolean;
-  }
-}
-
-declare module 'ol/layer/Group' {
-  interface GroupLayerOptions {
-    combine?: boolean;
-    fold?: boolean;
-  }
-}
-
+/**
+ * @protected
+ */
 const CSS_PREFIX = 'layer-switcher-';
 
-type GroupSelectStyle = 'none' | 'children' | 'group';
-
-interface RenderOptions {
-  groupSelectStyle?: GroupSelectStyle;
-  reverse?: boolean;
-}
-
-interface Options extends ControlOptions, RenderOptions {
-  activationMode?: 'mouseover' | 'click';
-  startActive?: boolean;
-  label?: string;
-  collapseLabel?: string;
-  tipLabel?: string;
-  collapseTipLabel?: string;
-  target?: string;
-}
-
 /**
- * OpenLayers Layer Switcher Control.
- * See [the examples](./examples) for usage.
+ * OpenLayers Layer Switcher Control, displays a list of layers and groups
+ * associated with a map which have a `title` property.
+ *
+ * To be shown in the Layer Switcher panel layers should have a `title` property;
+ * base map layers should have a `type` property set to `base`. Group layers
+ * (LayerGroup) can be used to visually group layers together; a group
+ * with a `fold` property set to either `'open'` or `'close'` will be displayed
+ * with a toggle.
+ *
+ * Layer and group properties can either be set by adding extra properties
+ * to their options when they are created or via their set method.
+ *
+ * Specify a `title` for a Layer by adding a `title` property to it's options object:
+ * ```javascript
+ * var lyr = new ol.layer.Tile({
+ *   // Specify a title property which will be displayed by the layer switcher
+ *   title: 'OpenStreetMap',
+ *   visible: true,
+ *   source: new ol.source.OSM()
+ * })
+ * ```
+ *
+ * Alternatively the properties can be set via the `set` method after a layer has been created:
+ * ```javascript
+ * var lyr = new ol.layer.Tile({
+ *   visible: true,
+ *   source: new ol.source.OSM()
+ * })
+ * // Specify a title property which will be displayed by the layer switcher
+ * lyr.set('title', 'OpenStreetMap');
+ * ```
+ *
+ * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+ * ```javascript
+ * var layerSwitcher = new LayerSwitcher({
+ *   reverse: true,
+ *   groupSelectStyle: 'group'
+ * });
+ * map.addControl(layerSwitcher);
+ * ```
+ *
  * @constructor
  * @extends {ol/control/Control~Control}
- * @param {Object} opt_options Control options, extends ol/control/Control~Control#options adding:
- * @param {boolean} opt_options.startActive Whether panel is open when created. Defaults to false.
- * @param {String} opt_options.activationMode Event to use on the button to collapse or expand the panel.
- *   `'mouseover'` (default) the layerswitcher panel stays expanded while button or panel are hovered.
- *   `'click'` a click on the button toggles the layerswitcher visibility.
- * @param {String} opt_options.collapseLabel Text label to use for the expanded layerswitcher button. E.g.:
- *   `'»'` (default) or `'\u00BB'`, `'-'` or `'\u2212'`. Not visible if activation mode is `'mouseover'`
- * @param {String} opt_options.label Text label to use for the collapsed layerswitcher button. E.g.:
- *   `''` (default), `'«'` or `'\u00AB'`, `'+'`.
- * @param {String} opt_options.tipLabel the button tooltip.
- * @param {String} opt_options.collapseTipLabel the button tooltip when the panel is open.
- * @param {String} opt_options.groupSelectStyle either `'none'` - groups don't get a checkbox,
- *   `'children'` (default) groups have a checkbox and affect child visibility or
- *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
- * @param {boolean} opt_options.reverse Reverse the layer order. Defaults to true.
+ * @param opt_options LayerSwitcher options, see  [LayerSwitcher Options](#options) and [RenderOptions](#renderoptions) which LayerSwitcher `Options` extends for more details.
  */
 export default class LayerSwitcher extends Control {
   protected activationMode: 'mouseover' | 'click';
@@ -172,7 +165,7 @@ export default class LayerSwitcher extends Control {
       };
 
       this.panel.onmouseout = (evt: MouseEvent) => {
-        if (!this.panel.contains(<HTMLElement>evt.relatedTarget)) {
+        if (!this.panel.contains(evt.relatedTarget as HTMLElement)) {
           this.hidePanel();
         }
       };
@@ -181,7 +174,7 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Set the map instance the control is associated with.
-   * @param {ol/Map~Map} map The map instance.
+   * @param map The map instance.
    */
   setMap(map: PluggableMap): void {
     // Clean up listeners associated with the previous map
@@ -199,9 +192,9 @@ export default class LayerSwitcher extends Control {
       }
       if (this.activationMode !== 'click') {
         this.mapListeners.push(
-          <EventsKey>map.on('pointerdown', () => {
+          map.on('pointerdown', () => {
             this.hidePanel();
-          })
+          }) as EventsKey
         );
       }
     }
@@ -239,14 +232,10 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Re-draw the layer panel to represent the current state of the layers.
-   * @param {ol/Map~Map} map The OpenLayers Map instance to render layers for
-   * @param {Element} panel The DOM Element into which the layer tree will be rendered
-   * @param {Object} options Options for panel, group, and layers
-   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-   *   `'children'` (default) groups have a checkbox and affect child visibility or
-   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
+   * **_[static]_** - Re-draw the layer panel to represent the current state of the layers.
+   * @param map The OpenLayers Map instance to render layers for
+   * @param panel The DOM Element into which the layer tree will be rendered
+   * @param options Options for panel, group, and layers
    */
   static renderPanel(
     map: PluggableMap,
@@ -304,12 +293,11 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Determine if a given layer group contains base layers
-   * @param {ol/layer/Group~GroupLayer} grp GroupLayer to test
-   * @returns {boolean}
+   * **_[static]_** - Determine if a given layer group contains base layers
+   * @param grp Group to test
    */
-  static isBaseGroup(grp: GroupLayer): boolean {
-    if (grp instanceof GroupLayer) {
+  static isBaseGroup(grp: LayerGroup): boolean {
+    if (grp instanceof LayerGroup) {
       const lyrs = grp.getLayers().getArray();
       return lyrs.length && lyrs[0].get('type') === 'base';
     } else {
@@ -321,7 +309,7 @@ export default class LayerSwitcher extends Control {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
-        l instanceof GroupLayer &&
+        l instanceof LayerGroup &&
         !l.get('combine') &&
         !LayerSwitcher.isBaseGroup(l)
       );
@@ -360,13 +348,13 @@ export default class LayerSwitcher extends Control {
     // console.log('setChildVisibility');
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
-        l instanceof GroupLayer &&
+        l instanceof LayerGroup &&
         !l.get('combine') &&
         !LayerSwitcher.isBaseGroup(l)
       );
     });
     groups.forEach(function (grp) {
-      const group = <GroupLayer>grp;
+      const group = grp as LayerGroup;
       // console.log(group.get('title'));
       const groupVisible = group.getVisible();
       const groupIndeterminate = group.get('indeterminate');
@@ -374,7 +362,6 @@ export default class LayerSwitcher extends Control {
         .getLayers()
         .getArray()
         .forEach(function (l) {
-          // console.log('>', l.get('title'));
           l.set('indeterminate', false);
           if ((!groupVisible || groupIndeterminate) && l.getVisible()) {
             l.set('indeterminate', true);
@@ -385,11 +372,8 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Ensure only the top-most base layer is visible if more than one is visible.
-   * @param {ol/Map~Map} map The map instance.
-   * @param {String} groupSelectStyle either:
-   *   `'none'` - groups don't get a checkbox,
-   *   `'children'` (default) groups have a checkbox and affect child visibility or
-   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @param map The map instance.
+   * @param groupSelectStyle
    * @protected
    */
   protected static ensureTopVisibleBaseLayerShown(
@@ -412,14 +396,13 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
+   * **_[static]_** - Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
    * contained by the specified map or layer group; optionally filtering via `filterFn`
-   * @param {ol/Map~Map|ol/layer/Group~GroupLayer} grp The map or layer group for which layers are found.
-   * @param {Function} filterFn Optional function used to filter the returned layers
-   * @returns {Array<ol/layer/Base~BaseLayer>}
+   * @param grp The map or layer group for which layers are found.
+   * @param filterFn Optional function used to filter the returned layers
    */
   static getGroupsAndLayers(
-    grp: PluggableMap | GroupLayer,
+    grp: PluggableMap | LayerGroup,
     filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean
   ): BaseLayer[] {
     const layers = [];
@@ -443,13 +426,10 @@ export default class LayerSwitcher extends Control {
    * Takes care of hiding other layers in the same exclusive group if the layer
    * is toggle to visible.
    * @protected
-   * @param {ol/Map~Map} map The map instance.
-   * @param {ol/layer/Base~BaseLayer} lyr layer whose visibility will be toggled.
-   * @param {Boolean} visible Set whether the layer is shown
-   * @param {String} groupSelectStyle either:
-   *   `'none'` - groups don't get a checkbox,
-   *   `'children'` (default) groups have a checkbox and affect child visibility or
-   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+   * @param map The map instance.
+   * @param lyr layer whose visibility will be toggled.
+   * @param visible Set whether the layer is shown
+   * @param groupSelectStyle
    * @protected
    */
   protected static setVisible_(
@@ -469,7 +449,7 @@ export default class LayerSwitcher extends Control {
       });
     }
     if (
-      lyr instanceof GroupLayer &&
+      lyr instanceof LayerGroup &&
       !lyr.get('combine') &&
       groupSelectStyle === 'children'
     ) {
@@ -481,16 +461,10 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Render all layers that are children of a group.
-   * @param {ol/Map~Map} map The map instance.
-   * @param {ol/layer/Base~BaseLayer} lyr Layer to be rendered (should have a title property).
-   * @param {Number} idx Position in parent group list.
-   * @param {Object} options Options for groups and layers
-   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-   *   `'children'` (default) groups have a checkbox and affect child visibility or
-   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
-   * @param {Function} render Callback for change event on layer
-   * @returns {HTMLElement} List item containing layer control markup
+   * @param map The map instance.
+   * @param lyr Layer to be rendered (should have a title property).
+   * @param idx Position in parent group list.
+   * @param options Options for groups and layers
    * @protected
    */
   protected static renderLayer_(
@@ -508,7 +482,7 @@ export default class LayerSwitcher extends Control {
 
     const label = document.createElement('label');
 
-    if (lyr instanceof GroupLayer && !lyr.get('combine')) {
+    if (lyr instanceof LayerGroup && !lyr.get('combine')) {
       const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
 
       li.classList.add('group');
@@ -536,7 +510,7 @@ export default class LayerSwitcher extends Control {
         input.checked = lyr.getVisible();
         input.indeterminate = lyr.get('indeterminate');
         input.onchange = function (e) {
-          const target = <HTMLInputElement>e.target;
+          const target = e.target as HTMLInputElement;
           LayerSwitcher.setVisible_(
             map,
             lyr,
@@ -568,7 +542,7 @@ export default class LayerSwitcher extends Control {
       input.checked = lyr.get('visible');
       input.indeterminate = lyr.get('indeterminate');
       input.onchange = function (e) {
-        const target = <HTMLInputElement>e.target;
+        const target = e.target as HTMLInputElement;
         LayerSwitcher.setVisible_(
           map,
           lyr,
@@ -595,20 +569,15 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Render all layers that are children of a group.
-   * @param {ol/Map~Map} map The map instance.
-   * @param {ol/layer/Group~LayerGroup} lyr Group layer whose children will be rendered.
-   * @param {Element} elm DOM element that children will be appended to.
-   * @param {Object} options Options for groups and layers
-   * @param {String} options.groupSelectStyle either `'none'` - groups don't get a checkbox,
-   *   `'children'` (default) groups have a checkbox and affect child visibility or
-   *   `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
-   * @param {boolean} options.reverse Reverse the layer order. Defaults to true.
-   * @param {Function} render Callback for change event on layer
+   * @param map The map instance.
+   * @param lyr Group layer whose children will be rendered.
+   * @param elm DOM element that children will be appended to.
+   * @param options Options for groups and layers
    * @protected
    */
   protected static renderLayers_(
     map: PluggableMap,
-    lyr: PluggableMap | GroupLayer,
+    lyr: PluggableMap | LayerGroup,
     elm: HTMLElement,
     options: RenderOptions,
     render: (changedLyr: BaseLayer) => void
@@ -624,26 +593,26 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * **Static** Call the supplied function for each layer in the passed layer group
+   * **_[static]_** - Call the supplied function for each layer in the passed layer group
    * recursing nested groups.
-   * @param {ol/layer/Group~LayerGroup} lyr The layer group to start iterating from.
-   * @param {Function} fn Callback which will be called for each `ol/layer/Base~BaseLayer`
-   * found under `lyr`. The signature for `fn` is the same as `ol/Collection~Collection#forEach`
+   * @param lyr The layer group to start iterating from.
+   * @param fn Callback which will be called for each layer
+   * found under `lyr`.
    */
   static forEachRecursive(
-    lyr: PluggableMap | GroupLayer,
+    lyr: PluggableMap | LayerGroup,
     fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void
   ): void {
     lyr.getLayers().forEach(function (lyr, idx, a) {
       fn(lyr, idx, a);
-      if (lyr instanceof GroupLayer) {
+      if (lyr instanceof LayerGroup) {
         LayerSwitcher.forEachRecursive(lyr, fn);
       }
     });
   }
 
   /**
-   * **Static** Generate a UUID
+   * **_[static]_** - Generate a UUID
    * Adapted from http://stackoverflow.com/a/2117523/526860
    * @returns {String} UUID
    */
@@ -660,7 +629,7 @@ export default class LayerSwitcher extends Control {
   /**
    * Apply workaround to enable scrolling of overflowing content within an
    * element. Adapted from https://gist.github.com/chrismbarr/4107472
-   * @param {HTMLElement} elm Element on which to enable touch scrolling
+   * @param elm Element on which to enable touch scrolling
    * @protected
    */
   protected static enableTouchScroll_(elm: HTMLElement): void {
@@ -700,11 +669,11 @@ export default class LayerSwitcher extends Control {
 
   /**
    * Fold/unfold layer group
-   * @param {ol/layer/Group~LayerGroup} lyr Layer group to fold/unfold
-   * @param {HTMLElement} li List item containing layer group
+   * @param lyr Layer group to fold/unfold
+   * @param li List item containing layer group
    * @protected
    */
-  protected static toggleFold_(lyr: GroupLayer, li: HTMLElement): void {
+  protected static toggleFold_(lyr: LayerGroup, li: HTMLElement): void {
     li.classList.remove(CSS_PREFIX + lyr.get('fold'));
     lyr.set('fold', lyr.get('fold') === 'open' ? 'close' : 'open');
     li.classList.add(CSS_PREFIX + lyr.get('fold'));
@@ -712,8 +681,8 @@ export default class LayerSwitcher extends Control {
 
   /**
    * If a valid groupSelectStyle value is not provided then return the default
-   * @param {String} groupSelectStyle The string to check for validity
-   * @returns {String} The value groupSelectStyle, if valid, the default otherwise
+   * @param groupSelectStyle The string to check for validity
+   * @returns The value groupSelectStyle, if valid, the default otherwise
    * @protected
    */
   protected static getGroupSelectStyle(
@@ -725,10 +694,125 @@ export default class LayerSwitcher extends Control {
   }
 }
 
+/**
+ * **_[interface]_** - LayerSwitcher Options specified when creating a LayerSwitcher
+ * instance, extends [RenderOptions](#renderoptions) and
+ * [Control Options](https://openlayers.org/en/latest/apidoc/module-ol_control_Control-Control.html#Control).
+ *
+ * Default values:
+ * ```javascript
+ * {
+ *   activationMode: 'mouseover',
+ *   startActive: false,
+ *   label: ''
+ *   collapseLabel: '\u00BB',
+ *   tipLabel: 'Legend',
+ *   collapseTipLabel: 'Collapse legend',
+ *   groupSelectStyle: 'children',
+ *   reverse: false
+ * }
+ */
+interface Options extends ControlOptions, RenderOptions {
+  /**
+   * Event to use on the button to collapse or expand the panel. Defaults to
+   * `"mouseover"`.
+   */
+  activationMode?: 'mouseover' | 'click';
+  /**
+   * Whether panel is open when created. Defaults to `false`.
+   */
+  startActive?: boolean;
+  /**
+   * Text label to use for the button that opens the panel. E.g.:  `''` (default), `'«'` or `'\u00AB'`, `'+'`.
+   */
+  label?: string;
+  /**
+   * Text label to use for the button that closes the panel. E.g.: `'»'` (default) or `'\u00BB'`, `'-'` or `'\u2212'`. Only used when `activationMode: 'mouseover'`.
+   */
+  collapseLabel?: string;
+  /**
+   * The button tooltip when the panel is closed.
+   */
+  tipLabel?: string;
+  /**
+   * The button tooltip when the panel is open.
+   */
+  collapseTipLabel?: string;
+}
+
+/**
+ * **_[interface]_** - LayerSwitcher Render Options as passed to [LayerSwitcher
+ * constructor](#layerswitcher) as part of [Options](#options) and [static
+ * LayerSwitcher.renderPanel](#renderpanel)
+ */
+interface RenderOptions {
+  /**
+   * How layers and groups behave when a given layer's visibility is set. See [GroupSelectStyle type for possible values](#groupselectstyle).
+   */
+  groupSelectStyle?: GroupSelectStyle;
+  /**
+   * Should the order of layers in the panel be reversed?
+   */
+  reverse?: boolean;
+}
+
+/**
+ * **_[type]_** - How layers and groups behave when a given layer's visibility is set, either:
+ * - `'none'` - groups don't get a checkbox,
+ * - `'children'` (default) groups have a checkbox and affect child visibility or
+ * - `'group'` groups have a checkbox but do not alter child visibility (like QGIS).
+ */
+type GroupSelectStyle = 'none' | 'children' | 'group';
+
 // Expose LayerSwitcher as ol.control.LayerSwitcher if using a full build of
 // OpenLayers
 if (window['ol'] && window['ol']['control']) {
   window['ol']['control']['LayerSwitcher'] = LayerSwitcher;
+}
+
+// Extend OpenLayers layer and group options types to include the properties
+// used by ol-layerswitcher such as `title`, `type`, `fold` etc.
+
+declare module 'ol/layer/Base' {
+  /**
+   * **_[interface]_** - Extended BaseLayer Options interface adding properties
+   * used by the LayerSwitcher
+   */
+  interface BaseLayerOptions {
+    /**
+     * Title of the layer displayed in the LayerSwitcher panel
+     */
+    title?: string;
+    /**
+     * Type of the layer, a layer of `type: 'base'` is treated as a base map
+     * layer by the LayerSwitcher and is displayed with a radio button
+     */
+    type?: 'base';
+    /**
+     * Internal property used to track the indeterminate state of a layer/ group
+     *
+     * @protected
+     */
+    indeterminate?: boolean;
+  }
+}
+
+declare module 'ol/layer/Group' {
+  /**
+   * **_[interface]_** - Extended LayerGroup Options interface adding
+   * properties used by the LayerSwitcher.
+   */
+  interface GroupLayerOptions {
+    /**
+     * When `true` child layers are not shown in the Layer Switcher panel
+     */
+    combine?: boolean;
+    /**
+     * Fold state of the group, if set then the group will be displayed with a
+     * button to allow the user to show/ hide the child layers.
+     */
+    fold?: 'open' | 'close';
+  }
 }
 
 export { BaseLayerOptions, GroupLayerOptions };
