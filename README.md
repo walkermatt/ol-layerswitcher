@@ -23,7 +23,7 @@ The examples demonstrate usage and can be viewed online thanks to [raw.githack.c
 - [Add layer](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/addlayer.html)
   - Add a layer to an existing layer group after the layer switcher has been added to the map.
 - [Scrolling](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/scroll.html)
-  - Makes the panel scroll vertically, the height of the layer switcher is controlled by setting the `max-height` style (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [src/ol-layerswitcher.css](src/ol-layerswitcher.css)).
+  - Makes the panel scroll vertically, the height of the layer switcher is controlled by setting the `max-height` style (see [examples/scroll.css](examples/scroll.css)) and it's position relative to the bottom of the map (see the `.layer-switcher.shown` selector in [dist/ol-layerswitcher.css](dist/ol-layerswitcher.css)).
 - [Side bar](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/sidebar.html)
   - Demonstrates rendering the layer tree into a [Turbo87/sidebar-v2](https://github.com/Turbo87/sidebar-v2) pane. This uses the static method [`LayerSwitcher.renderPanel`](#renderpanel) which can be used to render the layer tree to any arbitrary HTML element.
 - [Collapse groups](http://raw.githack.com/walkermatt/ol-layerswitcher/master/examples/collapse-groups.html)
