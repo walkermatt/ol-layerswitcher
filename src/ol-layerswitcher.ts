@@ -14,14 +14,19 @@ import { Options as GroupLayerOptions } from 'ol/layer/Group';
 const CSS_PREFIX = 'layer-switcher-';
 
 /**
- * OpenLayers Layer Switcher Control, displays a list of layers and groups
+ * OpenLayers LayerSwitcher Control, displays a list of layers and groups
  * associated with a map which have a `title` property.
  *
- * To be shown in the Layer Switcher panel layers should have a `title` property;
+ * To be shown in the LayerSwitcher panel layers must have a `title` property;
  * base map layers should have a `type` property set to `base`. Group layers
- * (LayerGroup) can be used to visually group layers together; a group
+ * (`LayerGroup`) can be used to visually group layers together; a group
  * with a `fold` property set to either `'open'` or `'close'` will be displayed
  * with a toggle.
+ *
+ * See [BaseLayerOptions](#baselayeroptions) for a full list of LayerSwitcher
+ * properties for layers (`TileLayer`, `ImageLayer`, `VectorTile` etc.) and
+ * [GroupLayerOptions](#grouplayeroptions) for group layer (`LayerGroup`)
+ * LayerSwitcher properties.
  *
  * Layer and group properties can either be set by adding extra properties
  * to their options when they are created or via their set method.

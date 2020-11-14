@@ -7,14 +7,19 @@ import LayerGroup from 'ol/layer/Group';
 import { Options as BaseLayerOptions } from 'ol/layer/Base';
 import { Options as GroupLayerOptions } from 'ol/layer/Group';
 /**
- * OpenLayers Layer Switcher Control, displays a list of layers and groups
+ * OpenLayers LayerSwitcher Control, displays a list of layers and groups
  * associated with a map which have a `title` property.
  *
- * To be shown in the Layer Switcher panel layers should have a `title` property;
+ * To be shown in the LayerSwitcher panel layers must have a `title` property;
  * base map layers should have a `type` property set to `base`. Group layers
- * (LayerGroup) can be used to visually group layers together; a group
+ * (`LayerGroup`) can be used to visually group layers together; a group
  * with a `fold` property set to either `'open'` or `'close'` will be displayed
  * with a toggle.
+ *
+ * See [BaseLayerOptions](#baselayeroptions) for a full list of LayerSwitcher
+ * properties for layers (`TileLayer`, `ImageLayer`, `VectorTile` etc.) and
+ * [GroupLayerOptions](#grouplayeroptions) for group layer (`LayerGroup`)
+ * LayerSwitcher properties.
  *
  * Layer and group properties can either be set by adding extra properties
  * to their options when they are created or via their set method.
@@ -251,22 +256,6 @@ declare module 'ol/layer/Base' {
     /**
      * **_[interface]_** - Extended BaseLayer Options interface adding properties
      * used by the LayerSwitcher
-     *
-     * When defining BaseLayer Options as an object literal in a TypeScript
-     * project casting to `BaseLayerOptions` should avoid compile errors. For
-     * example (notice the `as BaseLayerOptions` after the object literal):
-     *
-     * ```typescript
-     * import { BaseLayerOptions } from 'ol-layerswitcher';
-     *
-     * const stamen = new LayerTile({
-     *   title: 'Water color',
-     *   type: 'base',
-     *   source: new SourceStamen({
-     *     layer: 'watercolor'
-     *   })
-     * } as BaseLayerOptions);
-     * ```
      */
     interface BaseLayerOptions {
         /**
@@ -290,33 +279,6 @@ declare module 'ol/layer/Group' {
     /**
      * **_[interface]_** - Extended LayerGroup Options interface adding
      * properties used by the LayerSwitcher.
-     *
-     * When defining LayerGroup Options as an object literal in a TypeScript
-     * project casting to `GroupLayerOptions` should avoid compile errors. For
-     * example:
-     *
-     * ```typescript
-     * import { BaseLayerOptions, GroupLayerOptions } from 'ol-layerswitcher';
-     *
-     * const stamenWithLabels = new LayerGroup({
-     *     title: 'Water color with labels',
-     *     type: 'base',
-     *     combine: true,
-     *     visible: false,
-     *     layers: [
-     *         new LayerTile({
-     *             source: new SourceStamen({
-     *                 layer: 'watercolor'
-     *             })
-     *         } as BaseLayerOptions),
-     *         new LayerTile({
-     *             source: new SourceStamen({
-     *                 layer: 'terrain-labels'
-     *             })
-     *         } as BaseLayerOptions)
-     *     ]
-     * } as GroupLayerOptions);
-     * ```
      */
     interface GroupLayerOptions {
         /**
