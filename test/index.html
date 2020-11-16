@@ -9,7 +9,7 @@
       href="../node_modules/mocha/mocha.css"
     />
     <link rel="stylesheet" href="https://openlayers.org/en/v6.1.1/css/ol.css" />
-    <link rel="stylesheet" type="text/css" href="../src/ol-layerswitcher.css" />
+    <link rel="stylesheet" type="text/css" href="../dist/ol-layerswitcher.css" />
     <style type="text/css">
       /* Can be useful when writing tests, uncomment the following CSS to always show
            the panel and add a `debugger` statement where you want to inspect the current state */
@@ -22,6 +22,7 @@
   </head>
   <body>
     <div id="mocha"></div>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Array.prototype.includes,Element.prototype.classList,Object.assign,Event,URL"></script>
     <script
       type="text/javascript"
       src="../node_modules/jquery/dist/jquery.js"
