@@ -1,5 +1,20 @@
 # Changelog
 
+## 3.8.0
+
+- Build plain `dist/ol-layerswitcher.js` from `.ts` source as well as
+  TypeScript type definition
+- Improved docs
+- **BREAKING CHANGE**: `ol-layerswitcher.css` has moved from `src` to `dist` in the
+  published package and hence unpkg.com etc. The path is now:
+  `ol-layerswitcher/dist/ol-layerswitcher.css` when importing via Webpack,
+  Parcel etc. or `dist/ol-layerswitcher.css` when loading from unpkg.com.
+
+## 3.8.0-beta.1
+
+- Improve docs
+- Format and lint
+
 ## 3.8.0-beta.0
 
 - Migrate source to TypeScript
