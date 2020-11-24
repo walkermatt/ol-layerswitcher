@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.8.1
+
+- Extended layer options now extend `ol` options directly, improves documentation
+  and completion
+- All interfaces and types are exported as named exports so they can be used as
+  needed in TypeScript projects
+
 ## 3.8.0
 
 - Build plain `dist/ol-layerswitcher.js` from `.ts` source as well as
