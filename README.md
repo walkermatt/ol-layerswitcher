@@ -414,6 +414,8 @@ Type: (`"none"` \| `"children"` \| `"group"`)
 
 ### BaseLayerOptions
 
+**Extends [ol/layer/Base~Options](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base.html#~Options)**
+
 **_[interface]_** - Extended BaseLayer Options interface adding properties
 used by the LayerSwitcher
 
@@ -431,6 +433,8 @@ layer by the LayerSwitcher and is displayed with a radio button
 Type: `"base"`
 
 ### GroupLayerOptions
+
+**Extends [ol/layer/Group~Options](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group.html#~Options), BaseLayerOptions**
 
 **_[interface]_** - Extended LayerGroup Options interface adding
 properties used by the LayerSwitcher.

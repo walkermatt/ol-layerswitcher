@@ -5,8 +5,8 @@ import { Options as ControlOptions } from 'ol/control/Control';
 import PluggableMap from 'ol/PluggableMap';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
-import { Options as BaseLayerOptions } from 'ol/layer/Base';
-import { Options as GroupLayerOptions } from 'ol/layer/Group';
+import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
+import { Options as OlLayerGroupOptions } from 'ol/layer/Group';
 
 /**
  * @protected
@@ -716,6 +716,7 @@ export default class LayerSwitcher extends Control {
  *   groupSelectStyle: 'children',
  *   reverse: false
  * }
+ * ```
  */
 interface Options extends ControlOptions, RenderOptions {
   /**
@@ -778,46 +779,48 @@ if (window['ol'] && window['ol']['control']) {
 // Extend OpenLayers layer and group options types to include the properties
 // used by ol-layerswitcher such as `title`, `type`, `fold` etc.
 
-declare module 'ol/layer/Base' {
+/**
+ * **_[interface]_** - Extended BaseLayer Options interface adding properties
+ * used by the LayerSwitcher
+ */
+interface BaseLayerOptions extends OlLayerBaseOptions {
   /**
-   * **_[interface]_** - Extended BaseLayer Options interface adding properties
-   * used by the LayerSwitcher
+   * Title of the layer displayed in the LayerSwitcher panel
    */
-  interface BaseLayerOptions {
-    /**
-     * Title of the layer displayed in the LayerSwitcher panel
-     */
-    title?: string;
-    /**
-     * Type of the layer, a layer of `type: 'base'` is treated as a base map
-     * layer by the LayerSwitcher and is displayed with a radio button
-     */
-    type?: 'base';
-    /**
-     * Internal property used to track the indeterminate state of a layer/ group
-     *
-     * @protected
-     */
-    indeterminate?: boolean;
-  }
+  title?: string;
+  /**
+   * Type of the layer, a layer of `type: 'base'` is treated as a base map
+   * layer by the LayerSwitcher and is displayed with a radio button
+   */
+  type?: 'base';
+  /**
+   * Internal property used to track the indeterminate state of a layer/ group
+   *
+   * @protected
+   */
+  indeterminate?: boolean;
 }
 
-declare module 'ol/layer/Group' {
+/**
+ * **_[interface]_** - Extended LayerGroup Options interface adding
+ * properties used by the LayerSwitcher.
+ */
+interface GroupLayerOptions extends OlLayerGroupOptions, BaseLayerOptions {
   /**
-   * **_[interface]_** - Extended LayerGroup Options interface adding
-   * properties used by the LayerSwitcher.
+   * When `true` child layers are not shown in the Layer Switcher panel
    */
-  interface GroupLayerOptions {
-    /**
-     * When `true` child layers are not shown in the Layer Switcher panel
-     */
-    combine?: boolean;
-    /**
-     * Fold state of the group, if set then the group will be displayed with a
-     * button to allow the user to show/ hide the child layers.
-     */
-    fold?: 'open' | 'close';
-  }
+  combine?: boolean;
+  /**
+   * Fold state of the group, if set then the group will be displayed with a
+   * button to allow the user to show/ hide the child layers.
+   */
+  fold?: 'open' | 'close';
 }
 
-export { BaseLayerOptions, GroupLayerOptions };
+export {
+  Options,
+  RenderOptions,
+  GroupSelectStyle,
+  BaseLayerOptions,
+  GroupLayerOptions
+};
