@@ -304,7 +304,7 @@ export default class LayerSwitcher extends Control {
   static isBaseGroup(grp: LayerGroup): boolean {
     if (grp instanceof LayerGroup) {
       const lyrs = grp.getLayers().getArray();
-      return lyrs.length && lyrs[0].get('type') === 'base';
+      return lyrs.length && lyrs[0].get('groupName');
     } else {
       return false;
     }
@@ -385,19 +385,20 @@ export default class LayerSwitcher extends Control {
     map: PluggableMap,
     groupSelectStyle: GroupSelectStyle
   ): void {
-    let lastVisibleBaseLyr;
+    let lastVisibleBaseLyr = {};
     LayerSwitcher.forEachRecursive(map, function (lyr, _idx, _arr) {
-      if (lyr.get('type') === 'base' && lyr.getVisible()) {
-        lastVisibleBaseLyr = lyr;
+      if (lyr.get('groupName') && lyr.getVisible()) {
+        lastVisibleBaseLyr[lyr.get('groupName')] = lyr;
       }
     });
-    if (lastVisibleBaseLyr)
+    for (let groupName in lastVisibleBaseLyr) {
       LayerSwitcher.setVisible_(
         map,
-        lastVisibleBaseLyr,
+        lastVisibleBaseLyr[groupName],
         true,
         groupSelectStyle
       );
+    }
   }
 
   /**
@@ -445,10 +446,10 @@ export default class LayerSwitcher extends Control {
   ): void {
     // console.log(lyr.get('title'), visible, groupSelectStyle);
     lyr.setVisible(visible);
-    if (visible && lyr.get('type') === 'base') {
+    if (visible && lyr.get('groupName')) {
       // Hide all other base layers regardless of grouping
       LayerSwitcher.forEachRecursive(map, function (l, _idx, _arr) {
-        if (l != lyr && l.get('type') === 'base') {
+        if (l != lyr && l.get('groupName') === lyr.get('groupName')) {
           l.setVisible(false);
         }
       });
@@ -537,9 +538,10 @@ export default class LayerSwitcher extends Control {
     } else {
       li.className = 'layer';
       const input = document.createElement('input');
-      if (lyr.get('type') === 'base') {
+      const groupName = lyr.get('groupName');
+      if (groupName) {
         input.type = 'radio';
-        input.name = 'base';
+        input.name = groupName;
       } else {
         input.type = 'checkbox';
       }

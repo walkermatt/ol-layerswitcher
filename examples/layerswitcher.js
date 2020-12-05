@@ -12,7 +12,7 @@
             // Setting the layers type to 'base' results
             // in it having a radio button and only one
             // base layer being visibile at a time
-            type: 'base',
+            groupName: 'base',
             // Setting combine to true causes sub-layers to be hidden
             // in the layerswitcher, only the parent is shown
             combine: true,
@@ -34,7 +34,7 @@
             // A layer must have a title to appear in the layerswitcher
             title: 'Water color',
             // Again set this layer as a base layer
-            type: 'base',
+            groupName: 'base',
             visible: false,
             source: new ol.source.Stamen({
               layer: 'watercolor'
@@ -44,7 +44,7 @@
             // A layer must have a title to appear in the layerswitcher
             title: 'OSM',
             // Again set this layer as a base layer
-            type: 'base',
+            groupName: 'base',
             visible: true,
             source: new ol.source.OSM()
           })
@@ -60,6 +60,7 @@
           new ol.layer.Image({
             // A layer must have a title to appear in the layerswitcher
             title: 'Countries',
+            groupName: 'census',
             source: new ol.source.ImageArcGISRest({
               ratio: 1,
               params: { LAYERS: 'show:0' },
@@ -75,6 +76,8 @@
               new ol.layer.Image({
                 // A layer must have a title to appear in the layerswitcher
                 title: 'Local Authority Districts December 2011 Boundaries',
+                groupName: 'census',
+                visible: true,
                 source: new ol.source.ImageArcGISRest({
                   ratio: 1,
                   params: { LAYERS: 'show:0' },
@@ -85,6 +88,7 @@
               new ol.layer.Image({
                 // A layer must have a title to appear in the layerswitcher
                 title: 'Wards',
+                groupName: 'census',
                 visible: false,
                 source: new ol.source.ImageArcGISRest({
                   ratio: 1,
@@ -106,7 +110,9 @@
 
   var layerSwitcher = new ol.control.LayerSwitcher({
     tipLabel: 'Légende', // Optional label for button
-    groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
+    groupSelectStyle: 'children', // Can be 'children' [default], 'group' or 'none'
+    startActive: true,
+    activationMode: 'click'
   });
   map.addControl(layerSwitcher);
 })();

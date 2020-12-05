@@ -355,7 +355,7 @@ var LayerSwitcher = function (_Control) {
         value: function isBaseGroup(grp) {
             if (grp instanceof LayerGroup) {
                 var lyrs = grp.getLayers().getArray();
-                return lyrs.length && lyrs[0].get('type') === 'base';
+                return lyrs.length && lyrs[0].get('groupName');
             } else {
                 return false;
             }
@@ -422,13 +422,15 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'ensureTopVisibleBaseLayerShown',
         value: function ensureTopVisibleBaseLayerShown(map, groupSelectStyle) {
-            var lastVisibleBaseLyr = void 0;
+            var lastVisibleBaseLyr = {};
             LayerSwitcher.forEachRecursive(map, function (lyr, _idx, _arr) {
-                if (lyr.get('type') === 'base' && lyr.getVisible()) {
-                    lastVisibleBaseLyr = lyr;
+                if (lyr.get('groupName') && lyr.getVisible()) {
+                    lastVisibleBaseLyr[lyr.get('groupName')] = lyr;
                 }
             });
-            if (lastVisibleBaseLyr) LayerSwitcher.setVisible_(map, lastVisibleBaseLyr, true, groupSelectStyle);
+            for (var groupName in lastVisibleBaseLyr) {
+                LayerSwitcher.setVisible_(map, lastVisibleBaseLyr[groupName], true, groupSelectStyle);
+            }
         }
         /**
          * **_[static]_** - Get an Array of all layers and groups displayed by the LayerSwitcher (has a `'title'` property)
@@ -470,10 +472,10 @@ var LayerSwitcher = function (_Control) {
         value: function setVisible_(map, lyr, visible, groupSelectStyle) {
             // console.log(lyr.get('title'), visible, groupSelectStyle);
             lyr.setVisible(visible);
-            if (visible && lyr.get('type') === 'base') {
+            if (visible && lyr.get('groupName')) {
                 // Hide all other base layers regardless of grouping
                 LayerSwitcher.forEachRecursive(map, function (l, _idx, _arr) {
-                    if (l != lyr && l.get('type') === 'base') {
+                    if (l != lyr && l.get('groupName') === lyr.get('groupName')) {
                         l.setVisible(false);
                     }
                 });
@@ -540,9 +542,10 @@ var LayerSwitcher = function (_Control) {
             } else {
                 li.className = 'layer';
                 var _input = document.createElement('input');
-                if (lyr.get('type') === 'base') {
+                var groupName = lyr.get('groupName');
+                if (groupName) {
                     _input.type = 'radio';
-                    _input.name = 'base';
+                    _input.name = groupName;
                 } else {
                     _input.type = 'checkbox';
                 }
