@@ -7,6 +7,410 @@
 Control = 'default' in Control ? Control['default'] : Control;
 LayerGroup = 'default' in LayerGroup ? LayerGroup['default'] : LayerGroup;
 
+assert$1.notEqual = notEqual;
+assert$1.notOk = notOk;
+assert$1.equal = equal;
+assert$1.ok = assert$1;
+
+var index$1 = assert$1;
+
+function equal (a, b, m) {
+  assert$1(a == b, m); // eslint-disable-line eqeqeq
+}
+
+function notEqual (a, b, m) {
+  assert$1(a != b, m); // eslint-disable-line eqeqeq
+}
+
+function notOk (t, m) {
+  assert$1(!t, m);
+}
+
+function assert$1 (t, m) {
+  if (!t) throw new Error(m || 'AssertionError')
+}
+
+var events$1 = [
+  // attribute events (can be set with attributes)
+  'onclick',
+  'ondblclick',
+  'onmousedown',
+  'onmouseup',
+  'onmouseover',
+  'onmousemove',
+  'onmouseout',
+  'onmouseenter',
+  'onmouseleave',
+  'ontouchcancel',
+  'ontouchend',
+  'ontouchmove',
+  'ontouchstart',
+  'ondragstart',
+  'ondrag',
+  'ondragenter',
+  'ondragleave',
+  'ondragover',
+  'ondrop',
+  'ondragend',
+  'onkeydown',
+  'onkeypress',
+  'onkeyup',
+  'onunload',
+  'onabort',
+  'onerror',
+  'onresize',
+  'onscroll',
+  'onselect',
+  'onchange',
+  'onsubmit',
+  'onreset',
+  'onfocus',
+  'onblur',
+  'oninput',
+  // other common events
+  'oncontextmenu',
+  'onfocusin',
+  'onfocusout'
+];
+
+var events = events$1;
+var eventsLength = events.length;
+
+var ELEMENT_NODE = 1;
+var TEXT_NODE$1 = 3;
+var COMMENT_NODE = 8;
+
+var morph_1 = morph$2;
+
+// diff elements and apply the resulting patch to the old node
+// (obj, obj) -> null
+function morph$2 (newNode, oldNode) {
+  var nodeType = newNode.nodeType;
+  var nodeName = newNode.nodeName;
+
+  if (nodeType === ELEMENT_NODE) {
+    copyAttrs(newNode, oldNode);
+  }
+
+  if (nodeType === TEXT_NODE$1 || nodeType === COMMENT_NODE) {
+    if (oldNode.nodeValue !== newNode.nodeValue) {
+      oldNode.nodeValue = newNode.nodeValue;
+    }
+  }
+
+  // Some DOM nodes are weird
+  // https://github.com/patrick-steele-idem/morphdom/blob/master/src/specialElHandlers.js
+  if (nodeName === 'INPUT') updateInput(newNode, oldNode);
+  else if (nodeName === 'OPTION') updateOption(newNode, oldNode);
+  else if (nodeName === 'TEXTAREA') updateTextarea(newNode, oldNode);
+
+  copyEvents(newNode, oldNode);
+}
+
+function copyAttrs (newNode, oldNode) {
+  var oldAttrs = oldNode.attributes;
+  var newAttrs = newNode.attributes;
+  var attrNamespaceURI = null;
+  var attrValue = null;
+  var fromValue = null;
+  var attrName = null;
+  var attr = null;
+
+  for (var i = newAttrs.length - 1; i >= 0; --i) {
+    attr = newAttrs[i];
+    attrName = attr.name;
+    attrNamespaceURI = attr.namespaceURI;
+    attrValue = attr.value;
+    if (attrNamespaceURI) {
+      attrName = attr.localName || attrName;
+      fromValue = oldNode.getAttributeNS(attrNamespaceURI, attrName);
+      if (fromValue !== attrValue) {
+        oldNode.setAttributeNS(attrNamespaceURI, attrName, attrValue);
+      }
+    } else {
+      if (!oldNode.hasAttribute(attrName)) {
+        oldNode.setAttribute(attrName, attrValue);
+      } else {
+        fromValue = oldNode.getAttribute(attrName);
+        if (fromValue !== attrValue) {
+          // apparently values are always cast to strings, ah well
+          if (attrValue === 'null' || attrValue === 'undefined') {
+            oldNode.removeAttribute(attrName);
+          } else {
+            oldNode.setAttribute(attrName, attrValue);
+          }
+        }
+      }
+    }
+  }
+
+  // Remove any extra attributes found on the original DOM element that
+  // weren't found on the target element.
+  for (var j = oldAttrs.length - 1; j >= 0; --j) {
+    attr = oldAttrs[j];
+    if (attr.specified !== false) {
+      attrName = attr.name;
+      attrNamespaceURI = attr.namespaceURI;
+
+      if (attrNamespaceURI) {
+        attrName = attr.localName || attrName;
+        if (!newNode.hasAttributeNS(attrNamespaceURI, attrName)) {
+          oldNode.removeAttributeNS(attrNamespaceURI, attrName);
+        }
+      } else {
+        if (!newNode.hasAttributeNS(null, attrName)) {
+          oldNode.removeAttribute(attrName);
+        }
+      }
+    }
+  }
+}
+
+function copyEvents (newNode, oldNode) {
+  for (var i = 0; i < eventsLength; i++) {
+    var ev = events[i];
+    if (newNode[ev]) {           // if new element has a whitelisted attribute
+      oldNode[ev] = newNode[ev];  // update existing element
+    } else if (oldNode[ev]) {    // if existing element has it and new one doesnt
+      oldNode[ev] = undefined;    // remove it from existing element
+    }
+  }
+}
+
+function updateOption (newNode, oldNode) {
+  updateAttribute(newNode, oldNode, 'selected');
+}
+
+// The "value" attribute is special for the <input> element since it sets the
+// initial value. Changing the "value" attribute without changing the "value"
+// property will have no effect since it is only used to the set the initial
+// value. Similar for the "checked" attribute, and "disabled".
+function updateInput (newNode, oldNode) {
+  var newValue = newNode.value;
+  var oldValue = oldNode.value;
+
+  updateAttribute(newNode, oldNode, 'checked');
+  updateAttribute(newNode, oldNode, 'disabled');
+
+  // The "indeterminate" property can not be set using an HTML attribute.
+  // See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox
+  if (newNode.indeterminate !== oldNode.indeterminate) {
+    oldNode.indeterminate = newNode.indeterminate;
+  }
+
+  // Persist file value since file inputs can't be changed programatically
+  if (oldNode.type === 'file') return
+
+  if (newValue !== oldValue) {
+    oldNode.setAttribute('value', newValue);
+    oldNode.value = newValue;
+  }
+
+  if (newValue === 'null') {
+    oldNode.value = '';
+    oldNode.removeAttribute('value');
+  }
+
+  if (!newNode.hasAttributeNS(null, 'value')) {
+    oldNode.removeAttribute('value');
+  } else if (oldNode.type === 'range') {
+    // this is so elements like slider move their UI thingy
+    oldNode.value = newValue;
+  }
+}
+
+function updateTextarea (newNode, oldNode) {
+  var newValue = newNode.value;
+  if (newValue !== oldNode.value) {
+    oldNode.value = newValue;
+  }
+
+  if (oldNode.firstChild && oldNode.firstChild.nodeValue !== newValue) {
+    // Needed for IE. Apparently IE sets the placeholder as the
+    // node value and vise versa. This ignores an empty update.
+    if (newValue === '' && oldNode.firstChild.nodeValue === oldNode.placeholder) {
+      return
+    }
+
+    oldNode.firstChild.nodeValue = newValue;
+  }
+}
+
+function updateAttribute (newNode, oldNode, name) {
+  if (newNode[name] !== oldNode[name]) {
+    oldNode[name] = newNode[name];
+    if (newNode[name]) {
+      oldNode.setAttribute(name, '');
+    } else {
+      oldNode.removeAttribute(name);
+    }
+  }
+}
+
+var assert = index$1;
+var morph = morph_1;
+
+var TEXT_NODE = 3;
+// var DEBUG = false
+
+var index = nanomorph;
+
+// Morph one tree into another tree
+//
+// no parent
+//   -> same: diff and walk children
+//   -> not same: replace and return
+// old node doesn't exist
+//   -> insert new node
+// new node doesn't exist
+//   -> delete old node
+// nodes are not the same
+//   -> diff nodes and apply patch to old node
+// nodes are the same
+//   -> walk all child nodes and append to old node
+function nanomorph (oldTree, newTree, options) {
+  // if (DEBUG) {
+  //   console.log(
+  //   'nanomorph\nold\n  %s\nnew\n  %s',
+  //   oldTree && oldTree.outerHTML,
+  //   newTree && newTree.outerHTML
+  // )
+  // }
+  assert.equal(typeof oldTree, 'object', 'nanomorph: oldTree should be an object');
+  assert.equal(typeof newTree, 'object', 'nanomorph: newTree should be an object');
+
+  if (options && options.childrenOnly) {
+    updateChildren(newTree, oldTree);
+    return oldTree
+  }
+
+  assert.notEqual(
+    newTree.nodeType,
+    11,
+    'nanomorph: newTree should have one root node (which is not a DocumentFragment)'
+  );
+
+  return walk(newTree, oldTree)
+}
+
+// Walk and morph a dom tree
+function walk (newNode, oldNode) {
+  // if (DEBUG) {
+  //   console.log(
+  //   'walk\nold\n  %s\nnew\n  %s',
+  //   oldNode && oldNode.outerHTML,
+  //   newNode && newNode.outerHTML
+  // )
+  // }
+  if (!oldNode) {
+    return newNode
+  } else if (!newNode) {
+    return null
+  } else if (newNode.isSameNode && newNode.isSameNode(oldNode)) {
+    return oldNode
+  } else if (newNode.tagName !== oldNode.tagName || getComponentId(newNode) !== getComponentId(oldNode)) {
+    return newNode
+  } else {
+    morph(newNode, oldNode);
+    updateChildren(newNode, oldNode);
+    return oldNode
+  }
+}
+
+function getComponentId (node) {
+  return node.dataset ? node.dataset.nanomorphComponentId : undefined
+}
+
+// Update the children of elements
+// (obj, obj) -> null
+function updateChildren (newNode, oldNode) {
+  // if (DEBUG) {
+  //   console.log(
+  //   'updateChildren\nold\n  %s\nnew\n  %s',
+  //   oldNode && oldNode.outerHTML,
+  //   newNode && newNode.outerHTML
+  // )
+  // }
+  var oldChild, newChild, morphed, oldMatch;
+
+  // The offset is only ever increased, and used for [i - offset] in the loop
+  var offset = 0;
+
+  for (var i = 0; ; i++) {
+    oldChild = oldNode.childNodes[i];
+    newChild = newNode.childNodes[i - offset];
+    // if (DEBUG) {
+    //   console.log(
+    //   '===\n- old\n  %s\n- new\n  %s',
+    //   oldChild && oldChild.outerHTML,
+    //   newChild && newChild.outerHTML
+    // )
+    // }
+    // Both nodes are empty, do nothing
+    if (!oldChild && !newChild) {
+      break
+
+    // There is no new child, remove old
+    } else if (!newChild) {
+      oldNode.removeChild(oldChild);
+      i--;
+
+    // There is no old child, add new
+    } else if (!oldChild) {
+      oldNode.appendChild(newChild);
+      offset++;
+
+    // Both nodes are the same, morph
+    } else if (same(newChild, oldChild)) {
+      morphed = walk(newChild, oldChild);
+      if (morphed !== oldChild) {
+        oldNode.replaceChild(morphed, oldChild);
+        offset++;
+      }
+
+    // Both nodes do not share an ID or a placeholder, try reorder
+    } else {
+      oldMatch = null;
+
+      // Try and find a similar node somewhere in the tree
+      for (var j = i; j < oldNode.childNodes.length; j++) {
+        if (same(oldNode.childNodes[j], newChild)) {
+          oldMatch = oldNode.childNodes[j];
+          break
+        }
+      }
+
+      // If there was a node with the same ID or placeholder in the old list
+      if (oldMatch) {
+        morphed = walk(newChild, oldMatch);
+        if (morphed !== oldMatch) offset++;
+        oldNode.insertBefore(morphed, oldChild);
+
+      // It's safe to morph two nodes in-place if neither has an ID
+      } else if (!newChild.id && !oldChild.id) {
+        morphed = walk(newChild, oldChild);
+        if (morphed !== oldChild) {
+          oldNode.replaceChild(morphed, oldChild);
+          offset++;
+        }
+
+      // Insert the node at the index if we couldn't morph or find a matching node
+      } else {
+        oldNode.insertBefore(newChild, oldChild);
+        offset++;
+      }
+    }
+  }
+}
+
+function same (a, b) {
+  if (a.id) return a.id === b.id
+  if (a.isSameNode) return a.isSameNode(b)
+  if (a.tagName !== b.tagName) return false
+  if (a.type === TEXT_NODE) return a.nodeValue === b.nodeValue
+  return false
+}
+
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -96,6 +500,7 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+// import morph from 'morphdom/dist/morphdom-esm.js';
 /**
  * @protected
  */
@@ -318,9 +723,9 @@ var LayerSwitcher = function (_Control) {
             options = options || {};
             options.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
             LayerSwitcher.ensureTopVisibleBaseLayerShown(map, options.groupSelectStyle);
-            while (panel.firstChild) {
-                panel.removeChild(panel.firstChild);
-            }
+            // while (panel.firstChild) {
+            //   panel.removeChild(panel.firstChild);
+            // }
             // Reset indeterminate state for all layers and groups before
             // applying based on groupSelectStyle
             LayerSwitcher.forEachRecursive(map, function (l, _idx, _a) {
@@ -335,11 +740,15 @@ var LayerSwitcher = function (_Control) {
                 LayerSwitcher.setChildVisibility(map);
             }
             var ul = document.createElement('ul');
-            panel.appendChild(ul);
             // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
             LayerSwitcher.renderLayers_(map, map, ul, options, function render(_changedLyr) {
                 LayerSwitcher.renderPanel(map, panel, options);
             });
+            if (panel.firstChild) {
+                index(panel.firstChild, ul);
+            } else {
+                panel.appendChild(ul);
+            }
             // Create the event.
             var rendercomplete_event = new Event('rendercomplete');
             // Dispatch the event.
@@ -498,7 +907,12 @@ var LayerSwitcher = function (_Control) {
         value: function renderLayer_(map, lyr, idx, options, render) {
             var li = document.createElement('li');
             var lyrTitle = lyr.get('title');
-            var checkboxId = LayerSwitcher.uuid();
+            // const checkboxId = LayerSwitcher.uuid();
+            var checkboxId = lyr.get('lsId');
+            if (!checkboxId) {
+                lyr.set('lsId', LayerSwitcher.uuid());
+                checkboxId = lyr.get('lsId');
+            }
             var label = document.createElement('label');
             if (lyr instanceof LayerGroup && !lyr.get('combine')) {
                 var isBaseGroup = LayerSwitcher.isBaseGroup(lyr);

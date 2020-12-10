@@ -106,7 +106,9 @@
 
   var layerSwitcher = new ol.control.LayerSwitcher({
     tipLabel: 'Légende', // Optional label for button
-    groupSelectStyle: 'children' // Can be 'children' [default], 'group' or 'none'
+    groupSelectStyle: 'children', // Can be 'children' [default], 'group' or 'none'
+    startActive: true,
+    activationMode: 'click'
   });
   map.addControl(layerSwitcher);
 })();

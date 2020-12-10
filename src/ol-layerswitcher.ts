@@ -8,6 +8,9 @@ import LayerGroup from 'ol/layer/Group';
 import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
 import { Options as OlLayerGroupOptions } from 'ol/layer/Group';
 
+import morph from 'nanomorph';
+// import morph from 'morphdom/dist/morphdom-esm.js';
+
 /**
  * @protected
  */
@@ -260,9 +263,9 @@ export default class LayerSwitcher extends Control {
 
     LayerSwitcher.ensureTopVisibleBaseLayerShown(map, options.groupSelectStyle);
 
-    while (panel.firstChild) {
-      panel.removeChild(panel.firstChild);
-    }
+    // while (panel.firstChild) {
+    //   panel.removeChild(panel.firstChild);
+    // }
 
     // Reset indeterminate state for all layers and groups before
     // applying based on groupSelectStyle
@@ -283,13 +286,18 @@ export default class LayerSwitcher extends Control {
     }
 
     const ul = document.createElement('ul');
-    panel.appendChild(ul);
     // passing two map arguments instead of lyr as we're passing the map as the root of the layers tree
     LayerSwitcher.renderLayers_(map, map, ul, options, function render(
       _changedLyr: BaseLayer
     ) {
       LayerSwitcher.renderPanel(map, panel, options);
     });
+
+    if (panel.firstChild) {
+      morph(panel.firstChild, ul);
+    } else {
+      panel.appendChild(ul);
+    }
 
     // Create the event.
     const rendercomplete_event = new Event('rendercomplete');
@@ -483,7 +491,12 @@ export default class LayerSwitcher extends Control {
 
     const lyrTitle = lyr.get('title');
 
-    const checkboxId = LayerSwitcher.uuid();
+    // const checkboxId = LayerSwitcher.uuid();
+    let checkboxId = lyr.get('lsId');
+    if (!checkboxId) {
+      lyr.set('lsId', LayerSwitcher.uuid());
+      checkboxId = lyr.get('lsId');
+    }
 
     const label = document.createElement('label');
 
