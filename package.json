@@ -1,12 +1,13 @@
 {
   "name": "ol-layerswitcher",
-  "version": "3.8.1",
+  "version": "3.8.2",
   "description": "Layer switcher control for OpenLayers",
   "main": "dist/ol-layerswitcher.js",
   "module": "dist/ol-layerswitcher.js",
   "types": "dist/ol-layerswitcher.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src/ol-layerswitcher.css"
   ],
   "repository": {
     "type": "git",

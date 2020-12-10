@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.8.2
+
+- Include `src/ol-layerswitcher.css` in package to avoid breaking change
+
 ## 3.8.1
 
 - Extended layer options now extend `ol` options directly, improves documentation
