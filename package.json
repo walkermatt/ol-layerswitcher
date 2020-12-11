@@ -5,6 +5,7 @@
   "main": "dist/ol-layerswitcher.js",
   "module": "dist/ol-layerswitcher.js",
   "types": "dist/ol-layerswitcher.d.ts",
+  "style": "dist/ol-layerswitcher.css",
   "files": [
     "dist",
     "src/ol-layerswitcher.css"
