@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.8.3
+
+- Add style field to package.json
+
+Should allow tools like npm-css, rework-npm, and npm-less to import the
+CSS by package name instead of specifying the full path.
+
+```css
+@import "ol-layerswitcher";
+```
+
 ## 3.8.2
 
 - Include `src/ol-layerswitcher.css` in package to avoid breaking change
