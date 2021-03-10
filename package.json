@@ -57,7 +57,7 @@
     "mocha": "~1.20.1",
     "ol": "^6.1.1",
     "prettier": "^2.0.4",
-    "rollup": "^0.41.4",
+    "rollup": "^2.41.0",
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
