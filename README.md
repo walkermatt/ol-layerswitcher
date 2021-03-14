@@ -171,6 +171,8 @@ See [BaseLayerOptions](#baselayeroptions) and [GroupLayerOptions](#grouplayeropt
   - [forEachRecursive](#foreachrecursive)
     - [Parameters](#parameters-5)
   - [uuid](#uuid)
+- [LayerSwitcher#show](#layerswitchershow)
+- [LayerSwitcher#hide](#layerswitcherhide)
 - [Options](#options)
   - [activationMode](#activationmode)
   - [startActive](#startactive)
@@ -258,13 +260,13 @@ Returns **void**
 
 #### showPanel
 
-Show the layer panel.
+Show the layer panel. Fires `'show'` event.
 
 Returns **void**
 
 #### hidePanel
 
-Hide the layer panel.
+Hide the layer panel. Fires `'hide'` event.
 
 Returns **void**
 
@@ -327,6 +329,24 @@ Returns **void**
 Adapted from <http://stackoverflow.com/a/2117523/526860>
 
 Returns **[String](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** UUID
+
+### LayerSwitcher#show
+
+Event triggered after the panel has been shown.
+Listen to the event via the `on` or `once` methods; for example:
+
+```js
+var layerSwitcher = new LayerSwitcher();
+map.addControl(layerSwitcher);
+
+layerSwitcher.on('show', (evt) => {
+  console.log('show', evt);
+});
+```
+
+### LayerSwitcher#hide
+
+Event triggered after the panel has been hidden.
 
 ### Options
 

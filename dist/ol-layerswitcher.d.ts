@@ -78,11 +78,13 @@ export default class LayerSwitcher extends Control {
      */
     setMap(map: PluggableMap): void;
     /**
-     * Show the layer panel.
+     * Show the layer panel. Fires `'show'` event.
+     * @fires LayerSwitcher#show
      */
     showPanel(): void;
     /**
-     * Hide the layer panel.
+     * Hide the layer panel. Fires `'hide'` event.
+     * @fires LayerSwitcher#hide
      */
     hidePanel(): void;
     /**

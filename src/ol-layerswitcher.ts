@@ -197,7 +197,8 @@ export default class LayerSwitcher extends Control {
   }
 
   /**
-   * Show the layer panel.
+   * Show the layer panel. Fires `'show'` event.
+   * @fires LayerSwitcher#show
    */
   showPanel(): void {
     if (!this.element.classList.contains(this.shownClassName)) {
@@ -205,16 +206,35 @@ export default class LayerSwitcher extends Control {
       this.updateButton();
       this.renderPanel();
     }
+    /**
+     * Event triggered after the panel has been shown.
+     * Listen to the event via the `on` or `once` methods; for example:
+     * ```js
+     * var layerSwitcher = new LayerSwitcher();
+     * map.addControl(layerSwitcher);
+     *
+     * layerSwitcher.on('show', evt => {
+     *   console.log('show', evt);
+     * });
+     * @event LayerSwitcher#show
+     */
+    this.dispatchEvent('show');
   }
 
   /**
-   * Hide the layer panel.
+   * Hide the layer panel. Fires `'hide'` event.
+   * @fires LayerSwitcher#hide
    */
   hidePanel(): void {
     if (this.element.classList.contains(this.shownClassName)) {
       this.element.classList.remove(this.shownClassName);
       this.updateButton();
     }
+    /**
+     * Event triggered after the panel has been hidden.
+     * @event LayerSwitcher#hide
+     */
+    this.dispatchEvent('hide');
   }
 
   /**
