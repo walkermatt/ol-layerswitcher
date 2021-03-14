@@ -271,6 +271,7 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'showPanel',
         value: function showPanel() {
+            this.dispatchEvent({ type: 'showPanel' });
             if (!this.element.classList.contains(this.shownClassName)) {
                 this.element.classList.add(this.shownClassName);
                 this.renderPanel();
@@ -283,6 +284,7 @@ var LayerSwitcher = function (_Control) {
     }, {
         key: 'hidePanel',
         value: function hidePanel() {
+            this.dispatchEvent({ type: 'hidePanel' });
             if (this.element.classList.contains(this.shownClassName)) {
                 this.element.classList.remove(this.shownClassName);
             }
