@@ -114,6 +114,48 @@ describe('activationMode option', function () {
         'layer-switcher-activation-mode-click'
       );
     });
+    it('Updates button state when closed via hidePanel', function () {
+      var label = '+';
+      var tipLabel = 'Open layers';
+      var switcher = new LayerSwitcher({
+        startActive: true,
+        activationMode: 'click',
+        label: label,
+        tipLabel: tipLabel,
+      });
+      map.addControl(switcher);
+      switcher.hidePanel();
+      expect(jQuery('.layer-switcher button').text()).to.be(
+        label
+      );
+      expect(jQuery('.layer-switcher button').attr('title')).to.be(
+        tipLabel
+      );
+      expect(jQuery('.layer-switcher button').attr('aria-label')).to.be(
+        tipLabel
+      );
+    });
+    it('Updates button state when opened via showPanel', function () {
+      var collapseLabel = 'x';
+      var collapseTipLabel = 'Close layers';
+      var switcher = new LayerSwitcher({
+        startActive: false,
+        activationMode: 'click',
+        collapseLabel: collapseLabel,
+        collapseTipLabel: collapseTipLabel,
+      });
+      map.addControl(switcher);
+      switcher.showPanel();
+      expect(jQuery('.layer-switcher button').text()).to.be(
+        collapseLabel
+      );
+      expect(jQuery('.layer-switcher button').attr('title')).to.be(
+        collapseTipLabel
+      );
+      expect(jQuery('.layer-switcher button').attr('aria-label')).to.be(
+        collapseTipLabel
+      );
+    });
   });
 
   describe("activationMode: 'mouseover'", function () {

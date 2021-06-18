@@ -159,10 +159,6 @@ var LayerSwitcher = function (_Control) {
         classCallCheck(this, LayerSwitcher);
 
         var options = Object.assign({}, opt_options);
-        // TODO Next: Rename to showButtonTitle
-        var tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
-        // TODO Next: Rename to hideButtonTitle
-        var collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
         var element = document.createElement('div');
 
         var _this = possibleConstructorReturn(this, (LayerSwitcher.__proto__ || Object.getPrototypeOf(LayerSwitcher)).call(this, { element: element, target: options.target }));
@@ -170,9 +166,13 @@ var LayerSwitcher = function (_Control) {
         _this.activationMode = options.activationMode || 'mouseover';
         _this.startActive = options.startActive === true;
         // TODO Next: Rename to showButtonContent
-        var label = options.label !== undefined ? options.label : '';
+        _this.label = options.label !== undefined ? options.label : '';
         // TODO Next: Rename to hideButtonContent
-        var collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
+        _this.collapseLabel = options.collapseLabel !== undefined ? options.collapseLabel : '\xBB';
+        // TODO Next: Rename to showButtonTitle
+        _this.tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
+        // TODO Next: Rename to hideButtonTitle
+        _this.collapseTipLabel = options.collapseTipLabel ? options.collapseTipLabel : 'Collapse legend';
         _this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(options.groupSelectStyle);
         _this.reverse = options.reverse !== false;
         _this.mapListeners = [];
@@ -182,45 +182,31 @@ var LayerSwitcher = function (_Control) {
         }
         _this.shownClassName = 'shown';
         element.className = _this.hiddenClassName;
-        var button = document.createElement('button');
-        button.setAttribute('title', tipLabel);
-        button.setAttribute('aria-label', tipLabel);
-        element.appendChild(button);
+        _this.button = document.createElement('button');
+        element.appendChild(_this.button);
         _this.panel = document.createElement('div');
         _this.panel.className = 'panel';
         element.appendChild(_this.panel);
         LayerSwitcher.enableTouchScroll_(_this.panel);
-        button.textContent = label;
         element.classList.add(CSS_PREFIX + 'group-select-style-' + _this.groupSelectStyle);
         element.classList.add(CSS_PREFIX + 'activation-mode-' + _this.activationMode);
         if (_this.activationMode === 'click') {
             // TODO Next: Remove in favour of layer-switcher-activation-mode-click
             element.classList.add('activationModeClick');
-            if (_this.startActive) {
-                button.textContent = collapseLabel;
-                button.setAttribute('title', collapseTipLabel);
-                button.setAttribute('aria-label', collapseTipLabel);
-            }
-            button.onclick = function (e) {
+            _this.button.onclick = function (e) {
                 var evt = e || window.event;
                 if (_this.element.classList.contains(_this.shownClassName)) {
                     _this.hidePanel();
-                    button.textContent = label;
-                    button.setAttribute('title', tipLabel);
-                    button.setAttribute('aria-label', tipLabel);
                 } else {
                     _this.showPanel();
-                    button.textContent = collapseLabel;
-                    button.setAttribute('title', collapseTipLabel);
-                    button.setAttribute('aria-label', collapseTipLabel);
                 }
                 evt.preventDefault();
             };
         } else {
-            button.onmouseover = function () {
+            _this.button.onmouseover = function () {
                 _this.showPanel();
             };
-            button.onclick = function (e) {
+            _this.button.onclick = function (e) {
                 var evt = e || window.event;
                 _this.showPanel();
                 evt.preventDefault();
@@ -231,6 +217,7 @@ var LayerSwitcher = function (_Control) {
                 }
             };
         }
+        _this.updateButton();
         return _this;
     }
     /**
@@ -273,6 +260,7 @@ var LayerSwitcher = function (_Control) {
         value: function showPanel() {
             if (!this.element.classList.contains(this.shownClassName)) {
                 this.element.classList.add(this.shownClassName);
+                this.updateButton();
                 this.renderPanel();
             }
         }
@@ -285,6 +273,25 @@ var LayerSwitcher = function (_Control) {
         value: function hidePanel() {
             if (this.element.classList.contains(this.shownClassName)) {
                 this.element.classList.remove(this.shownClassName);
+                this.updateButton();
+            }
+        }
+        /**
+         * Update button text content and attributes based on current
+         * state
+         */
+
+    }, {
+        key: 'updateButton',
+        value: function updateButton() {
+            if (this.element.classList.contains(this.shownClassName)) {
+                this.button.textContent = this.collapseLabel;
+                this.button.setAttribute('title', this.collapseTipLabel);
+                this.button.setAttribute('aria-label', this.collapseTipLabel);
+            } else {
+                this.button.textContent = this.label;
+                this.button.setAttribute('title', this.tipLabel);
+                this.button.setAttribute('aria-label', this.tipLabel);
             }
         }
         /**
