@@ -62,10 +62,15 @@ export default class LayerSwitcher extends Control {
     protected startActive: boolean;
     protected groupSelectStyle: 'none' | 'children' | 'group';
     protected reverse: boolean;
+    protected label: string;
+    protected collapseLabel: string;
+    protected tipLabel: string;
+    protected collapseTipLabel: string;
     protected mapListeners: Array<EventsKey>;
     protected hiddenClassName: string;
     protected shownClassName: string;
     protected panel: HTMLElement;
+    protected button: HTMLElement;
     constructor(opt_options?: Options);
     /**
      * Set the map instance the control is associated with.
@@ -80,6 +85,11 @@ export default class LayerSwitcher extends Control {
      * Hide the layer panel.
      */
     hidePanel(): void;
+    /**
+     * Update button text content and attributes based on current
+     * state
+     */
+    protected updateButton(): void;
     /**
      * Re-draw the layer panel to represent the current state of the layers.
      */

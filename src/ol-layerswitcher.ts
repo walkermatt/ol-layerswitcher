@@ -69,20 +69,17 @@ export default class LayerSwitcher extends Control {
   protected startActive: boolean;
   protected groupSelectStyle: 'none' | 'children' | 'group';
   protected reverse: boolean;
+  protected label: string;
+  protected collapseLabel: string;
+  protected tipLabel: string;
+  protected collapseTipLabel: string;
   protected mapListeners: Array<EventsKey>;
   protected hiddenClassName: string;
   protected shownClassName: string;
   protected panel: HTMLElement;
+  protected button: HTMLElement;
   constructor(opt_options?: Options) {
     const options = Object.assign({}, opt_options);
-
-    // TODO Next: Rename to showButtonTitle
-    const tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
-
-    // TODO Next: Rename to hideButtonTitle
-    const collapseTipLabel = options.collapseTipLabel
-      ? options.collapseTipLabel
-      : 'Collapse legend';
 
     const element = document.createElement('div');
 
@@ -93,11 +90,19 @@ export default class LayerSwitcher extends Control {
     this.startActive = options.startActive === true;
 
     // TODO Next: Rename to showButtonContent
-    const label = options.label !== undefined ? options.label : '';
+    this.label = options.label !== undefined ? options.label : '';
 
     // TODO Next: Rename to hideButtonContent
-    const collapseLabel =
+    this.collapseLabel =
       options.collapseLabel !== undefined ? options.collapseLabel : '\u00BB';
+
+    // TODO Next: Rename to showButtonTitle
+    this.tipLabel = options.tipLabel ? options.tipLabel : 'Legend';
+
+    // TODO Next: Rename to hideButtonTitle
+    this.collapseTipLabel = options.collapseTipLabel
+      ? options.collapseTipLabel
+      : 'Collapse legend';
 
     this.groupSelectStyle = LayerSwitcher.getGroupSelectStyle(
       options.groupSelectStyle
@@ -115,17 +120,13 @@ export default class LayerSwitcher extends Control {
 
     element.className = this.hiddenClassName;
 
-    const button = document.createElement('button');
-    button.setAttribute('title', tipLabel);
-    button.setAttribute('aria-label', tipLabel);
-    element.appendChild(button);
+    this.button = document.createElement('button');
+    element.appendChild(this.button);
 
     this.panel = document.createElement('div');
     this.panel.className = 'panel';
     element.appendChild(this.panel);
     LayerSwitcher.enableTouchScroll_(this.panel);
-
-    button.textContent = label;
 
     element.classList.add(
       CSS_PREFIX + 'group-select-style-' + this.groupSelectStyle
@@ -138,32 +139,21 @@ export default class LayerSwitcher extends Control {
     if (this.activationMode === 'click') {
       // TODO Next: Remove in favour of layer-switcher-activation-mode-click
       element.classList.add('activationModeClick');
-      if (this.startActive) {
-        button.textContent = collapseLabel;
-        button.setAttribute('title', collapseTipLabel);
-        button.setAttribute('aria-label', collapseTipLabel);
-      }
-      button.onclick = (e: Event) => {
+      this.button.onclick = (e: Event) => {
         const evt = e || window.event;
         if (this.element.classList.contains(this.shownClassName)) {
           this.hidePanel();
-          button.textContent = label;
-          button.setAttribute('title', tipLabel);
-          button.setAttribute('aria-label', tipLabel);
         } else {
           this.showPanel();
-          button.textContent = collapseLabel;
-          button.setAttribute('title', collapseTipLabel);
-          button.setAttribute('aria-label', collapseTipLabel);
         }
         evt.preventDefault();
       };
     } else {
-      button.onmouseover = () => {
+      this.button.onmouseover = () => {
         this.showPanel();
       };
 
-      button.onclick = (e: Event) => {
+      this.button.onclick = (e: Event) => {
         const evt = e || window.event;
         this.showPanel();
         evt.preventDefault();
@@ -175,6 +165,7 @@ export default class LayerSwitcher extends Control {
         }
       };
     }
+    this.updateButton();
   }
 
   /**
@@ -211,6 +202,7 @@ export default class LayerSwitcher extends Control {
   showPanel(): void {
     if (!this.element.classList.contains(this.shownClassName)) {
       this.element.classList.add(this.shownClassName);
+      this.updateButton();
       this.renderPanel();
     }
   }
@@ -221,6 +213,23 @@ export default class LayerSwitcher extends Control {
   hidePanel(): void {
     if (this.element.classList.contains(this.shownClassName)) {
       this.element.classList.remove(this.shownClassName);
+      this.updateButton();
+    }
+  }
+
+  /**
+   * Update button text content and attributes based on current
+   * state
+   */
+  protected updateButton(): void {
+    if (this.element.classList.contains(this.shownClassName)) {
+      this.button.textContent = this.collapseLabel;
+      this.button.setAttribute('title', this.collapseTipLabel);
+      this.button.setAttribute('aria-label', this.collapseTipLabel);
+    } else {
+      this.button.textContent = this.label;
+      this.button.setAttribute('title', this.tipLabel);
+      this.button.setAttribute('aria-label', this.tipLabel);
     }
   }
 
