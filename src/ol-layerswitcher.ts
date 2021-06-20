@@ -209,6 +209,7 @@ export default class LayerSwitcher extends Control {
    * Show the layer panel.
    */
   showPanel(): void {
+    this.dispatchEvent('showPanel');
     if (!this.element.classList.contains(this.shownClassName)) {
       this.element.classList.add(this.shownClassName);
       this.renderPanel();
@@ -219,6 +220,7 @@ export default class LayerSwitcher extends Control {
    * Hide the layer panel.
    */
   hidePanel(): void {
+    this.dispatchEvent('hidePanel');
     if (this.element.classList.contains(this.shownClassName)) {
       this.element.classList.remove(this.shownClassName);
     }
