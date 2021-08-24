@@ -542,7 +542,6 @@ var LayerSwitcher = function (_Control) {
                 var _input = document.createElement('input');
                 if (lyr.get('type') === 'base') {
                     _input.type = 'radio';
-                    _input.name = 'base';
                 } else {
                     _input.type = 'checkbox';
                 }

@@ -539,7 +539,6 @@ export default class LayerSwitcher extends Control {
       const input = document.createElement('input');
       if (lyr.get('type') === 'base') {
         input.type = 'radio';
-        input.name = 'base';
       } else {
         input.type = 'checkbox';
       }

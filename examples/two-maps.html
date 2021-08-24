@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>OpenLayers - LayerSwitcher - Two Maps</title>
+    <meta
+      name="viewport"
+      content="initial-scale=1.0, user-scalable=no, width=device-width"
+    />
+    <link rel="stylesheet" href="https://openlayers.org/en/v6.1.1/css/ol.css" />
+    <link rel="stylesheet" href="../dist/ol-layerswitcher.css" />
+    <link rel="stylesheet" href="layerswitcher.css" />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+      #map1,
+      #map2 {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map1"></div>
+    <div id="map2"></div>
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,Object.assign,Event,URL"></script>
+    <script src="https://openlayers.org/en/v6.1.1/build/ol.js"></script>
+    <script src="../dist/ol-layerswitcher.js"></script>
+    <script src="two-maps.js"></script>
+  </body>
+</html>

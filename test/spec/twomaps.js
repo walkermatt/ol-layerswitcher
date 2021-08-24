@@ -19,6 +19,7 @@ describe('ol.control.LayerSwitcher - Two maps', function () {
             new ol.layer.Tile({
               title: 'Foo',
               type: 'base',
+              visible: true,
               source: new ol.source.TileDebug({
                 projection: 'EPSG:3857',
                 tileGrid: ol.tilegrid.createXYZ({
@@ -29,6 +30,7 @@ describe('ol.control.LayerSwitcher - Two maps', function () {
             new ol.layer.Tile({
               title: 'Too',
               type: 'base',
+              visible: false,
               source: new ol.source.TileDebug({
                 projection: 'EPSG:3857',
                 tileGrid: ol.tilegrid.createXYZ({
@@ -59,6 +61,7 @@ describe('ol.control.LayerSwitcher - Two maps', function () {
             new ol.layer.Tile({
               title: 'Foo',
               type: 'base',
+              visible: false,
               source: new ol.source.TileDebug({
                 projection: 'EPSG:3857',
                 tileGrid: ol.tilegrid.createXYZ({
@@ -69,6 +72,7 @@ describe('ol.control.LayerSwitcher - Two maps', function () {
             new ol.layer.Tile({
               title: 'Too',
               type: 'base',
+              visible: true,
               source: new ol.source.TileDebug({
                 projection: 'EPSG:3857',
                 tileGrid: ol.tilegrid.createXYZ({
@@ -114,6 +118,46 @@ describe('ol.control.LayerSwitcher - Two maps', function () {
         .siblings('input')
         .attr('id');
       expect(bar1Id).to.not.equal(bar2Id);
+    });
+  });
+
+  describe('Base maps', function () {
+    it('Changing the base map for one map doesn`t affect the other map', function () {
+      // Setup
+      var foo1 = getLayerByTitle(map1, 'Foo');
+      var too1 = getLayerByTitle(map1, 'Too');
+      var foo2 = getLayerByTitle(map2, 'Foo');
+      var too2 = getLayerByTitle(map2, 'Too');
+      switcher1.showPanel();
+      switcher2.showPanel();
+      // Assert the initial state is what we expect
+      expect(foo1.getVisible()).to.be(true);
+      expect(too1.getVisible()).to.be(false);
+      expect(foo2.getVisible()).to.be(false);
+      expect(too2.getVisible()).to.be(true);
+      // Set map1 base map to "Too"
+      jQuery('#map1 .layer-switcher label:contains("Too")').siblings('input').click();
+      // Assert expected layer visibility and radio button state
+      expect(foo1.getVisible()).to.be(false);
+      expect(
+        jQuery('#map1 .layer-switcher label:contains("Foo")').siblings('input').get(0)
+          .checked
+      ).to.be(false);
+      expect(too1.getVisible()).to.be(true);
+      expect(
+        jQuery('#map1 .layer-switcher label:contains("Too")').siblings('input').get(0)
+          .checked
+      ).to.be(true);
+      expect(foo2.getVisible()).to.be(false);
+      expect(
+        jQuery('#map2 .layer-switcher label:contains("Foo")').siblings('input').get(0)
+          .checked
+      ).to.be(false);
+      expect(too2.getVisible()).to.be(true);
+      expect(
+        jQuery('#map2 .layer-switcher label:contains("Too")').siblings('input').get(0)
+          .checked
+      ).to.be(true);
     });
   });
 });

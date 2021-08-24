@@ -307,7 +307,21 @@ describe('ol.control.LayerSwitcher', function () {
         l.setVisible(true);
       });
       switcher.renderPanel();
+      expect(foo.getVisible()).to.be(false);
+      expect(
+        jQuery('.layer-switcher label:contains("Foo")').siblings('input').get(0)
+          .checked
+      ).to.be(false);
+      expect(too.getVisible()).to.be(false);
+      expect(
+        jQuery('.layer-switcher label:contains("Too")').siblings('input').get(0)
+          .checked
+      ).to.be(false);
       expect(cbg.getVisible()).to.be(true);
+      expect(
+        jQuery('.layer-switcher label:contains("Combined-Base-Layer")').siblings('input').get(0)
+          .checked
+      ).to.be(true);
     });
     it('Clicking on unchecked base layer shows it', function () {
       var too = getLayerByTitle(map, 'Too');
