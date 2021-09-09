@@ -107,8 +107,6 @@ describe('ol.control.LayerSwitcher', function () {
         // Top-level layer not in a group
         new ol.layer.Tile({
           title: 'Bar',
-          minResolution: 1000,
-          maxResolution: 5000,
           source: new ol.source.TileDebug({
             projection: 'EPSG:3857',
             tileGrid: ol.tilegrid.createXYZ({
@@ -118,6 +116,28 @@ describe('ol.control.LayerSwitcher', function () {
         }),
         // Layer with no title (should be ignored)
         new ol.layer.Tile({
+          source: new ol.source.TileDebug({
+            projection: 'EPSG:3857',
+            tileGrid: ol.tilegrid.createXYZ({
+              maxZoom: 22
+            })
+          })
+        }),
+        new ol.layer.Tile({
+          title: 'MinMaxRes',
+          minResolution: 1000,
+          maxResolution: 5000,
+          source: new ol.source.TileDebug({
+            projection: 'EPSG:3857',
+            tileGrid: ol.tilegrid.createXYZ({
+              maxZoom: 22
+            })
+          })
+        }),
+        new ol.layer.Tile({
+          title: 'MinMaxZoom',
+          minZoom: 12,
+          maxZoom: 14,
           source: new ol.source.TileDebug({
             projection: 'EPSG:3857',
             tileGrid: ol.tilegrid.createXYZ({
@@ -169,6 +189,8 @@ describe('ol.control.LayerSwitcher', function () {
         })
         .get();
       expect(titles).to.eql([
+        'MinMaxZoom',
+        'MinMaxRes',
         'Bar',
         'Combined-Overlay-Group',
         'Combined-Base-Layer',
@@ -203,23 +225,67 @@ describe('ol.control.LayerSwitcher', function () {
           return jQuery(this).text();
         })
         .get();
-      expect(titles).to.eql(['Bar', 'Combined-Overlay-Group']);
+      expect(titles).to.eql(['MinMaxZoom', 'MinMaxRes', 'Bar', 'Combined-Overlay-Group']);
     });
-    it('greys out normal layer title labels when outside of layer resolution', function () {
+    it('greys out normal layer title label when resolution greater than maxResolution', function () {
       map.getView().setResolution(6000);
       switcher.showPanel();
-      var layerResTooHigh = jQuery('.layer-switcher label.disabled')
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
         .map(function () {
           return jQuery(this).text();
         })
         .get();
+      expect(disabledLayers).to.contain('MinMaxRes');
+    });
+    it('greys out normal layer title label when resolution equals maxResolution', function () {
+      map.getView().setResolution(5000);
+      switcher.showPanel();
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
+        .map(function () {
+          return jQuery(this).text();
+        })
+        .get();
+      expect(disabledLayers).to.contain('MinMaxRes');
+    });
+    it('greys out normal layer title label when resolution less than minResolution', function () {
       map.getView().setResolution(500);
-      var layerResTooLow = jQuery('.layer-switcher label.disabled')
+      switcher.showPanel();
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
         .map(function () {
           return jQuery(this).text();
         })
         .get();
-      expect([layerResTooHigh, layerResTooLow]).to.eql([['Bar'], ['Bar']]);
+      expect(disabledLayers).to.contain('MinMaxRes');
+    });
+    it('greys out normal layer title label when zoom greater than maxZoom', function () {
+      map.getView().setZoom(15);
+      switcher.showPanel();
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
+        .map(function () {
+          return jQuery(this).text();
+        })
+        .get();
+      expect(disabledLayers).to.contain('MinMaxZoom');
+    });
+    it('greys out normal layer title label when zoom less than minZoom', function () {
+      map.getView().setZoom(11);
+      switcher.showPanel();
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
+        .map(function () {
+          return jQuery(this).text();
+        })
+        .get();
+      expect(disabledLayers).to.contain('MinMaxZoom');
+    });
+    it('greys out normal layer title label when zoom equal to minZoom', function () {
+      map.getView().setZoom(12);
+      switcher.showPanel();
+      var disabledLayers = jQuery('.layer-switcher label.disabled')
+        .map(function () {
+          return jQuery(this).text();
+        })
+        .get();
+      expect(disabledLayers).to.contain('MinMaxZoom');
     });
     it('displays base layers as radio buttons', function () {
       switcher.showPanel();

@@ -570,8 +570,13 @@ export default class LayerSwitcher extends Control {
       label.innerHTML = lyrTitle;
 
       const rsl = map.getView().getResolution();
-      if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+      if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
         label.className += ' disabled';
+      } else if (lyr.getMinZoom && lyr.getMaxZoom) {
+        const zoom = map.getView().getZoom();
+        if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+          label.className += ' disabled';
+        }
       }
 
       li.appendChild(label);

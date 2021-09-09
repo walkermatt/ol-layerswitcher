@@ -564,8 +564,13 @@ var LayerSwitcher = function (_Control) {
                 label.htmlFor = checkboxId;
                 label.innerHTML = lyrTitle;
                 var rsl = map.getView().getResolution();
-                if (rsl > lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+                if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
                     label.className += ' disabled';
+                } else if (lyr.getMinZoom && lyr.getMaxZoom) {
+                    var zoom = map.getView().getZoom();
+                    if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+                        label.className += ' disabled';
+                    }
                 }
                 li.appendChild(label);
             }
