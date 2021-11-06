@@ -1,4 +1,4 @@
-/* Set a small height to demonstrate the layer switcher scrolling */
+/* Set a small height to demonstrate the layer switcher automatically scrolling when needed */
 #map {
   max-height: 300px;
 }

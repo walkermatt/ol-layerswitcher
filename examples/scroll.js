@@ -104,5 +104,9 @@
     })
   });
 
-  map.addControl(new ol.control.LayerSwitcher());
+  map.addControl(
+    new ol.control.LayerSwitcher({
+      activationMode: 'click'
+    })
+  );
 })();
