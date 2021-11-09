@@ -1,4 +1,11 @@
-/* Set the maxmimum height of the layerswitcher when it's shown */
-.layer-switcher.shown {
-  max-height: 170px;
+/* Set a small height to demonstrate the layer switcher automatically scrolling when needed */
+#map {
+  max-height: 300px;
+}
+
+/* Fixed max-height for IE11 to support scrolling, due to incomplete support for flexbox */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .layer-switcher.shown {
+    max-height: 170px;
+  }
 }
