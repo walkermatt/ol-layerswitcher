@@ -32,7 +32,7 @@
   var layerSwitcher = new ol.control.LayerSwitcher();
   map.addControl(layerSwitcher);
 
-  // Add a layer to a pre-exiting ol.layer.Group after the LayerSwitcher has
+  // Add a layer to a pre-existing ol.layer.Group after the LayerSwitcher has
   // been added to the map. The layer will appear in the list the next time
   // the LayerSwitcher is shown or LayerSwitcher#renderPanel is called.
   overlayGroup.getLayers().push(
