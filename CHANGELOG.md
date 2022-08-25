@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.0.0
+
+- Add support for OpenLayers v7
+- **BREAKING CHANGE**: `dist/ol-layerswitcher.js` is no longer transpiled to
+  ES5 in order to support ol v7
+
+## 4.0.0-beta.1
+
+- Add support for OpenLayers v7
+- **BREAKING CHANGE**: `dist/ol-layerswitcher.js` is no longer transpiled to
+  ES5 in order to support ol v7
+
 ## 3.8.3
 
 - Add style field to package.json
