@@ -8,7 +8,7 @@ const findReplace = [
     [new RegExp('\\bOlLayerGroupOptions\\b', 'g'), '[ol/layer/Group~Options](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group.html#~Options)'],
     [new RegExp('\\bBaseLayer\\b', 'g'), '[BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html)'],
     [new RegExp('\\bOlLayerBaseOptions\\b', 'g'), '[ol/layer/Base~Options](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base.html#~Options)'],
-    [new RegExp('\\bPluggableMap\\b', 'g'), '[PluggableMap](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html)'],
+    [new RegExp('\\bOlMap\\b', 'g'), '[Map](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html)'],
 ];
 
 const paramRegex = /^-\s+`[a-zA-Z0-9]+` \*\*/;

@@ -2,7 +2,7 @@ import Control from 'ol/control/Control';
 import { EventsKey } from 'ol/events';
 import { unByKey } from 'ol/Observable';
 import { Options as ControlOptions } from 'ol/control/Control';
-import PluggableMap from 'ol/PluggableMap';
+import OlMap from 'ol/Map';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
 import { Options as OlLayerBaseOptions } from 'ol/layer/Base';
@@ -51,7 +51,7 @@ const CSS_PREFIX = 'layer-switcher-';
  * lyr.set('title', 'OpenStreetMap');
  * ```
  *
- * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+ * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html#addControl).
  * ```javascript
  * var layerSwitcher = new LayerSwitcher({
  *   reverse: true,
@@ -172,7 +172,7 @@ export default class LayerSwitcher extends Control {
    * Set the map instance the control is associated with.
    * @param map The map instance.
    */
-  setMap(map: PluggableMap): void {
+  setMap(map: OlMap): void {
     // Clean up listeners associated with the previous map
     for (let i = 0; i < this.mapListeners.length; i++) {
       unByKey(this.mapListeners[i]);
@@ -272,7 +272,7 @@ export default class LayerSwitcher extends Control {
    * @param options Options for panel, group, and layers
    */
   static renderPanel(
-    map: PluggableMap,
+    map: OlMap,
     panel: HTMLElement,
     options: RenderOptions
   ): void {
@@ -339,7 +339,7 @@ export default class LayerSwitcher extends Control {
     }
   }
 
-  protected static setGroupVisibility(map: PluggableMap): void {
+  protected static setGroupVisibility(map: OlMap): void {
     // Get a list of groups, with the deepest first
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
@@ -378,7 +378,7 @@ export default class LayerSwitcher extends Control {
     });
   }
 
-  protected static setChildVisibility(map: PluggableMap): void {
+  protected static setChildVisibility(map: OlMap): void {
     // console.log('setChildVisibility');
     const groups = LayerSwitcher.getGroupsAndLayers(map, function (l) {
       return (
@@ -411,7 +411,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static ensureTopVisibleBaseLayerShown(
-    map: PluggableMap,
+    map: OlMap,
     groupSelectStyle: GroupSelectStyle
   ): void {
     let lastVisibleBaseLyr;
@@ -436,7 +436,7 @@ export default class LayerSwitcher extends Control {
    * @param filterFn Optional function used to filter the returned layers
    */
   static getGroupsAndLayers(
-    grp: PluggableMap | LayerGroup,
+    grp: OlMap | LayerGroup,
     filterFn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => boolean
   ): BaseLayer[] {
     const layers = [];
@@ -467,7 +467,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static setVisible_(
-    map: PluggableMap,
+    map: OlMap,
     lyr: BaseLayer,
     visible: boolean,
     groupSelectStyle: GroupSelectStyle
@@ -502,7 +502,7 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static renderLayer_(
-    map: PluggableMap,
+    map: OlMap,
     lyr: BaseLayer,
     idx: number,
     options: RenderOptions,
@@ -614,8 +614,8 @@ export default class LayerSwitcher extends Control {
    * @protected
    */
   protected static renderLayers_(
-    map: PluggableMap,
-    lyr: PluggableMap | LayerGroup,
+    map: OlMap,
+    lyr: OlMap | LayerGroup,
     elm: HTMLElement,
     options: RenderOptions,
     render: (changedLyr: BaseLayer) => void
@@ -638,7 +638,7 @@ export default class LayerSwitcher extends Control {
    * found under `lyr`.
    */
   static forEachRecursive(
-    lyr: PluggableMap | LayerGroup,
+    lyr: OlMap | LayerGroup,
     fn: (lyr: BaseLayer, idx: number, arr: BaseLayer[]) => void
   ): void {
     lyr.getLayers().forEach(function (lyr, idx, a) {

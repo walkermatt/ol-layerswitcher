@@ -49,7 +49,7 @@ const CSS_PREFIX = 'layer-switcher-';
  * lyr.set('title', 'OpenStreetMap');
  * ```
  *
- * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+ * To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html#addControl).
  * ```javascript
  * var layerSwitcher = new LayerSwitcher({
  *   reverse: true,
