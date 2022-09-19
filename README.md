@@ -234,7 +234,7 @@ var lyr = new ol.layer.Tile({
 lyr.set('title', 'OpenStreetMap');
 ```
 
-To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html#addControl).
+To create a LayerSwitcher and add it to a map, create a new instance then pass it to the map's [`addControl` method](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html#addControl).
 
 ```javascript
 var layerSwitcher = new LayerSwitcher({
@@ -254,7 +254,7 @@ Set the map instance the control is associated with.
 
 ##### Parameters
 
-- `map` **[PluggableMap](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html)** The map instance.
+- `map` **[Map](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html)** The map instance.
 
 Returns **void**
 
@@ -282,7 +282,7 @@ Returns **void**
 
 ##### Parameters
 
-- `map` **[PluggableMap](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html)** The OpenLayers Map instance to render layers for
+- `map` **[Map](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html)** The OpenLayers Map instance to render layers for
 - `panel` **[HTMLElement](https://developer.mozilla.org/docs/Web/HTML/Element)** The DOM Element into which the layer tree will be rendered
 - `options` **[RenderOptions](#renderoptions)** Options for panel, group, and layers
 
@@ -305,7 +305,7 @@ contained by the specified map or layer group; optionally filtering via `filterF
 
 ##### Parameters
 
-- `grp` **([PluggableMap](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html) | [LayerGroup](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group-LayerGroup.html))** The map or layer group for which layers are found.
+- `grp` **([Map](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html) | [LayerGroup](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group-LayerGroup.html))** The map or layer group for which layers are found.
 - `filterFn` **function (lyr: [BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html), idx: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), arr: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html)>): [boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** Optional function used to filter the returned layers
 
 Returns **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html)>**
@@ -317,7 +317,7 @@ recursing nested groups.
 
 ##### Parameters
 
-- `lyr` **([PluggableMap](https://openlayers.org/en/latest/apidoc/module-ol_PluggableMap-PluggableMap.html) | [LayerGroup](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group-LayerGroup.html))** The layer group to start iterating from.
+- `lyr` **([Map](https://openlayers.org/en/latest/apidoc/module-ol_Map-Map.html) | [LayerGroup](https://openlayers.org/en/latest/apidoc/module-ol_layer_Group-LayerGroup.html))** The layer group to start iterating from.
 - `fn` **function (lyr: [BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html), idx: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number), arr: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[BaseLayer](https://openlayers.org/en/latest/apidoc/module-ol_layer_Base-BaseLayer.html)>): void** Callback which will be called for each layer
   found under `lyr`.
 
