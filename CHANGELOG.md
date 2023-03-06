@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.0
+
+- Replaced ol/PluggableMap with ol/Map in definition file. #490
+
 ## 4.0.0
 
 - Add support for OpenLayers v7
