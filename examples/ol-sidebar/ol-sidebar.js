@@ -1,5 +1,3 @@
-/* global ol */
-
 class Sidebar extends ol.control.Control {
   constructor(settings) {
     var defaults = {
@@ -54,6 +52,7 @@ class Sidebar extends ol.control.Control {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   setMap(map) {
     var i, child;
 
