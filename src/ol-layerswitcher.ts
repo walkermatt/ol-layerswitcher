@@ -515,6 +515,10 @@ export default class LayerSwitcher extends Control {
     const checkboxId = LayerSwitcher.uuid();
 
     const label = document.createElement('label');
+      
+    if (!LayerSwitcher.visibleAtZoomLevel(lyr, map.getView())) {
+      label.classList.add('disabled');
+    }
 
     if (lyr instanceof LayerGroup && !lyr.get('combine')) {
       const isBaseGroup = LayerSwitcher.isBaseGroup(lyr);
@@ -559,16 +563,6 @@ export default class LayerSwitcher extends Control {
 
       label.innerHTML = lyrTitle;
 
-      const rsl = map.getView().getResolution();
-      if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-        label.className += ' disabled';
-      } else if (lyr.getMinZoom && lyr.getMaxZoom) {
-        const zoom = map.getView().getZoom();
-        if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
-          label.className += ' disabled';
-        }
-      }
-
       li.appendChild(label);
       const ul = document.createElement('ul');
       li.appendChild(ul);
@@ -600,20 +594,23 @@ export default class LayerSwitcher extends Control {
       label.htmlFor = checkboxId;
       label.innerHTML = lyrTitle;
 
-      const rsl = map.getView().getResolution();
-      if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
-        label.className += ' disabled';
-      } else if (lyr.getMinZoom && lyr.getMaxZoom) {
-        const zoom = map.getView().getZoom();
-        if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
-          label.className += ' disabled';
-        }
-      }
-
       li.appendChild(label);
     }
 
     return li;
+  }
+  
+  static visibleAtZoomLevel(lyr, view) {
+    const rsl = view.getResolution();
+    if (rsl >= lyr.getMaxResolution() || rsl < lyr.getMinResolution()) {
+      return false;
+    } else if (lyr.getMinZoom && lyr.getMaxZoom) {
+      const zoom = view.getZoom();
+      if (zoom <= lyr.getMinZoom() || zoom > lyr.getMaxZoom()) {
+        return false;
+      }
+    }
+    return true;
   }
 
   /**
