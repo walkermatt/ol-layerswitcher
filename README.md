@@ -499,9 +499,9 @@ If you find the layer switcher useful you might also like the
     # Open ./tests/ in browser
     # Open examples and manually test
     # Determine new version number (check current with `git tag --list`, check npm and GitHub)
-    # Update version number in `package.json`, `bower.json` and `README.md`
+    # Update version number in `package.json` and `README.md`
     # Add entry to CHANGELOG.md
-    git commit bower.json package.json CHANGELOG.md README.md
+    git commit package.json CHANGELOG.md README.md
     git tag vX.Y.Z
     git push origin master --tags
     npm publish
@@ -511,9 +511,9 @@ If you find the layer switcher useful you might also like the
     npm run build
     # Tests/ examples
     # Beta version should be X.Y.Z-beta.N
-    # Update version number in `package.json`, `bower.json` and `README.md`
+    # Update version number in `package.json` and `README.md`
     # Add entry to CHANGELOG.md
-    git commit bower.json package.json CHANGELOG.md README.md
+    git commit package.json CHANGELOG.md README.md
     git tag vX.Y.Z-beta.N
     git push --tags
     npm publish --tag beta
