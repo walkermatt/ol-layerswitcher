@@ -17,7 +17,7 @@
     />
     <link
       rel="stylesheet"
-      href="https://rawgit.com/Turbo87/sidebar-v2/master/css/ol3-sidebar.css"
+      href="ol-sidebar/ol-sidebar.css"
     />
     <link rel="stylesheet" href="../dist/ol-layerswitcher.css" />
     <link rel="stylesheet" href="sidebar.css" />
@@ -96,16 +96,7 @@
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,Object.assign,Event,URL"></script>
     <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@main/dist/en/v7.0.0/legacy/ol.js"></script>
-    <script>
-      // TEMP sidebar-v2 requires ol.inherits which was removed in ol v6.0
-      if (window.ol && !window.ol.inherits) {
-        ol.inherits = function inherits(childCtor, parentCtor) {
-          childCtor.prototype = Object.create(parentCtor.prototype);
-          childCtor.prototype.constructor = childCtor;
-        };
-      }
-    </script>
-    <script src="https://rawgit.com/Turbo87/sidebar-v2/master/js/ol3-sidebar.js"></script>
+    <script src="ol-sidebar/ol-sidebar.js"></script>
     <script src="../dist/ol-layerswitcher.js"></script>
     <script src="sidebar.js"></script>
   </body>

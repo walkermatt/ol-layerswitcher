@@ -87,20 +87,22 @@
         title: 'Overlays',
         layers: [
           new ol.layer.Image({
-            title: 'Countries',
+            // A layer must have a title to appear in the layerswitcher
+            title: 'States',
+            visible: true,
             source: new ol.source.ImageArcGISRest({
               ratio: 1,
-              params: { LAYERS: 'show:0' },
+              params: { LAYERS: 'show:2' },
               url:
-                'https://ons-inspire.esriuk.com/arcgis/rest/services/Administrative_Boundaries/Countries_December_2016_Boundaries/MapServer'
+                'https://sampleserver6.arcgisonline.com/ArcGIS/rest/services/USA/MapServer'
             })
           })
         ]
       })
     ],
     view: new ol.View({
-      center: ol.proj.transform([-0.92, 52.96], 'EPSG:4326', 'EPSG:3857'),
-      zoom: 6
+      center: ol.proj.transform([-80.789, 37.926], 'EPSG:4326', 'EPSG:3857'),
+      zoom: 5
     })
   });
 
