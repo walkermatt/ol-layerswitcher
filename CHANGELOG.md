@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.1.1
+
+- Minor CSS tweak to avoid button outline being clipped
+- Update data used by examples
+    - The OSN boundary data appears to no longer be available so it's been
+      replaced with some USA sample data thanks to ESRI.
+- Fix sidebar example
+    - The sidebar component (https://github.com/Turbo87/sidebar-v2) isn't
+      currently compatible with OpenLayers 7 due to the JS being an ES5
+      prototype based class, an updated ES6 class version is now included in
+      the examples directory.
+
 ## 4.1.0
 
 - Replaced ol/PluggableMap with ol/Map in definition file. #490
