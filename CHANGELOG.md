@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.1.2
+
+- Remove polyfill.io from examples, see #503
+
 ## 4.1.1
 
 - Minor CSS tweak to avoid button outline being clipped
