@@ -1,0 +1,42 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: eslint-config-prettier
+    versions:
+    - 7.2.0
+    - 8.0.0
+    - 8.1.0
+    - 8.2.0
+  - dependency-name: rollup
+    versions:
+    - 2.38.1
+    - 2.38.2
+    - 2.38.3
+    - 2.38.4
+    - 2.38.5
+    - 2.39.0
+    - 2.39.1
+    - 2.40.0
+    - 2.41.0
+    - 2.41.1
+    - 2.41.2
+    - 2.41.4
+    - 2.41.5
+    - 2.42.2
+    - 2.42.3
+    - 2.42.4
+    - 2.43.1
+    - 2.44.0
+    - 2.45.0
+    - 2.45.1
+    - 2.45.2
+  - dependency-name: mocha
+    versions:
+    - 8.2.1
+    - 8.3.0
+    - 8.3.1
