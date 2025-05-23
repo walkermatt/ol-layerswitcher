@@ -10,9 +10,12 @@ toggle.
 
 See [**API documentation**](#api) and [**Examples**](#examples) for usage.
 
-Compatible with OpenLayers version 3, 4, 5 and 6 (see note in [Install - Parcel,
+Compatible with OpenLayers version 3, 4, 5, 6, 7, 8, 9 and 10 (see note in [Install - Parcel,
 Webpack etc.](#parcel-webpack-etc) regarding installing the appropriate version
-of `ol-layerswitcher` for OpenLayers).
+of `ol-layerswitcher` for OpenLayers). If you have an issue using ol-layerswitcher with a more
+recent version of OpenLayers please [raise an issue](https://github.com/walkermatt/ol-layerswitcher/issues)
+with details including the versions you are using. It would be really nice if you could provide a link
+to a codesandbox.io or similar that demonstrates the error :-).
 
 ## Examples
 
